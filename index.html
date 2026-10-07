@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Chemsha Bongo — Brain Reflex & Dopamine Workout</title>
+  <meta name="description" content="A fast-paced cognitive reflex and mental workout suite. Quick dopamine-boosting brain mini-games.">
+  <meta name="theme-color" content="#0a0e17">
+
+  <!-- Favicon Emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/animations.css">
+</head>
+<body>
+
+  <!-- Fullscreen Particle & Confetti Canvas -->
+  <canvas id="fx-canvas"></canvas>
+
+  <main class="app-container">
+
+    <!-- ====================================================================
+         SCREEN 1: MAIN MENU (HOME)
+         ==================================================================== -->
+    <section class="screen-view active" data-screen="home" id="screen-home">
+      <header class="brand-hero">
+        <div class="brand-badge">⚡ Mental Workout Suite</div>
+        <h1 class="brand-title">Chemsha Bongo</h1>
+        <p class="brand-tagline">A simple game that challenges the brain and increases dopamine.</p>
+        <p class="sub-tagline">Quick 30-second cognitive reflex & memory workouts</p>
+      </header>
+
+      <div class="menu-options-container">
+        <!-- Daily Blitz Workout -->
+        <div class="action-card action-card-blitz" id="start-blitz-btn" role="button" tabindex="0">
+          <div class="card-content-left">
+            <div class="card-icon-box">⚡</div>
+            <div class="card-text-group">
+              <h3>Daily Blitz (Mchakamchaka)</h3>
+              <p>3 rapid random micro-games back-to-back. Earn your Brain Quotient rating!</p>
+            </div>
+          </div>
+          <span class="card-arrow-icon">→</span>
+        </div>
+
+        <!-- Free Play / Practice -->
+        <div class="action-card" id="browse-games-btn" role="button" tabindex="0">
+          <div class="card-content-left">
+            <div class="card-icon-box">🎮</div>
+            <div class="card-text-group">
+              <h3>Free Play (Chagua Mchezo)</h3>
+              <p>Practice any mini-game: Stroop Effect, Chimp Memory, Fast Math & more.</p>
+            </div>
+          </div>
+          <span class="card-arrow-icon">→</span>
+        </div>
+      </div>
+
+      <!-- Quick Stats Card -->
+      <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-around; text-align: center;">
+          <div>
+            <div class="hud-label">BEST STREAK</div>
+            <div class="hud-num" id="home-best-streak" style="color: var(--accent-amber);">0x</div>
+          </div>
+          <div style="border-left: 1px solid var(--border-subtle); height: 36px;"></div>
+          <div>
+            <div class="hud-label">BEST BLITZ SCORE</div>
+            <div class="hud-num" id="home-best-bq" style="color: var(--accent-cyan);">—</div>
+          </div>
+          <div style="border-left: 1px solid var(--border-subtle); height: 36px;"></div>
+          <div>
+            <div class="hud-label">GAMES PLAYED</div>
+            <div class="hud-num" id="home-total-games">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Action Bar -->
+      <footer class="menu-footer-bar">
+        <button class="btn btn-ghost" id="home-sound-btn" style="font-size: 0.85rem;">🔊 Sound: On</button>
+        <button class="btn btn-outline" id="view-stats-btn" style="font-size: 0.85rem;">📊 Stats & Records</button>
+      </footer>
+    </section>
+
+
+    <!-- ====================================================================
+         SCREEN 2: GAME SELECTOR (FREE PLAY)
+         ==================================================================== -->
+    <section class="screen-view" data-screen="select" id="screen-select">
+      <header class="picker-header">
+        <div>
+          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0;">← Back to Menu</button>
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-top: 0.25rem;">Choose a Challenge</h2>
+        </div>
+      </header>
+
+      <div class="games-grid" id="game-select-grid">
+        <!-- Dynamically rendered by app.js -->
+      </div>
+    </section>
+
+
+    <!-- ====================================================================
+         SCREEN 3: READY COUNTDOWN
+         ==================================================================== -->
+    <section class="screen-view" data-screen="countdown" id="screen-countdown">
+      <div class="countdown-box glass-panel" style="padding: 2.5rem 1.5rem; width: 100%;">
+        <div class="countdown-icon" id="countdown-game-icon">🧠</div>
+        <h2 class="countdown-game-title" id="countdown-game-title">Color Clash</h2>
+        <p class="countdown-instructions" id="countdown-instructions">Click the INK color of the word — DO NOT read the text!</p>
+        <div class="countdown-controls-hint" id="countdown-controls-hint">Tap buttons or keys 1, 2, 3, 4</div>
+
+        <div class="countdown-number-wrapper">
+          <div class="countdown-num-pulse" id="countdown-number">3</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ====================================================================
+         SCREEN 4: ACTIVE GAMEPLAY & HUD
+         ==================================================================== -->
+    <section class="screen-view" data-screen="play" id="screen-play">
+      <!-- Live HUD -->
+      <header id="game-hud" class="hud-container">
+        <!-- Injected by HUD.js -->
+      </header>
+
+      <!-- Active Mini-game Arena -->
+      <div class="game-arena-card" id="active-game-board">
+        <!-- Game class injects interactive puzzle DOM here -->
+      </div>
+    </section>
+
+
+    <!-- ====================================================================
+         SCREEN 5: ROUND SUMMARY
+         ==================================================================== -->
+    <section class="screen-view" data-screen="round-summary" id="screen-round-summary">
+      <div class="summary-card glass-panel">
+        <div class="prompt-hint-badge">ROUND COMPLETED</div>
+        <h2 id="summary-game-title" style="font-size: 1.8rem; font-weight: 800;">Color Clash</h2>
+
+        <div class="summary-score-display">
+          <span class="hud-label">ROUND SCORE</span>
+          <span class="big-score" id="summary-score">0</span>
+          <span class="new-high-badge" id="summary-new-high" style="display: none;">🌟 NEW PERSONAL BEST!</span>
+        </div>
+
+        <div class="summary-stats-grid">
+          <div class="summary-stat-item">
+            <span class="hud-label">ACCURACY</span>
+            <span class="val" id="summary-accuracy" style="color: var(--accent-green);">100%</span>
+          </div>
+          <div class="summary-stat-item">
+            <span class="hud-label">CORRECT</span>
+            <span class="val" id="summary-correct">0 / 0</span>
+          </div>
+          <div class="summary-stat-item">
+            <span class="hud-label">MAX STREAK</span>
+            <span class="val" id="summary-streak" style="color: var(--accent-amber);">0x</span>
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button class="btn btn-outline" id="summary-home-btn">Menu</button>
+          <button class="btn btn-primary" id="summary-action-btn">Next →</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ====================================================================
+         SCREEN 6: FINAL BLITZ RESULTS
+         ==================================================================== -->
+    <section class="screen-view" data-screen="blitz-final" id="screen-blitz-final">
+      <div class="summary-card glass-panel">
+        <div style="font-size: 3rem;">🏆</div>
+        <div class="prompt-hint-badge">DAILY BLITZ WORKOUT FINISHED</div>
+        <h2 style="font-size: 1.8rem; font-weight: 800;">Brain Quotient Assessment</h2>
+
+        <div class="summary-score-display">
+          <span class="hud-label">TOTAL WORKOUT SCORE</span>
+          <span class="big-score" id="blitz-final-score">0</span>
+          <span class="new-high-badge" id="blitz-new-high-badge" style="display: none;">🔥 NEW BLITZ RECORD!</span>
+        </div>
+
+        <div style="padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); width: 100%;">
+          <div class="hud-label">RATING</div>
+          <div id="blitz-final-rating" style="font-size: 1.4rem; font-weight: 900; margin-top: 0.2rem;">Grandmaster</div>
+        </div>
+
+        <div class="hud-label" style="align-self: flex-start; margin-top: 0.5rem;">WORKOUT ROUNDS:</div>
+        <div class="blitz-breakdown-list" id="blitz-rounds-breakdown">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div class="summary-actions">
+          <button class="btn btn-outline" id="blitz-home-btn">Main Menu</button>
+          <button class="btn btn-primary" id="blitz-again-btn">Another Workout ⚡</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ====================================================================
+       MODAL 1: PAUSE OVERLAY
+       ==================================================================== -->
+  <div class="modal-overlay" id="pause-modal" aria-hidden="true">
+    <div class="modal-content">
+      <div style="font-size: 2.5rem;">⏸</div>
+      <h3 style="font-size: 1.5rem; font-weight: 800;">Workout Paused</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Take a deep breath. Your timer is on hold.</p>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+        <button class="btn btn-primary" id="pause-resume-btn">Resume Play ▶</button>
+        <button class="btn btn-outline" id="pause-quit-btn">Quit to Menu ✕</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ====================================================================
+       MODAL 2: CAREER STATS & RECORDS
+       ==================================================================== -->
+  <div class="modal-overlay" id="stats-modal" aria-hidden="true">
+    <div class="modal-content" style="max-width: 520px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.4rem; font-weight: 800;">📊 Career Stats & Records</h3>
+        <button class="btn btn-ghost" id="close-stats-btn" style="padding: 0.4rem 0.6rem;">✕</button>
+      </div>
+
+      <div class="summary-stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 0.5rem;">
+        <div class="summary-stat-item" style="text-align: center;">
+          <span class="hud-label">GAMES PLAYED</span>
+          <span class="val" id="stat-total-games">0</span>
+        </div>
+        <div class="summary-stat-item" style="text-align: center;">
+          <span class="hud-label">ACCURACY</span>
+          <span class="val" id="stat-accuracy" style="color: var(--accent-green);">100%</span>
+        </div>
+        <div class="summary-stat-item" style="text-align: center;">
+          <span class="hud-label">MAX STREAK</span>
+          <span class="val" id="stat-max-streak" style="color: var(--accent-amber);">0x</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem;">
+          <span class="hud-label">BEST BLITZ SCORE</span>
+          <strong id="stat-blitz-best" style="font-family: var(--font-mono); color: var(--accent-cyan);">0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span class="hud-label">BEST BLITZ RATING</span>
+          <strong id="stat-blitz-rating" style="color: var(--accent-purple);">Novice</strong>
+        </div>
+      </div>
+
+      <div class="hud-label" style="margin-top: 0.5rem;">MINI-GAME PERSONAL BESTS:</div>
+      <div class="blitz-breakdown-list" id="stat-games-breakdown" style="max-height: 180px; overflow-y: auto;">
+        <!-- Populated by app.js -->
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+        <button class="btn btn-ghost" id="reset-stats-btn" style="color: var(--accent-rose); font-size: 0.8rem;">Reset All Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entry Script (ES6 Module) -->
+  <script type="module" src="src/app.js"></script>
+
+</body>
+</html>
