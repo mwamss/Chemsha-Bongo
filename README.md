@@ -62,6 +62,28 @@ python -m http.server 8000
 ```
 Then open `http://localhost:8000` in your web browser.
 
+## Connect Google Stitch MCP in VS Code
+
+This repository includes a workspace MCP configuration at `.vscode/mcp.json`
+for the official Google Stitch HTTP server. VS Code prompts for your API key
+when the server starts; the key is not stored in this repository.
+
+1. Revoke the API key shared in chat and create a replacement in Google Cloud
+   Console.
+2. Open this repository as a VS Code workspace.
+3. Open Chat, select **Agent** mode, and open the tools/MCP menu.
+4. Start or enable the `stitch` server.
+5. Enter the replacement Stitch API key when VS Code prompts for it.
+6. Confirm that Stitch tools appear in the available tools list.
+
+For guided setup instead, run this from the project folder:
+
+```bash
+npx @_davideast/stitch-mcp init
+```
+
+Never commit an API key to `mcp.json`, `.env`, or source files.
+
 ---
 
 ## 🌐 Deploy to GitHub Pages
