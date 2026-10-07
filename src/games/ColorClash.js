@@ -7,12 +7,12 @@
 import { BaseGame } from './BaseGame.js';
 
 const COLOR_PALETTE = [
-  { name: 'RED', hex: '#ef4444', swahili: 'NYEKUNDU' },
-  { name: 'BLUE', hex: '#3b82f6', swahili: 'BLUU' },
-  { name: 'GREEN', hex: '#10b981', swahili: 'KIJANI' },
-  { name: 'YELLOW', hex: '#facc15', swahili: 'MANJANO' },
-  { name: 'PURPLE', hex: '#a855f7', swahili: 'ZAMBARAU' },
-  { name: 'ORANGE', hex: '#f97316', swahili: 'MACHUNGWA' }
+  { name: 'RED', hex: '#ef4444' },
+  { name: 'BLUE', hex: '#3b82f6' },
+  { name: 'GREEN', hex: '#10b981' },
+  { name: 'YELLOW', hex: '#facc15' },
+  { name: 'PURPLE', hex: '#a855f7' },
+  { name: 'ORANGE', hex: '#f97316' }
 ];
 
 export class ColorClashGame extends BaseGame {
@@ -20,7 +20,7 @@ export class ColorClashGame extends BaseGame {
     super({
       id: 'color-clash',
       title: 'Color Clash',
-      swahiliTitle: 'Mgongano wa Rangi',
+      subtitle: 'Inhibition Challenge',
       category: 'focus',
       instructions: 'Click the INK COLOR of the word — DO NOT read the text!',
       controlsHint: 'Tap buttons or press keys 1, 2, 3, 4'

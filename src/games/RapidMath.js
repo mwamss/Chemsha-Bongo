@@ -11,7 +11,7 @@ export class RapidMathGame extends BaseGame {
     super({
       id: 'rapid-math',
       title: 'Rapid Math',
-      swahiliTitle: 'Hesabu Haraka',
+      subtitle: 'Mental Arithmetic',
       category: 'math',
       instructions: 'Solve the equation as fast as you can! Beat the ticking clock.',
       controlsHint: 'Tap options or press keys 1, 2, 3, 4'

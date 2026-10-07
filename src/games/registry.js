@@ -13,7 +13,7 @@ export const GAME_CATALOG = [
   {
     id: 'color-clash',
     title: 'Color Clash',
-    swahiliTitle: 'Mgongano wa Rangi',
+    subtitle: 'Inhibition Challenge',
     category: 'focus',
     icon: '🎨',
     categoryLabel: 'Attention & Focus',
@@ -24,7 +24,7 @@ export const GAME_CATALOG = [
   {
     id: 'chimp-memory',
     title: 'Chimp Memory',
-    swahiliTitle: 'Kumbukumbu ya Sokwe',
+    subtitle: 'Working Memory Grid',
     category: 'memory',
     icon: '🐵',
     categoryLabel: 'Working Memory',
@@ -35,7 +35,7 @@ export const GAME_CATALOG = [
   {
     id: 'rapid-math',
     title: 'Rapid Math',
-    swahiliTitle: 'Hesabu Haraka',
+    subtitle: 'Mental Arithmetic',
     category: 'math',
     icon: '⚡',
     categoryLabel: 'Mental Calculation',
@@ -46,7 +46,7 @@ export const GAME_CATALOG = [
   {
     id: 'confusing-arrows',
     title: 'Confusing Arrows',
-    swahiliTitle: 'Mielekeo Yenye Mitego',
+    subtitle: 'Spatial Direction Reflex',
     category: 'reflex',
     icon: '🧭',
     categoryLabel: 'Spatial Reflexes',
@@ -57,7 +57,7 @@ export const GAME_CATALOG = [
   {
     id: 'number-sequence',
     title: 'Pattern Sequence',
-    swahiliTitle: 'Mfuatano wa Nambari',
+    subtitle: 'Pattern Deduction',
     category: 'logic',
     icon: '🧩',
     categoryLabel: 'Logic & Induction',

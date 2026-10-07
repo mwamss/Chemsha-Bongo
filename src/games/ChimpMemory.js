@@ -11,7 +11,7 @@ export class ChimpMemoryGame extends BaseGame {
     super({
       id: 'chimp-memory',
       title: 'Chimp Memory',
-      swahiliTitle: 'Kumbukumbu ya Sokwe',
+      subtitle: 'Working Memory Grid',
       category: 'memory',
       instructions: 'Remember the numbers, then click the blank tiles in ascending order (1, 2, 3...)!',
       controlsHint: 'Click or tap the tiles in sequence'

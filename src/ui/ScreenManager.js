@@ -55,7 +55,7 @@ export class ScreenManager {
     const hintEl = document.getElementById('countdown-controls-hint');
     const numberEl = document.getElementById('countdown-number');
 
-    if (titleEl) titleEl.textContent = `${gameMeta.title} (${gameMeta.swahiliTitle})`;
+    if (titleEl) titleEl.textContent = gameMeta.subtitle ? `${gameMeta.title} • ${gameMeta.subtitle}` : gameMeta.title;
     if (iconEl) iconEl.textContent = gameMeta.icon || '🧠';
     if (instructionEl) instructionEl.textContent = gameMeta.instructions;
     if (hintEl) hintEl.textContent = gameMeta.controlsHint;

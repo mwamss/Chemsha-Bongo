@@ -8,7 +8,7 @@ export class BaseGame {
   constructor(metadata = {}) {
     this.id = metadata.id || 'unnamed-game';
     this.title = metadata.title || 'Untitled Game';
-    this.swahiliTitle = metadata.swahiliTitle || '';
+    this.subtitle = metadata.subtitle || '';
     this.category = metadata.category || 'focus'; // focus | memory | math | reflex | logic
     this.instructions = metadata.instructions || '';
     this.controlsHint = metadata.controlsHint || 'Click or tap options';

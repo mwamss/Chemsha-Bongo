@@ -89,30 +89,30 @@ class App {
     const now = new Date();
     const hour = now.getHours();
 
-    let salutation = 'Habari ya Leo';
-    if (hour < 12) salutation = 'Habari ya Asubuhi';
-    else if (hour < 17) salutation = 'Habari ya Mchana';
-    else salutation = 'Habari ya Jioni';
+    let salutation = 'Welcome';
+    if (hour < 12) salutation = 'Good Morning';
+    else if (hour < 17) salutation = 'Good Afternoon';
+    else salutation = 'Good Evening';
 
     if (salutationEl) salutationEl.textContent = salutation;
 
     const savedSurname = this.storage.getSurname();
     if (surnameDisplayEl) {
-      surnameDisplayEl.textContent = savedSurname || 'Mchezaji';
+      surnameDisplayEl.textContent = savedSurname || 'Player';
       surnameDisplayEl.title = savedSurname 
-        ? `Jina lako: ${savedSurname} (Bonyeza kubadilisha)` 
-        : 'Bonyeza kuingiza jina lako la ukoo';
+        ? `Surname: ${savedSurname} (Click to edit)` 
+        : 'Click to enter your surname';
     }
 
-    const daysSwahili = ['Jumapili', 'Jumatatu', 'Jumanne', 'Jumatano', 'Alhamisi', 'Ijumaa', 'Jumamosi'];
-    const monthsSwahili = ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun', 'Jul', 'Ago', 'Sep', 'Okt', 'Nov', 'Des'];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    const dayName = daysSwahili[now.getDay()];
-    const monthName = monthsSwahili[now.getMonth()];
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
     const dateNum = now.getDate();
 
     if (dateLabelEl) {
-      dateLabelEl.textContent = `${dayName}, ${dateNum} ${monthName} • Calm Focus`;
+      dateLabelEl.textContent = `${dayName}, ${monthName} ${dateNum} • Calm Focus`;
     }
 
     // Highlight current day in 7-day pebble habit tracker

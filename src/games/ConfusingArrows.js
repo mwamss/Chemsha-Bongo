@@ -19,7 +19,7 @@ export class ConfusingArrowsGame extends BaseGame {
     super({
       id: 'confusing-arrows',
       title: 'Confusing Arrows',
-      swahiliTitle: 'Mielekeo Yenye Mitego',
+      subtitle: 'Spatial Direction Reflex',
       category: 'reflex',
       instructions: 'GREEN: Tap where it points! RED: Tap the OPPOSITE direction!',
       controlsHint: 'Arrow Keys, WASD, or on-screen directional buttons'

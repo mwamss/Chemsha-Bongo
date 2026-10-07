@@ -251,19 +251,19 @@ export class GameManager {
     this.fx.confetti(3500);
 
     // Compute Brain Rating based on total score
-    let rating = 'Novice (Mwanafunzi)';
+    let rating = 'Novice';
     let badgeColor = '#94a3b8';
     if (this.blitzTotalScore >= 4500) {
-      rating = '🧠 Grandmaster (Bingwa Mkuu)';
+      rating = '🧠 Grandmaster';
       badgeColor = '#eab308';
     } else if (this.blitzTotalScore >= 3500) {
-      rating = '⚡ Genius (Mwenye Kipaji)';
+      rating = '⚡ Genius';
       badgeColor = '#8b5cf6';
     } else if (this.blitzTotalScore >= 2500) {
-      rating = '🔥 Sharpshooter (Hodari)';
+      rating = '🔥 Sharpshooter';
       badgeColor = '#06b6d4';
     } else if (this.blitzTotalScore >= 1500) {
-      rating = '🎯 Quick Thinker (Mchangamfu)';
+      rating = '🎯 Quick Thinker';
       badgeColor = '#10b981';
     }
 

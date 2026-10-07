@@ -37,9 +37,9 @@
         <div class="header-top-row">
           <div class="greeting-text-group">
             <h1 id="home-greeting-text" style="display: inline-flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
-              <span id="home-greeting-salutation">Habari ya Leo</span>, 
-              <span id="home-surname-display" class="editable-surname-badge" title="Bonyeza kubadilisha jina la ukoo / Click to edit surname">...</span>
-              <button id="edit-surname-btn" class="btn-edit-icon" title="Badilisha Jina la Ukoo / Edit Surname" aria-label="Edit Surname">✎</button>
+              <span id="home-greeting-salutation">Welcome</span>, 
+              <span id="home-surname-display" class="editable-surname-badge" title="Click to edit surname">...</span>
+              <button id="edit-surname-btn" class="btn-edit-icon" title="Edit Surname" aria-label="Edit Surname">✎</button>
             </h1>
             <div class="date-pill">
               <span>🍃</span>
@@ -63,7 +63,7 @@
         <!-- Daily Reflection Pill -->
         <div class="reflection-banner">
           <span class="reflection-icon">🕊️</span>
-          <span>"One thoughtful breath before each challenge. (Pumzi ya utulivu)"</span>
+          <span>"One thoughtful breath before each challenge."</span>
         </div>
       </header>
 
@@ -242,7 +242,7 @@
     <section class="screen-view" data-screen="select" id="screen-select">
       <header class="picker-header" style="margin-bottom: 1.5rem;">
         <div>
-          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0; color: var(--secondary);">← Back to Sanctuary</button>
+          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0; color: var(--secondary);">← Back to Main Menu</button>
           <h2 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-top: 0.25rem; color: var(--primary);">Choose an Exercise</h2>
         </div>
       </header>
@@ -316,7 +316,7 @@
         </div>
 
         <div class="summary-actions">
-          <button class="btn btn-outline" id="summary-home-btn">Sanctuary</button>
+          <button class="btn btn-outline" id="summary-home-btn">Main Menu</button>
           <button class="btn btn-primary" id="summary-action-btn">Next →</button>
         </div>
       </div>
@@ -369,7 +369,7 @@
       
       <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
         <button class="btn btn-primary" id="pause-resume-btn">Resume Session ▶</button>
-        <button class="btn btn-outline" id="pause-quit-btn">Back to Sanctuary ✕</button>
+        <button class="btn btn-outline" id="pause-quit-btn">Back to Main Menu ✕</button>
       </div>
     </div>
   </div>
@@ -381,10 +381,9 @@
   <div class="modal-overlay" id="surname-modal" aria-hidden="true">
     <div class="modal-content" style="max-width: 440px; text-align: center;">
       <div style="font-size: 2.4rem;">🌿</div>
-      <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--primary);">Karibu Chemsha Bongo</h3>
+      <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--primary);">Welcome to Chemsha Bongo</h3>
       <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
-        Tafadhali ingiza <strong>jina lako la ukoo (surname)</strong> ili kubinafsisha mazoezi yako ya akili:<br>
-        <span style="font-size: 0.8rem; color: var(--secondary);">(Enter your surname to personalize your experience)</span>
+        Please enter your <strong>surname</strong> to personalize your daily brain workout experience:
       </p>
 
       <form id="surname-form" style="display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.6rem;">

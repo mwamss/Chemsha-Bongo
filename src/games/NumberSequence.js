@@ -11,7 +11,7 @@ export class NumberSequenceGame extends BaseGame {
     super({
       id: 'number-sequence',
       title: 'Pattern Sequence',
-      swahiliTitle: 'Mfuatano wa Nambari',
+      subtitle: 'Pattern Deduction',
       category: 'logic',
       instructions: 'Find the hidden rule and select the next number in the sequence!',
       controlsHint: 'Tap options or press keys 1, 2, 3, 4'
