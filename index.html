@@ -3,12 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Chemsha Bongo — Brain Reflex & Dopamine Workout</title>
-  <meta name="description" content="A fast-paced cognitive reflex and mental workout suite. Quick dopamine-boosting brain mini-games.">
-  <meta name="theme-color" content="#0a0e17">
+  <title>Chemsha Bongo — Daily Brain Workout & Cognitive Sanctuary</title>
+  <meta name="description" content="Serene focus & cognitive sanctuary. A simple game that challenges the brain and increases dopamine.">
+  <meta name="theme-color" content="#1e3a34">
 
   <!-- Favicon Emoji -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter (Stitch Design System Tokens) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles/main.css">
@@ -17,72 +22,212 @@
 </head>
 <body>
 
-  <!-- Fullscreen Particle & Confetti Canvas -->
+  <!-- Fullscreen Particle & Celebration Canvas -->
   <canvas id="fx-canvas"></canvas>
 
   <main class="app-container">
 
     <!-- ====================================================================
-         SCREEN 1: MAIN MENU (HOME)
+         SCREEN 1: STITCH CALM HOME PAGE (Serene Focus & Cognitive Sanctuary)
          ==================================================================== -->
     <section class="screen-view active" data-screen="home" id="screen-home">
-      <header class="brand-hero">
-        <div class="brand-badge">⚡ Mental Workout Suite</div>
-        <h1 class="brand-title">Chemsha Bongo</h1>
-        <p class="brand-tagline">A simple game that challenges the brain and increases dopamine.</p>
-        <p class="sub-tagline">Quick 30-second cognitive reflex & memory workouts</p>
+
+      <!-- 1. Warm Greeting & Focus Intention Header -->
+      <header class="mindful-header">
+        <div class="header-top-row">
+          <div class="greeting-text-group">
+            <h1 id="home-greeting-text">Habari ya Leo, Amani</h1>
+            <div class="date-pill">
+              <span>🍃</span>
+              <span id="home-date-label">Chemsha Bongo • Calm Focus</span>
+            </div>
+          </div>
+
+          <!-- Serene Readiness Ring -->
+          <div class="readiness-widget" title="Daily Mindset & Focus Readiness">
+            <svg class="readiness-ring-svg" viewBox="0 0 36 36">
+              <path class="readiness-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="readiness-ring-bar" stroke-dashoffset="8" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <div class="readiness-meta">
+              <span class="readiness-percent">92%</span>
+              <span class="readiness-label">Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Reflection Pill -->
+        <div class="reflection-banner">
+          <span class="reflection-icon">🕊️</span>
+          <span>"One thoughtful breath before each challenge. (Pumzi ya utulivu)"</span>
+        </div>
       </header>
 
-      <div class="menu-options-container">
-        <!-- Daily Blitz Workout -->
-        <div class="action-card action-card-blitz" id="start-blitz-btn" role="button" tabindex="0">
-          <div class="card-content-left">
-            <div class="card-icon-box">⚡</div>
-            <div class="card-text-group">
-              <h3>Daily Blitz (Mchakamchaka)</h3>
-              <p>3 rapid random micro-games back-to-back. Earn your Brain Quotient rating!</p>
-            </div>
+
+      <!-- 2. Hero Feature: "Today's Mindful Brain Ritual" (Curated Circuit) -->
+      <article class="hero-ritual-card">
+        <div class="ritual-eyebrow">
+          <span class="ritual-tag">Today's Brain Ritual</span>
+          <span class="ritual-duration">Est. 2-3 mins • Low stress</span>
+        </div>
+        <h2 class="ritual-title">Morning Cognitive Awakening</h2>
+        <p class="ritual-desc">
+          A gentle 3-exercise cognitive circuit designed to sharpen mental acuity and boost dopamine without cognitive fatigue.
+        </p>
+
+        <!-- Micro-breakdown chips -->
+        <div class="ritual-circuit-chips">
+          <div class="circuit-chip">
+            <span>1</span> 🎨 Color Clash (Inhibition)
           </div>
-          <span class="card-arrow-icon">→</span>
+          <div class="circuit-chip">
+            <span>2</span> 🐵 Chimp Memory (Recall)
+          </div>
+          <div class="circuit-chip">
+            <span>3</span> ⚡ Rapid Math (Speed)
+          </div>
         </div>
 
-        <!-- Free Play / Practice -->
-        <div class="action-card" id="browse-games-btn" role="button" tabindex="0">
-          <div class="card-content-left">
-            <div class="card-icon-box">🎮</div>
-            <div class="card-text-group">
-              <h3>Free Play (Chagua Mchezo)</h3>
-              <p>Practice any mini-game: Stroop Effect, Chimp Memory, Fast Math & more.</p>
+        <!-- Grounding CTA Button -->
+        <button class="ritual-cta-btn" id="start-blitz-btn">
+          <span>▶</span>
+          <span>Begin Today's Workout</span>
+        </button>
+      </article>
+
+
+      <!-- 3. Gentle Daily Rhythm (Weekly Streak & Habit Tracker) -->
+      <section class="habit-section">
+        <div class="habit-header">
+          <h3>Gentle Daily Rhythm</h3>
+          <span class="habit-badge"><span id="home-best-streak">0</span>x Day Streak</span>
+        </div>
+
+        <div class="pebble-row">
+          <div class="pebble-item">
+            <div class="pebble-dot active">🌿</div>
+            <span class="pebble-day-label">M</span>
+          </div>
+          <div class="pebble-item">
+            <div class="pebble-dot active">🌿</div>
+            <span class="pebble-day-label">T</span>
+          </div>
+          <div class="pebble-item">
+            <div class="pebble-dot active">🌿</div>
+            <span class="pebble-day-label">W</span>
+          </div>
+          <div class="pebble-item">
+            <div class="pebble-dot active">💧</div>
+            <span class="pebble-day-label">T</span>
+          </div>
+          <div class="pebble-item">
+            <div class="pebble-dot today">🌱</div>
+            <span class="pebble-day-label">F</span>
+          </div>
+          <div class="pebble-item">
+            <div class="pebble-dot">⚪</div>
+            <span class="pebble-day-label">S</span>
+          </div>
+          <div class="pebble-item">
+            <div class="pebble-dot">⚪</div>
+            <span class="pebble-day-label">S</span>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 4. Targeted Mind Exercises (Browse by Cognitive Pillar) -->
+      <section class="pillars-section">
+        <div class="pillars-section-header">
+          <h3>Targeted Mind Exercises</h3>
+          <button class="btn btn-ghost" id="browse-games-btn" style="font-size: 0.85rem; padding: 0.2rem 0.5rem; color: var(--secondary);">
+            View All (5) →
+          </button>
+        </div>
+
+        <div class="pillars-grid">
+          <!-- Pillar 1: Attention -->
+          <div class="pillar-card" onclick="window.launchGameFromPillar('color-clash')">
+            <div class="pillar-card-top">
+              <div class="pillar-icon-box" style="color: #ef4444;">🎨</div>
+              <span class="pillar-time-chip">30s drill</span>
+            </div>
+            <h4>Color Clash</h4>
+            <p>Stroop inhibition: Select the ink color of the word without reading the text.</p>
+            <div class="pillar-card-footer">
+              <span>Attention & Focus</span>
+              <strong style="color: var(--secondary);">Play →</strong>
             </div>
           </div>
-          <span class="card-arrow-icon">→</span>
+
+          <!-- Pillar 2: Memory -->
+          <div class="pillar-card" onclick="window.launchGameFromPillar('chimp-memory')">
+            <div class="pillar-card-top">
+              <div class="pillar-icon-box" style="color: #10b981;">🐵</div>
+              <span class="pillar-time-chip">Memory grid</span>
+            </div>
+            <h4>Chimp Memory</h4>
+            <p>Kyoto primate recall: Memorize numbers 1..N and click tiles in ascending order.</p>
+            <div class="pillar-card-footer">
+              <span>Working Memory</span>
+              <strong style="color: var(--secondary);">Play →</strong>
+            </div>
+          </div>
+
+          <!-- Pillar 3: Calculation -->
+          <div class="pillar-card" onclick="window.launchGameFromPillar('rapid-math')">
+            <div class="pillar-card-top">
+              <div class="pillar-icon-box" style="color: #3b82f6;">⚡</div>
+              <span class="pillar-time-chip">Quick math</span>
+            </div>
+            <h4>Rapid Math</h4>
+            <p>Speed arithmetic: Solve equations and True/False questions under time pressure.</p>
+            <div class="pillar-card-footer">
+              <span>Calculation</span>
+              <strong style="color: var(--secondary);">Play →</strong>
+            </div>
+          </div>
+
+          <!-- Pillar 4: Reflex -->
+          <div class="pillar-card" onclick="window.launchGameFromPillar('confusing-arrows')">
+            <div class="pillar-card-top">
+              <div class="pillar-icon-box" style="color: #f59e0b;">🧭</div>
+              <span class="pillar-time-chip">Spatial reflex</span>
+            </div>
+            <h4>Confusing Arrows</h4>
+            <p>Spatial rule-switching: Green matches direction, Red demands the opposite.</p>
+            <div class="pillar-card-footer">
+              <span>Spatial Reflex</span>
+              <strong style="color: var(--secondary);">Play →</strong>
+            </div>
+          </div>
         </div>
+      </section>
+
+
+      <!-- 5. Ambient Reset & Audio Soundscape Bar -->
+      <div class="ambient-reset-card">
+        <div class="ambient-left">
+          <span class="ambient-icon">🎧</span>
+          <div>
+            <div class="ambient-title">Ambient Soundscape & Tones</div>
+            <div class="ambient-sub">Web Audio procedural feedback synthesizer</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" id="home-sound-btn" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
+          🔊 Sound: On
+        </button>
       </div>
 
-      <!-- Quick Stats Card -->
-      <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem;">
-        <div style="display: flex; justify-content: space-around; text-align: center;">
-          <div>
-            <div class="hud-label">BEST STREAK</div>
-            <div class="hud-num" id="home-best-streak" style="color: var(--accent-amber);">0x</div>
-          </div>
-          <div style="border-left: 1px solid var(--border-subtle); height: 36px;"></div>
-          <div>
-            <div class="hud-label">BEST BLITZ SCORE</div>
-            <div class="hud-num" id="home-best-bq" style="color: var(--accent-cyan);">—</div>
-          </div>
-          <div style="border-left: 1px solid var(--border-subtle); height: 36px;"></div>
-          <div>
-            <div class="hud-label">GAMES PLAYED</div>
-            <div class="hud-num" id="home-total-games">0</div>
-          </div>
-        </div>
-      </div>
 
       <!-- Footer Action Bar -->
       <footer class="menu-footer-bar">
-        <button class="btn btn-ghost" id="home-sound-btn" style="font-size: 0.85rem;">🔊 Sound: On</button>
-        <button class="btn btn-outline" id="view-stats-btn" style="font-size: 0.85rem;">📊 Stats & Records</button>
+        <div style="font-size: 0.82rem; color: var(--text-muted);">
+          Best Rating: <strong id="home-best-bq" style="color: var(--primary);">—</strong> • Games: <strong id="home-total-games">0</strong>
+        </div>
+        <button class="btn btn-outline" id="view-stats-btn" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
+          📊 Career Stats
+        </button>
       </footer>
     </section>
 
@@ -91,10 +236,10 @@
          SCREEN 2: GAME SELECTOR (FREE PLAY)
          ==================================================================== -->
     <section class="screen-view" data-screen="select" id="screen-select">
-      <header class="picker-header">
+      <header class="picker-header" style="margin-bottom: 1.5rem;">
         <div>
-          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0;">← Back to Menu</button>
-          <h2 style="font-size: 1.6rem; font-weight: 800; margin-top: 0.25rem;">Choose a Challenge</h2>
+          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0; color: var(--secondary);">← Back to Sanctuary</button>
+          <h2 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-top: 0.25rem; color: var(--primary);">Choose an Exercise</h2>
         </div>
       </header>
 
@@ -108,7 +253,7 @@
          SCREEN 3: READY COUNTDOWN
          ==================================================================== -->
     <section class="screen-view" data-screen="countdown" id="screen-countdown">
-      <div class="countdown-box glass-panel" style="padding: 2.5rem 1.5rem; width: 100%;">
+      <div class="countdown-box calm-card" style="padding: 2.5rem 1.5rem; width: 100%;">
         <div class="countdown-icon" id="countdown-game-icon">🧠</div>
         <h2 class="countdown-game-title" id="countdown-game-title">Color Clash</h2>
         <p class="countdown-instructions" id="countdown-instructions">Click the INK color of the word — DO NOT read the text!</p>
@@ -141,9 +286,9 @@
          SCREEN 5: ROUND SUMMARY
          ==================================================================== -->
     <section class="screen-view" data-screen="round-summary" id="screen-round-summary">
-      <div class="summary-card glass-panel">
+      <div class="summary-card calm-card">
         <div class="prompt-hint-badge">ROUND COMPLETED</div>
-        <h2 id="summary-game-title" style="font-size: 1.8rem; font-weight: 800;">Color Clash</h2>
+        <h2 id="summary-game-title" style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: var(--primary);">Color Clash</h2>
 
         <div class="summary-score-display">
           <span class="hud-label">ROUND SCORE</span>
@@ -154,7 +299,7 @@
         <div class="summary-stats-grid">
           <div class="summary-stat-item">
             <span class="hud-label">ACCURACY</span>
-            <span class="val" id="summary-accuracy" style="color: var(--accent-green);">100%</span>
+            <span class="val" id="summary-accuracy" style="color: var(--feedback-correct);">100%</span>
           </div>
           <div class="summary-stat-item">
             <span class="hud-label">CORRECT</span>
@@ -162,12 +307,12 @@
           </div>
           <div class="summary-stat-item">
             <span class="hud-label">MAX STREAK</span>
-            <span class="val" id="summary-streak" style="color: var(--accent-amber);">0x</span>
+            <span class="val" id="summary-streak" style="color: var(--tertiary);">0x</span>
           </div>
         </div>
 
         <div class="summary-actions">
-          <button class="btn btn-outline" id="summary-home-btn">Menu</button>
+          <button class="btn btn-outline" id="summary-home-btn">Sanctuary</button>
           <button class="btn btn-primary" id="summary-action-btn">Next →</button>
         </div>
       </div>
@@ -178,10 +323,10 @@
          SCREEN 6: FINAL BLITZ RESULTS
          ==================================================================== -->
     <section class="screen-view" data-screen="blitz-final" id="screen-blitz-final">
-      <div class="summary-card glass-panel">
+      <div class="summary-card calm-card">
         <div style="font-size: 3rem;">🏆</div>
-        <div class="prompt-hint-badge">DAILY BLITZ WORKOUT FINISHED</div>
-        <h2 style="font-size: 1.8rem; font-weight: 800;">Brain Quotient Assessment</h2>
+        <div class="prompt-hint-badge">DAILY BRAIN RITUAL COMPLETE</div>
+        <h2 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: var(--primary);">Brain Quotient Assessment</h2>
 
         <div class="summary-score-display">
           <span class="hud-label">TOTAL WORKOUT SCORE</span>
@@ -189,19 +334,19 @@
           <span class="new-high-badge" id="blitz-new-high-badge" style="display: none;">🔥 NEW BLITZ RECORD!</span>
         </div>
 
-        <div style="padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); width: 100%;">
+        <div style="padding: 0.85rem 1.5rem; background: var(--surface-subdued); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); width: 100%;">
           <div class="hud-label">RATING</div>
-          <div id="blitz-final-rating" style="font-size: 1.4rem; font-weight: 900; margin-top: 0.2rem;">Grandmaster</div>
+          <div id="blitz-final-rating" style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--primary); margin-top: 0.2rem;">Grandmaster</div>
         </div>
 
-        <div class="hud-label" style="align-self: flex-start; margin-top: 0.5rem;">WORKOUT ROUNDS:</div>
+        <div class="hud-label" style="align-self: flex-start; margin-top: 0.5rem;">CIRCUIT BREAKDOWN:</div>
         <div class="blitz-breakdown-list" id="blitz-rounds-breakdown">
           <!-- Dynamically populated -->
         </div>
 
         <div class="summary-actions">
-          <button class="btn btn-outline" id="blitz-home-btn">Main Menu</button>
-          <button class="btn btn-primary" id="blitz-again-btn">Another Workout ⚡</button>
+          <button class="btn btn-outline" id="blitz-home-btn">Home</button>
+          <button class="btn btn-primary" id="blitz-again-btn">Another Circuit 🌿</button>
         </div>
       </div>
     </section>
@@ -214,13 +359,13 @@
        ==================================================================== -->
   <div class="modal-overlay" id="pause-modal" aria-hidden="true">
     <div class="modal-content">
-      <div style="font-size: 2.5rem;">⏸</div>
-      <h3 style="font-size: 1.5rem; font-weight: 800;">Workout Paused</h3>
-      <p style="color: var(--text-secondary); font-size: 0.9rem;">Take a deep breath. Your timer is on hold.</p>
+      <div style="font-size: 2.2rem;">⏸</div>
+      <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--primary);">Workout Paused</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Take a gentle breath. Your timer is paused.</p>
       
       <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
-        <button class="btn btn-primary" id="pause-resume-btn">Resume Play ▶</button>
-        <button class="btn btn-outline" id="pause-quit-btn">Quit to Menu ✕</button>
+        <button class="btn btn-primary" id="pause-resume-btn">Resume Session ▶</button>
+        <button class="btn btn-outline" id="pause-quit-btn">Back to Sanctuary ✕</button>
       </div>
     </div>
   </div>
@@ -232,7 +377,7 @@
   <div class="modal-overlay" id="stats-modal" aria-hidden="true">
     <div class="modal-content" style="max-width: 520px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 1.4rem; font-weight: 800;">📊 Career Stats & Records</h3>
+        <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--primary);">📊 Career Stats & Growth</h3>
         <button class="btn btn-ghost" id="close-stats-btn" style="padding: 0.4rem 0.6rem;">✕</button>
       </div>
 
@@ -243,32 +388,32 @@
         </div>
         <div class="summary-stat-item" style="text-align: center;">
           <span class="hud-label">ACCURACY</span>
-          <span class="val" id="stat-accuracy" style="color: var(--accent-green);">100%</span>
+          <span class="val" id="stat-accuracy" style="color: var(--feedback-correct);">100%</span>
         </div>
         <div class="summary-stat-item" style="text-align: center;">
           <span class="hud-label">MAX STREAK</span>
-          <span class="val" id="stat-max-streak" style="color: var(--accent-amber);">0x</span>
+          <span class="val" id="stat-max-streak" style="color: var(--tertiary);">0x</span>
         </div>
       </div>
 
-      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 0.5rem;">
+      <div style="background: var(--surface-subdued); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 0.5rem;">
         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem;">
           <span class="hud-label">BEST BLITZ SCORE</span>
-          <strong id="stat-blitz-best" style="font-family: var(--font-mono); color: var(--accent-cyan);">0</strong>
+          <strong id="stat-blitz-best" style="font-family: var(--font-display); color: var(--primary);">0</strong>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
           <span class="hud-label">BEST BLITZ RATING</span>
-          <strong id="stat-blitz-rating" style="color: var(--accent-purple);">Novice</strong>
+          <strong id="stat-blitz-rating" style="color: var(--secondary);">Novice</strong>
         </div>
       </div>
 
-      <div class="hud-label" style="margin-top: 0.5rem;">MINI-GAME PERSONAL BESTS:</div>
+      <div class="hud-label" style="margin-top: 0.5rem;">EXERCISE PERSONAL BESTS:</div>
       <div class="blitz-breakdown-list" id="stat-games-breakdown" style="max-height: 180px; overflow-y: auto;">
         <!-- Populated by app.js -->
       </div>
 
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
-        <button class="btn btn-ghost" id="reset-stats-btn" style="color: var(--accent-rose); font-size: 0.8rem;">Reset All Data</button>
+        <button class="btn btn-ghost" id="reset-stats-btn" style="color: var(--feedback-correction); font-size: 0.8rem;">Reset All Records</button>
       </div>
     </div>
   </div>

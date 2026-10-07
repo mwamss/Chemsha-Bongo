@@ -57,15 +57,59 @@ class App {
       gameContainer: gameBoardContainer
     });
 
-    // 4. Bind Global and Screen Events
+    // 4. Expose Global Pillar Launcher
+    window.launchGameFromPillar = (gameId) => {
+      this.sound.playClick();
+      this.gameManager.startFreePlay(gameId, 30);
+    };
+
+    // 5. Bind Global and Screen Events
     this.bindGlobalEvents();
     this.bindHomeEvents();
     this.bindSelectEvents();
     this.bindModalEvents();
 
-    // 5. Initial Screen Setup
+    // 6. Initial Screen Setup & Dynamic Content
+    this.updateGreetingAndDate();
     this.updateHomeStatsPreview();
     this.screens.showScreen('home');
+  }
+
+  updateGreetingAndDate() {
+    const greetingEl = document.getElementById('home-greeting-text');
+    const dateLabelEl = document.getElementById('home-date-label');
+    const now = new Date();
+    const hour = now.getHours();
+
+    let timeGreeting = 'Habari ya Leo, Amani';
+    if (hour < 12) timeGreeting = 'Habari ya Asubuhi, Amani';
+    else if (hour < 17) timeGreeting = 'Habari ya Mchana, Amani';
+    else timeGreeting = 'Habari ya Jioni, Amani';
+
+    if (greetingEl) greetingEl.textContent = timeGreeting;
+
+    const daysSwahili = ['Jumapili', 'Jumatatu', 'Jumanne', 'Jumatano', 'Alhamisi', 'Ijumaa', 'Jumamosi'];
+    const monthsSwahili = ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun', 'Jul', 'Ago', 'Sep', 'Okt', 'Nov', 'Des'];
+
+    const dayName = daysSwahili[now.getDay()];
+    const monthName = monthsSwahili[now.getMonth()];
+    const dateNum = now.getDate();
+
+    if (dateLabelEl) {
+      dateLabelEl.textContent = `${dayName}, ${dateNum} ${monthName} • Calm Focus`;
+    }
+
+    // Highlight current day in 7-day pebble habit tracker
+    // Days index in UI: M (0), T (1), W (2), T (3), F (4), S (5), S (6)
+    const jsDay = now.getDay(); // 0 is Sunday, 1 is Monday ...
+    const uiDayIndex = jsDay === 0 ? 6 : jsDay - 1;
+    const pebbles = document.querySelectorAll('.pebble-dot');
+    pebbles.forEach((p, idx) => {
+      p.classList.remove('today');
+      if (idx === uiDayIndex) {
+        p.classList.add('today');
+      }
+    });
   }
 
   toggleSound() {
@@ -226,17 +270,17 @@ class App {
       const bestStreak = this.storage.getBestStreak(g.id);
 
       const card = document.createElement('div');
-      card.className = 'game-select-card';
+      card.className = 'game-select-card calm-card';
       card.innerHTML = `
         <div class="game-card-top">
           <span class="game-card-icon">${g.icon}</span>
           <span class="game-category-chip">${g.categoryLabel}</span>
         </div>
-        <h4>${g.title}</h4>
+        <h4 style="font-family: var(--font-display);">${g.title}</h4>
         <p>${g.description}</p>
         <div class="game-card-stats">
-          <span>High Score: <strong>${bestScore.toLocaleString()}</strong></span>
-          <span>Best Streak: <strong>${bestStreak}x</strong></span>
+          <span>Personal Best: <strong>${bestScore.toLocaleString()}</strong></span>
+          <span>Max Streak: <strong>${bestStreak}x</strong></span>
         </div>
       `;
 
@@ -255,7 +299,7 @@ class App {
     const bqEl = document.getElementById('home-best-bq');
     const gamesEl = document.getElementById('home-total-games');
 
-    if (streakEl) streakEl.textContent = `${totals.highestOverallStreak}x`;
+    if (streakEl) streakEl.textContent = totals.highestOverallStreak;
     if (bqEl) bqEl.textContent = totals.bestBlitzScore > 0 ? totals.bestBlitzScore.toLocaleString() : '—';
     if (gamesEl) gamesEl.textContent = totals.gamesPlayed;
   }
