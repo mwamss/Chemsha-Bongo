@@ -73,20 +73,36 @@ class App {
     this.updateGreetingAndDate();
     this.updateHomeStatsPreview();
     this.screens.showScreen('home');
+
+    // Prompt for surname on start if not already set
+    if (!this.storage.getSurname()) {
+      setTimeout(() => {
+        this.openSurnameModal();
+      }, 300);
+    }
   }
 
   updateGreetingAndDate() {
-    const greetingEl = document.getElementById('home-greeting-text');
+    const salutationEl = document.getElementById('home-greeting-salutation');
+    const surnameDisplayEl = document.getElementById('home-surname-display');
     const dateLabelEl = document.getElementById('home-date-label');
     const now = new Date();
     const hour = now.getHours();
 
-    let timeGreeting = 'Habari ya Leo, Amani';
-    if (hour < 12) timeGreeting = 'Habari ya Asubuhi, Amani';
-    else if (hour < 17) timeGreeting = 'Habari ya Mchana, Amani';
-    else timeGreeting = 'Habari ya Jioni, Amani';
+    let salutation = 'Habari ya Leo';
+    if (hour < 12) salutation = 'Habari ya Asubuhi';
+    else if (hour < 17) salutation = 'Habari ya Mchana';
+    else salutation = 'Habari ya Jioni';
 
-    if (greetingEl) greetingEl.textContent = timeGreeting;
+    if (salutationEl) salutationEl.textContent = salutation;
+
+    const savedSurname = this.storage.getSurname();
+    if (surnameDisplayEl) {
+      surnameDisplayEl.textContent = savedSurname || 'Mchezaji';
+      surnameDisplayEl.title = savedSurname 
+        ? `Jina lako: ${savedSurname} (Bonyeza kubadilisha)` 
+        : 'Bonyeza kuingiza jina lako la ukoo';
+    }
 
     const daysSwahili = ['Jumapili', 'Jumatatu', 'Jumanne', 'Jumatano', 'Alhamisi', 'Ijumaa', 'Jumamosi'];
     const monthsSwahili = ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun', 'Jul', 'Ago', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -101,7 +117,7 @@ class App {
 
     // Highlight current day in 7-day pebble habit tracker
     // Days index in UI: M (0), T (1), W (2), T (3), F (4), S (5), S (6)
-    const jsDay = now.getDay(); // 0 is Sunday, 1 is Monday ...
+    const jsDay = now.getDay();
     const uiDayIndex = jsDay === 0 ? 6 : jsDay - 1;
     const pebbles = document.querySelectorAll('.pebble-dot');
     pebbles.forEach((p, idx) => {
@@ -252,10 +268,69 @@ class App {
           this.storage.resetAll();
           this.openStatsModal();
           this.updateHomeStatsPreview();
+          this.updateGreetingAndDate();
           alert('Progress has been reset.');
         }
       });
     }
+
+    // --- Surname Modal Events ---
+    const surnameForm = document.getElementById('surname-form');
+    if (surnameForm) {
+      surnameForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('surname-input');
+        const val = input ? input.value.trim() : '';
+        if (val) {
+          this.storage.setSurname(val);
+          this.sound.playCorrect(1);
+          this.updateGreetingAndDate();
+          this.closeSurnameModal();
+        }
+      });
+    }
+
+    const surnameSkipBtn = document.getElementById('surname-skip-btn');
+    if (surnameSkipBtn) {
+      surnameSkipBtn.addEventListener('click', () => {
+        this.sound.playClick();
+        this.closeSurnameModal();
+      });
+    }
+
+    const editSurnameBtn = document.getElementById('edit-surname-btn');
+    if (editSurnameBtn) {
+      editSurnameBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.sound.playClick();
+        this.openSurnameModal();
+      });
+    }
+
+    const surnameDisplay = document.getElementById('home-surname-display');
+    if (surnameDisplay) {
+      surnameDisplay.addEventListener('click', () => {
+        this.sound.playClick();
+        this.openSurnameModal();
+      });
+    }
+  }
+
+  openSurnameModal() {
+    const modal = document.getElementById('surname-modal');
+    const input = document.getElementById('surname-input');
+    if (!modal) return;
+
+    if (input) {
+      input.value = this.storage.getSurname();
+      setTimeout(() => input.focus(), 120);
+    }
+    modal.classList.add('active');
+  }
+
+  closeSurnameModal() {
+    const modal = document.getElementById('surname-modal');
+    if (modal) modal.classList.remove('active');
   }
 
   renderGamePicker() {

@@ -100,6 +100,42 @@
   line-height: 1.2;
 }
 
+.editable-surname-badge {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: var(--secondary);
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.editable-surname-badge:hover {
+  color: var(--secondary);
+}
+
+.btn-edit-icon {
+  background: var(--surface-subdued);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: all 0.15s ease;
+  vertical-align: middle;
+}
+
+.btn-edit-icon:hover {
+  border-color: var(--secondary);
+  color: var(--primary);
+  background: var(--surface);
+  transform: scale(1.1);
+}
+
 .date-pill {
   display: inline-flex;
   align-items: center;

@@ -7,6 +7,9 @@
 const STORAGE_KEY = 'chemsha_bongo_data_v1';
 
 const DEFAULT_DATA = {
+  profile: {
+    surname: ''
+  },
   highScores: {},       // { [gameId]: score }
   bestStreaks: {},      // { [gameId]: streak }
   blitzStats: {
@@ -52,6 +55,7 @@ export class StorageManager {
           return {
             ...DEFAULT_DATA,
             ...parsed,
+            profile: { ...DEFAULT_DATA.profile, ...(parsed.profile || {}) },
             settings: { ...DEFAULT_DATA.settings, ...(parsed.settings || {}) },
             totals: { ...DEFAULT_DATA.totals, ...(parsed.totals || {}) },
             blitzStats: { ...DEFAULT_DATA.blitzStats, ...(parsed.blitzStats || {}) },
@@ -133,6 +137,19 @@ export class StorageManager {
   updateSettings(partial) {
     this.data.settings = { ...this.data.settings, ...partial };
     this.save();
+  }
+
+  // --- Player Profile Methods ---
+
+  getSurname() {
+    return (this.data.profile && this.data.profile.surname) ? this.data.profile.surname.trim() : '';
+  }
+
+  setSurname(name) {
+    if (!this.data.profile) this.data.profile = {};
+    this.data.profile.surname = (name || '').trim();
+    this.save();
+    return this.data.profile.surname;
   }
 
   getTotals() {

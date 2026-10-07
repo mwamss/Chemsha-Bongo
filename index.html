@@ -36,7 +36,11 @@
       <header class="mindful-header">
         <div class="header-top-row">
           <div class="greeting-text-group">
-            <h1 id="home-greeting-text">Habari ya Leo, Amani</h1>
+            <h1 id="home-greeting-text" style="display: inline-flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+              <span id="home-greeting-salutation">Habari ya Leo</span>, 
+              <span id="home-surname-display" class="editable-surname-badge" title="Bonyeza kubadilisha jina la ukoo / Click to edit surname">...</span>
+              <button id="edit-surname-btn" class="btn-edit-icon" title="Badilisha Jina la Ukoo / Edit Surname" aria-label="Edit Surname">✎</button>
+            </h1>
             <div class="date-pill">
               <span>🍃</span>
               <span id="home-date-label">Chemsha Bongo • Calm Focus</span>
@@ -372,7 +376,38 @@
 
 
   <!-- ====================================================================
-       MODAL 2: CAREER STATS & RECORDS
+       MODAL 2: SURNAME SETUP / EDIT
+       ==================================================================== -->
+  <div class="modal-overlay" id="surname-modal" aria-hidden="true">
+    <div class="modal-content" style="max-width: 440px; text-align: center;">
+      <div style="font-size: 2.4rem;">🌿</div>
+      <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--primary);">Karibu Chemsha Bongo</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+        Tafadhali ingiza <strong>jina lako la ukoo (surname)</strong> ili kubinafsisha mazoezi yako ya akili:<br>
+        <span style="font-size: 0.8rem; color: var(--secondary);">(Enter your surname to personalize your experience)</span>
+      </p>
+
+      <form id="surname-form" style="display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.6rem;">
+        <input 
+          type="text" 
+          id="surname-input" 
+          placeholder="e.g. Mwamburi, Kiprop, Omondi..." 
+          autocomplete="family-name"
+          maxlength="25"
+          required 
+          style="width: 100%; padding: 0.85rem 1.25rem; border-radius: var(--radius-md); border: 1.5px solid var(--border-subtle); background: var(--surface-subdued); font-family: var(--font-sans); font-size: 1.05rem; font-weight: 600; color: var(--text-primary); outline: none; text-align: center;" 
+        />
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline" id="surname-skip-btn" style="flex: 1; font-size: 0.88rem;">Skip for Now</button>
+          <button type="submit" class="btn btn-primary" style="flex: 2; font-size: 0.95rem;">Save & Continue 🍃</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ====================================================================
+       MODAL 3: CAREER STATS & RECORDS
        ==================================================================== -->
   <div class="modal-overlay" id="stats-modal" aria-hidden="true">
     <div class="modal-content" style="max-width: 520px; text-align: left;">
