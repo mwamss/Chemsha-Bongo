@@ -115,6 +115,11 @@ class App {
         : 'Click to enter your surname';
     }
 
+    const headerSurnameEl = document.getElementById('header-surname-display');
+    if (headerSurnameEl) {
+      headerSurnameEl.textContent = savedSurname || 'Player';
+    }
+
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -227,7 +232,7 @@ class App {
     if (freePlayBtn) {
       freePlayBtn.addEventListener('click', () => {
         this.sound.playClick();
-        this.renderGamePicker();
+        this.updateExerciseCatalogStats();
         this.screens.showScreen('select');
       });
     }
@@ -274,6 +279,28 @@ class App {
         this.screens.showScreen('home');
       });
     }
+
+    // Category pills filter (Stitch Screen 1)
+    const filterButtons = document.querySelectorAll('#categoryFilterBar button');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        this.sound.playClick();
+        filterButtons.forEach(b => {
+          b.className = 'cat-pill px-3.5 py-1.5 rounded-lg bg-white border border-[#c2e5d5] text-[#101e1a] hover:bg-[#e7f7f0] hover:border-[#9dd1c0] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer';
+        });
+        button.className = 'cat-pill active-pill px-3.5 py-1.5 rounded-lg bg-[#1e3a34] text-white border border-[#1e3a34] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer';
+
+        const filter = button.getAttribute('data-cat');
+        const cards = document.querySelectorAll('#exerciseGrid .exercise-item');
+        cards.forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
   }
 
   bindModalEvents() {
@@ -323,13 +350,46 @@ class App {
       });
     }
 
-    // Stats modal close
+    // Stats modal close buttons
     const closeStatsBtn = document.getElementById('close-stats-btn');
     if (closeStatsBtn) {
       closeStatsBtn.addEventListener('click', () => {
         this.sound.playClick();
         const modal = document.getElementById('stats-modal');
         if (modal) modal.classList.remove('active');
+      });
+    }
+
+    const closeStatsFooterBtn = document.getElementById('close-stats-footer-btn');
+    if (closeStatsFooterBtn) {
+      closeStatsFooterBtn.addEventListener('click', () => {
+        this.sound.playClick();
+        const modal = document.getElementById('stats-modal');
+        if (modal) modal.classList.remove('active');
+      });
+    }
+
+    // Export Stats (CSV)
+    const exportStatsBtn = document.getElementById('export-stats-btn');
+    if (exportStatsBtn) {
+      exportStatsBtn.addEventListener('click', () => {
+        this.sound.playClick();
+        const games = getAllGames();
+        let csv = "Discipline,Category,Best Score,Max Streak\r\n";
+        games.forEach(g => {
+          const score = this.storage.getHighScore(g.id);
+          const streak = this.storage.getBestStreak(g.id);
+          csv += `"${g.title}","${g.categoryLabel}",${score},${streak}\r\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('href', url);
+        a.setAttribute('download', 'chemsha_bongo_career_stats.csv');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       });
     }
 
@@ -342,6 +402,7 @@ class App {
           this.openStatsModal();
           this.updateHomeStatsPreview();
           this.updateGreetingAndDate();
+          this.updateExerciseCatalogStats();
           alert('Progress has been reset.');
         }
       });
@@ -366,6 +427,14 @@ class App {
     const surnameSkipBtn = document.getElementById('surname-skip-btn');
     if (surnameSkipBtn) {
       surnameSkipBtn.addEventListener('click', () => {
+        this.sound.playClick();
+        this.closeSurnameModal();
+      });
+    }
+
+    const dismissOnboardingBtn = document.getElementById('btnDismissOnboarding');
+    if (dismissOnboardingBtn) {
+      dismissOnboardingBtn.addEventListener('click', () => {
         this.sound.playClick();
         this.closeSurnameModal();
       });
@@ -402,7 +471,7 @@ class App {
           if (path === 'today') {
             this.screens.showScreen('home');
           } else if (path === 'sanctuary') {
-            this.renderGamePicker();
+            this.updateExerciseCatalogStats();
             this.screens.showScreen('select');
           } else if (path === 'insights') {
             this.openStatsModal();
@@ -417,6 +486,14 @@ class App {
     if (headerProfileBtn) {
       headerProfileBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        this.sound.playClick();
+        this.openSurnameModal();
+      });
+    }
+
+    const headerNameBox = document.getElementById('header-name-box');
+    if (headerNameBox) {
+      headerNameBox.addEventListener('click', () => {
         this.sound.playClick();
         this.openSurnameModal();
       });
@@ -542,30 +619,72 @@ class App {
     if (gamesEl) gamesEl.textContent = totals.gamesPlayed;
   }
 
+  updateExerciseCatalogStats() {
+    const games = getAllGames();
+    games.forEach(g => {
+      const score = this.storage.getHighScore(g.id);
+      const streak = this.storage.getBestStreak(g.id);
+      const bestEl = document.querySelector(`[data-card-best="${g.id}"]`);
+      const streakEl = document.querySelector(`[data-card-streak="${g.id}"]`);
+      if (bestEl) bestEl.textContent = score.toLocaleString();
+      if (streakEl) streakEl.textContent = `${streak}x`;
+    });
+    const cadenceEl = document.getElementById('cadence-total-completions');
+    if (cadenceEl) {
+      const totals = this.storage.getTotals();
+      cadenceEl.textContent = `${totals.gamesPlayed} Completions`;
+    }
+  }
+
   openStatsModal() {
     const modal = document.getElementById('stats-modal');
     if (!modal) return;
 
     const totals = this.storage.getTotals();
-    document.getElementById('stat-total-games').textContent = totals.gamesPlayed;
-    document.getElementById('stat-accuracy').textContent = `${totals.accuracy}%`;
-    document.getElementById('stat-max-streak').textContent = `${totals.highestOverallStreak}x`;
-    document.getElementById('stat-blitz-best').textContent = totals.bestBlitzScore.toLocaleString();
-    document.getElementById('stat-blitz-rating').textContent = totals.bestBlitzRating;
+    const gamesEl = document.getElementById('stat-total-games');
+    const accEl = document.getElementById('stat-accuracy');
+    const streakEl = document.getElementById('stat-max-streak');
+    const blitzBestEl = document.getElementById('stat-blitz-best');
+    const blitzRatingEl = document.getElementById('stat-blitz-rating');
 
-    // Per game breakdown
+    if (gamesEl) gamesEl.textContent = totals.gamesPlayed;
+    if (accEl) accEl.textContent = `${totals.accuracy}%`;
+    if (streakEl) streakEl.textContent = totals.highestOverallStreak;
+    if (blitzBestEl) blitzBestEl.textContent = `${totals.bestBlitzScore.toLocaleString()} pts`;
+    if (blitzRatingEl) blitzRatingEl.textContent = totals.bestBlitzRating;
+
+    // Per game breakdown with exact Stitch design system styling
     const breakdownEl = document.getElementById('stat-games-breakdown');
     if (breakdownEl) {
       breakdownEl.innerHTML = '';
       const games = getAllGames();
+      const iconMap = {
+        'color-clash': 'palette',
+        'chimp-memory': 'grid_4x4',
+        'rapid-math': 'calculate',
+        'confusing-arrows': 'swap_calls',
+        'number-sequence': 'extension'
+      };
       games.forEach(g => {
         const score = this.storage.getHighScore(g.id);
         const streak = this.storage.getBestStreak(g.id);
+        const icon = iconMap[g.id] || 'psychology';
         const row = document.createElement('div');
-        row.className = 'blitz-breakdown-row';
+        row.className = 'py-2.5 px-1.5 rounded-lg flex items-center justify-between hover:bg-surface-container-low/60 transition-colors';
         row.innerHTML = `
-          <span>${g.icon} <strong>${g.title}</strong></span>
-          <span>Score: <strong>${score.toLocaleString()}</strong> | Streak: <strong>${streak}x</strong></span>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary border border-[#c2e5d5]/60">
+              <span class="material-symbols-outlined text-[18px]">${icon}</span>
+            </div>
+            <div class="flex flex-col text-left">
+              <span class="font-body-md text-body-md text-on-surface font-medium">${g.title}</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">${g.categoryLabel}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="font-label-lg text-label-lg text-on-surface font-semibold">Score: ${score.toLocaleString()}</span>
+            <span class="font-label-md text-label-md text-on-surface-variant font-medium">Streak: ${streak}×</span>
+          </div>
         `;
         breakdownEl.appendChild(row);
       });

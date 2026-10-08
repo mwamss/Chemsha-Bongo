@@ -57,7 +57,7 @@
   --radius-full: 9999px;
 
   /* Layout */
-  --max-w-app: 740px;
+  --max-w-app: 1140px;
 }
 
 *, *::before, *::after {

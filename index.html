@@ -165,7 +165,7 @@
        FIXED TOP HEADER (Stitch Calm Design)
        ==================================================================== -->
   <header id="app-header" class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-b border-border-subtle/30">
-    <div class="h-16 px-margin flex items-center justify-between max-w-[760px] mx-auto">
+    <div class="h-16 px-margin flex items-center justify-between max-w-[1140px] mx-auto">
       <div class="flex items-center gap-space-sm cursor-pointer" id="header-brand-btn">
         <img alt="Chemsha Bongo Calm Brain Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UCMzigjpyGsIjY_KDIvI1aDgw0AVKPqwqZg6QI1dZ_ytwHuZiuY7CDdStF4kRq0vTMQ_uuW4i7ZK3SK6kckRStYoZ6H7rWH7FcZwv14QcZByGxS361cyPLpj9MLty5gGqJ8PKH1YLKcIdw2vqBj-qAVm_xGTaoBue5_RUXJRnKvupvyhXhTwVnKby30QHdXZ5-vRb4dwsDDT516RmX8iq9o0KrT7PULKJRCfIpCI9zmA"/>
         <div class="flex flex-col">
@@ -174,6 +174,10 @@
         </div>
       </div>
       <div class="flex items-center gap-space-sm">
+        <div class="hidden sm:flex flex-col text-right cursor-pointer" id="header-name-box">
+          <span class="font-label-lg text-xs text-[#1e3a34] font-semibold leading-none" id="header-surname-display">Player</span>
+          <span class="font-label-sm text-[10px] text-[#414846] mt-0.5">Mindful Tier</span>
+        </div>
         <button class="relative p-space-xs rounded-full flex items-center justify-center min-w-[44px] min-h-[44px] transition-transform active:scale-95 cursor-pointer" id="header-profile-btn" data-path="profile" title="View or Edit Profile">
           <img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_2px_8px_rgba(30,58,52,0.08)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA78kUWyWAC_f2W3_tRfDCeb1LEYfmjpWYaXUKOydLJ8vp65SnIklqYSoXj7qd1YZTqkXYqCCwU_hwt-FFc7-bkMPYo--z1TAvOIn_hzXzY4rh9qUbOLybEvOsEvQaUMEFLQ3mmeGO8CPGe8VlRQ4MTNhfoUg0GGHmsCj1e6IpKcFGwlRjzQ_JYdlwudBPNeW4-KgE5la91znSkpJj98ZbryNMouR0-dhe-FvoA-Bpu"/>
         </button>
@@ -566,18 +570,392 @@
     </section>
 
     <!-- ====================================================================
-         SCREEN 2: GAME SELECTOR (FREE PLAY / SANCTUARY)
+         SCREEN 2: STITCH EXERCISES DIRECTORY & SANCTUARY (Screen 1)
          ==================================================================== -->
     <section class="screen-view" data-screen="select" id="screen-select">
-      <header class="picker-header" style="margin-bottom: 1.5rem;">
-        <div>
-          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0; color: var(--secondary);">← Back to Today</button>
-          <h2 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-top: 0.25rem; color: var(--primary);">Choose an Exercise</h2>
-        </div>
-      </header>
+      <div class="max-w-[1140px] w-full mx-auto flex flex-col gap-space-lg">
 
-      <div class="games-grid" id="game-select-grid">
-        <!-- Dynamically rendered by app.js -->
+        <!-- Page Header (Strict Left-Anchored Asymmetric Hierarchy) -->
+        <header class="flex flex-col gap-space-xs text-left">
+          <!-- Breadcrumb & Workspace Status -->
+          <nav aria-label="Breadcrumb" class="flex items-center gap-space-xs flex-wrap">
+            <button class="font-label-sm text-[11px] text-[#414846] uppercase tracking-wider font-semibold hover:text-[#1e3a34] transition-colors cursor-pointer" id="back-to-home-btn">
+              ← Today
+            </button>
+            <span class="text-[#727976] text-[12px]">/</span>
+            <span class="font-label-sm text-[11px] text-[#356759] font-semibold uppercase tracking-wider">Exercise Catalog</span>
+            <span class="ml-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#d8f3e5] border border-[#c2e5d5] text-[#1b4f42] font-label-sm text-[11px] font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#356759] animate-pulse"></span>
+              5 Drills Operational
+            </span>
+          </nav>
+
+          <!-- Editorial Brass Key Accent -->
+          <div class="w-6 h-0.5 bg-[#356759] mt-1 rounded-full"></div>
+
+          <!-- Left-Aligned Display H1 -->
+          <h1 class="font-headline-xl text-3xl md:text-[34px] font-bold text-[#1e3a34] tracking-tight">Choose an Exercise</h1>
+
+          <!-- Editorial Subtitle with Generous Trailing Whitespace -->
+          <p class="font-body-lg text-base text-[#414846] max-w-2xl leading-relaxed">
+            Self-directed cognitive micro-drills to deepen mental stamina and working memory at your natural pace. Calibrated for 30-second intensive bursts.
+          </p>
+
+          <!-- Segmented Category Filter Bar -->
+          <div class="mt-space-sm flex flex-wrap items-center gap-2" id="categoryFilterBar">
+            <button class="cat-pill active-pill px-3.5 py-1.5 rounded-lg bg-[#1e3a34] text-white border border-[#1e3a34] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer" data-cat="all">
+              All Categories (5)
+            </button>
+            <button class="cat-pill px-3.5 py-1.5 rounded-lg bg-white border border-[#c2e5d5] text-[#101e1a] hover:bg-[#e7f7f0] hover:border-[#9dd1c0] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer" data-cat="attention">
+              Attention &amp; Focus
+            </button>
+            <button class="cat-pill px-3.5 py-1.5 rounded-lg bg-white border border-[#c2e5d5] text-[#101e1a] hover:bg-[#e7f7f0] hover:border-[#9dd1c0] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer" data-cat="memory">
+              Working Memory
+            </button>
+            <button class="cat-pill px-3.5 py-1.5 rounded-lg bg-white border border-[#c2e5d5] text-[#101e1a] hover:bg-[#e7f7f0] hover:border-[#9dd1c0] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer" data-cat="math">
+              Mental Calculation
+            </button>
+            <button class="cat-pill px-3.5 py-1.5 rounded-lg bg-white border border-[#c2e5d5] text-[#101e1a] hover:bg-[#e7f7f0] hover:border-[#9dd1c0] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer" data-cat="spatial">
+              Spatial Reflexes
+            </button>
+            <button class="cat-pill px-3.5 py-1.5 rounded-lg bg-white border border-[#c2e5d5] text-[#101e1a] hover:bg-[#e7f7f0] hover:border-[#9dd1c0] font-label-md text-xs font-medium transition-all shadow-sm cursor-pointer" data-cat="logic">
+              Logic &amp; Induction
+            </button>
+          </div>
+        </header>
+
+        <!-- Main 66 / 34 Split Composition -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+          <!-- Left Column (66% ~ 8 cols): 5 Core Exercise Cards -->
+          <section class="lg:col-span-8 flex flex-col gap-space-md" id="exerciseGrid">
+
+            <!-- Card 1: Color Clash -->
+            <article class="exercise-item group relative bg-white border border-[#c2e5d5]/80 p-space-md rounded-2xl shadow-[0_2px_10px_rgba(20,50,40,0.03)] hover:shadow-[0_4px_16px_rgba(30,58,52,0.08)] hover:border-[#9dd1c0] transition-all duration-200 cursor-pointer" data-category="attention" onclick="window.launchGameFromPillar('color-clash')">
+              <div class="flex flex-col sm:flex-row items-start justify-between gap-space-sm">
+                <div class="flex items-start gap-space-sm flex-1">
+                  <div class="w-12 h-12 rounded-xl bg-[#d8f3e5] border border-[#b8eedb] flex items-center justify-center shrink-0 text-[#1e3a34]">
+                    <span class="material-symbols-outlined text-[24px]">palette</span>
+                  </div>
+                  <div class="flex flex-col text-left min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-label-sm text-[11px] text-[#356759] uppercase font-bold tracking-wider">Attention &amp; Focus</span>
+                      <span class="w-1 h-1 rounded-full bg-[#9dd1c0]"></span>
+                      <span class="font-label-sm text-[11px] text-[#414846]">Stroop Protocol</span>
+                    </div>
+                    <h2 class="font-headline-md text-lg text-[#1e3a34] font-bold tracking-tight mt-0.5">Color Clash</h2>
+                    <p class="font-body-md text-sm text-[#414846] mt-1 leading-relaxed">
+                      Inhibit your impulse! Select the ink color of the word without reading it (Classic Stroop Effect). Demands acute inhibitory control under timer pressure.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Metadata Badges & CTA Bar -->
+              <div class="mt-space-md pt-space-xs flex flex-wrap items-center justify-between gap-space-sm bg-[#f4fbf7] border-t border-[#c2e5d5]/60 -mx-space-md -mb-space-md px-space-md py-3 rounded-b-2xl">
+                <div class="flex items-center flex-wrap gap-2">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#356759]">timer</span>
+                    30s drill
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">military_tech</span>
+                    Personal Best: <strong class="font-semibold text-[#1e3a34]" data-card-best="color-clash">0</strong>
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">bolt</span>
+                    Max Streak: <strong class="font-semibold text-[#1e3a34]" data-card-streak="color-clash">0x</strong>
+                  </span>
+                </div>
+                <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-md text-xs font-semibold group-hover:bg-[#1e3a34] group-hover:text-white group-hover:border-[#1e3a34] transition-all shadow-sm pointer-events-none">
+                  <span>Launch Drill</span>
+                  <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Card 2: Chimp Memory -->
+            <article class="exercise-item group relative bg-white border border-[#c2e5d5]/80 p-space-md rounded-2xl shadow-[0_2px_10px_rgba(20,50,40,0.03)] hover:shadow-[0_4px_16px_rgba(30,58,52,0.08)] hover:border-[#9dd1c0] transition-all duration-200 cursor-pointer" data-category="memory" onclick="window.launchGameFromPillar('chimp-memory')">
+              <div class="flex flex-col sm:flex-row items-start justify-between gap-space-sm">
+                <div class="flex items-start gap-space-sm flex-1">
+                  <div class="w-12 h-12 rounded-xl bg-[#e7f7f0] border border-[#c2e5d5] flex items-center justify-center shrink-0 text-[#1e3a34]">
+                    <span class="material-symbols-outlined text-[24px]">grid_4x4</span>
+                  </div>
+                  <div class="flex flex-col text-left min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-label-sm text-[11px] text-[#356759] uppercase font-bold tracking-wider">Working Memory</span>
+                      <span class="w-1 h-1 rounded-full bg-[#9dd1c0]"></span>
+                      <span class="font-label-sm text-[11px] text-[#414846]">Kyoto Protocol</span>
+                    </div>
+                    <h2 class="font-headline-md text-lg text-[#1e3a34] font-bold tracking-tight mt-0.5">Chimp Memory</h2>
+                    <p class="font-body-md text-sm text-[#414846] mt-1 leading-relaxed">
+                      Flash-memorize numbers 1..N and recall their positions in ascending order (Kyoto Primate Memory protocol). Tests rapid visual-spatial retention.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Metadata Badges & CTA Bar -->
+              <div class="mt-space-md pt-space-xs flex flex-wrap items-center justify-between gap-space-sm bg-[#f4fbf7] border-t border-[#c2e5d5]/60 -mx-space-md -mb-space-md px-space-md py-3 rounded-b-2xl">
+                <div class="flex items-center flex-wrap gap-2">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#356759]">memory</span>
+                    Memory grid
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">military_tech</span>
+                    Personal Best: <strong class="font-semibold text-[#1e3a34]" data-card-best="chimp-memory">0</strong>
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">bolt</span>
+                    Max Streak: <strong class="font-semibold text-[#1e3a34]" data-card-streak="chimp-memory">0x</strong>
+                  </span>
+                </div>
+                <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-md text-xs font-semibold group-hover:bg-[#1e3a34] group-hover:text-white group-hover:border-[#1e3a34] transition-all shadow-sm pointer-events-none">
+                  <span>Launch Drill</span>
+                  <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Card 3: Rapid Math -->
+            <article class="exercise-item group relative bg-white border border-[#c2e5d5]/80 p-space-md rounded-2xl shadow-[0_2px_10px_rgba(20,50,40,0.03)] hover:shadow-[0_4px_16px_rgba(30,58,52,0.08)] hover:border-[#9dd1c0] transition-all duration-200 cursor-pointer" data-category="math" onclick="window.launchGameFromPillar('rapid-math')">
+              <div class="flex flex-col sm:flex-row items-start justify-between gap-space-sm">
+                <div class="flex items-start gap-space-sm flex-1">
+                  <div class="w-12 h-12 rounded-xl bg-[#d8f3e5] border border-[#b8eedb] flex items-center justify-center shrink-0 text-[#1e3a34]">
+                    <span class="material-symbols-outlined text-[24px]">calculate</span>
+                  </div>
+                  <div class="flex flex-col text-left min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-label-sm text-[11px] text-[#356759] uppercase font-bold tracking-wider">Mental Calculation</span>
+                      <span class="w-1 h-1 rounded-full bg-[#9dd1c0]"></span>
+                      <span class="font-label-sm text-[11px] text-[#414846]">Arithmetic Speed</span>
+                    </div>
+                    <h2 class="font-headline-md text-lg text-[#1e3a34] font-bold tracking-tight mt-0.5">Rapid Math</h2>
+                    <p class="font-body-md text-sm text-[#414846] mt-1 leading-relaxed">
+                      Race against time to solve rapid equations and evaluate True/False numerical assertions. Stretches executive speed and numerical fluency.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Metadata Badges & CTA Bar -->
+              <div class="mt-space-md pt-space-xs flex flex-wrap items-center justify-between gap-space-sm bg-[#f4fbf7] border-t border-[#c2e5d5]/60 -mx-space-md -mb-space-md px-space-md py-3 rounded-b-2xl">
+                <div class="flex items-center flex-wrap gap-2">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#356759]">timer</span>
+                    30s drill
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">military_tech</span>
+                    Personal Best: <strong class="font-semibold text-[#1e3a34]" data-card-best="rapid-math">0</strong>
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">bolt</span>
+                    Max Streak: <strong class="font-semibold text-[#1e3a34]" data-card-streak="rapid-math">0x</strong>
+                  </span>
+                </div>
+                <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-md text-xs font-semibold group-hover:bg-[#1e3a34] group-hover:text-white group-hover:border-[#1e3a34] transition-all shadow-sm pointer-events-none">
+                  <span>Launch Drill</span>
+                  <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Card 4: Confusing Arrows -->
+            <article class="exercise-item group relative bg-white border border-[#c2e5d5]/80 p-space-md rounded-2xl shadow-[0_2px_10px_rgba(20,50,40,0.03)] hover:shadow-[0_4px_16px_rgba(30,58,52,0.08)] hover:border-[#9dd1c0] transition-all duration-200 cursor-pointer" data-category="spatial" onclick="window.launchGameFromPillar('confusing-arrows')">
+              <div class="flex flex-col sm:flex-row items-start justify-between gap-space-sm">
+                <div class="flex items-start gap-space-sm flex-1">
+                  <div class="w-12 h-12 rounded-xl bg-[#e7f7f0] border border-[#c2e5d5] flex items-center justify-center shrink-0 text-[#1e3a34]">
+                    <span class="material-symbols-outlined text-[24px]">swap_calls</span>
+                  </div>
+                  <div class="flex flex-col text-left min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-label-sm text-[11px] text-[#356759] uppercase font-bold tracking-wider">Spatial Reflexes</span>
+                      <span class="w-1 h-1 rounded-full bg-[#9dd1c0]"></span>
+                      <span class="font-label-sm text-[11px] text-[#414846]">Flanker Inversion</span>
+                    </div>
+                    <h2 class="font-headline-md text-lg text-[#1e3a34] font-bold tracking-tight mt-0.5">Confusing Arrows</h2>
+                    <p class="font-body-md text-sm text-[#414846] mt-1 leading-relaxed">
+                      Match green arrows with directional keys, but flip your instincts when red appears. Sharpens cognitive flexibility and spatial reaction times.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Metadata Badges & CTA Bar -->
+              <div class="mt-space-md pt-space-xs flex flex-wrap items-center justify-between gap-space-sm bg-[#f4fbf7] border-t border-[#c2e5d5]/60 -mx-space-md -mb-space-md px-space-md py-3 rounded-b-2xl">
+                <div class="flex items-center flex-wrap gap-2">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#356759]">timer</span>
+                    30s drill
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">military_tech</span>
+                    Personal Best: <strong class="font-semibold text-[#1e3a34]" data-card-best="confusing-arrows">0</strong>
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">bolt</span>
+                    Max Streak: <strong class="font-semibold text-[#1e3a34]" data-card-streak="confusing-arrows">0x</strong>
+                  </span>
+                </div>
+                <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-md text-xs font-semibold group-hover:bg-[#1e3a34] group-hover:text-white group-hover:border-[#1e3a34] transition-all shadow-sm pointer-events-none">
+                  <span>Launch Drill</span>
+                  <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Card 5: Pattern Sequence -->
+            <article class="exercise-item group relative bg-white border border-[#c2e5d5]/80 p-space-md rounded-2xl shadow-[0_2px_10px_rgba(20,50,40,0.03)] hover:shadow-[0_4px_16px_rgba(30,58,52,0.08)] hover:border-[#9dd1c0] transition-all duration-200 cursor-pointer" data-category="logic" onclick="window.launchGameFromPillar('number-sequence')">
+              <div class="flex flex-col sm:flex-row items-start justify-between gap-space-sm">
+                <div class="flex items-start gap-space-sm flex-1">
+                  <div class="w-12 h-12 rounded-xl bg-[#d8f3e5] border border-[#b8eedb] flex items-center justify-center shrink-0 text-[#1e3a34]">
+                    <span class="material-symbols-outlined text-[24px]">extension</span>
+                  </div>
+                  <div class="flex flex-col text-left min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-label-sm text-[11px] text-[#356759] uppercase font-bold tracking-wider">Logic &amp; Induction</span>
+                      <span class="w-1 h-1 rounded-full bg-[#9dd1c0]"></span>
+                      <span class="font-label-sm text-[11px] text-[#414846]">Abstract Reasoning</span>
+                    </div>
+                    <h2 class="font-headline-md text-lg text-[#1e3a34] font-bold tracking-tight mt-0.5">Pattern Sequence</h2>
+                    <p class="font-body-md text-sm text-[#414846] mt-1 leading-relaxed">
+                      Crack the inductive mathematical sequence and deduce the missing numeral. Tests pattern extraction, parity matching, and symbolic logic.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Metadata Badges & CTA Bar -->
+              <div class="mt-space-md pt-space-xs flex flex-wrap items-center justify-between gap-space-sm bg-[#f4fbf7] border-t border-[#c2e5d5]/60 -mx-space-md -mb-space-md px-space-md py-3 rounded-b-2xl">
+                <div class="flex items-center flex-wrap gap-2">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#356759]">psychology</span>
+                    Logic deduction
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">military_tech</span>
+                    Personal Best: <strong class="font-semibold text-[#1e3a34]" data-card-best="number-sequence">0</strong>
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-sm text-xs shadow-sm">
+                    <span class="material-symbols-outlined text-[15px] text-[#414846]">bolt</span>
+                    Max Streak: <strong class="font-semibold text-[#1e3a34]" data-card-streak="number-sequence">0x</strong>
+                  </span>
+                </div>
+                <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-[#c2e5d5] text-[#1e3a34] font-label-md text-xs font-semibold group-hover:bg-[#1e3a34] group-hover:text-white group-hover:border-[#1e3a34] transition-all shadow-sm pointer-events-none">
+                  <span>Launch Drill</span>
+                  <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+            </article>
+
+          </section>
+
+          <!-- Right Contextual Rail (34% ~ 4 cols): Atelier Telemetry & Readiness -->
+          <aside class="lg:col-span-4 flex flex-col gap-space-md">
+            <!-- 1. Session Readiness Metric Card with Inline SVG Circular Gauge -->
+            <div class="bg-white border border-[#c2e5d5]/80 p-space-md rounded-2xl shadow-[0_2px_10px_rgba(20,50,40,0.03)] flex flex-col gap-space-sm text-left">
+              <div class="flex items-center justify-between">
+                <span class="font-label-sm text-[11px] text-[#414846] uppercase tracking-wider font-semibold">Sanctuary Vitals</span>
+                <span class="font-label-sm text-[11px] text-[#356759] font-bold">Calibrated</span>
+              </div>
+              <div class="flex items-center gap-space-md pt-2">
+                <!-- Circular Progress Ring SVG -->
+                <div class="relative w-20 h-20 shrink-0">
+                  <svg class="w-20 h-20 -rotate-90 text-[#e1f2ea]" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" fill="none" r="15.5" stroke="currentColor" stroke-width="3"></circle>
+                    <circle cx="18" cy="18" fill="none" r="15.5" stroke="#1e3a34" stroke-dasharray="97.4" stroke-dashoffset="7.8" stroke-linecap="round" stroke-width="3"></circle>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="font-headline-md text-lg text-[#1e3a34] font-bold leading-none">92%</span>
+                  </div>
+                </div>
+                <div class="flex flex-col">
+                  <h3 class="font-headline-md text-base text-[#1e3a34] font-semibold">Focus Readiness</h3>
+                  <p class="font-body-md text-xs text-[#414846] mt-0.5 leading-snug">
+                    Resting pupil latency &amp; circadian timing optimal for 30s inhibitory tasks.
+                  </p>
+                </div>
+              </div>
+              <div class="mt-2 pt-2 bg-[#f4fbf7] border border-[#c2e5d5]/60 p-2.5 rounded-xl flex items-center justify-between">
+                <span class="font-label-md text-xs text-[#414846]">Recommended Cadence</span>
+                <span class="font-label-md text-xs text-[#1e3a34] font-bold">2 Drills / Session</span>
+              </div>
+            </div>
+
+            <!-- 2. Recommended Next Drill Suggestion Card -->
+            <div class="bg-[#1e3a34] text-white p-space-md rounded-2xl shadow-md flex flex-col gap-space-xs text-left relative overflow-hidden border border-[#1e3a34]">
+              <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-[#356759] opacity-30 pointer-events-none"></div>
+              <div class="flex items-center justify-between">
+                <span class="font-label-sm text-[11px] uppercase tracking-wider text-[#b8eedb] font-bold">Curator Selection</span>
+                <span class="material-symbols-outlined text-[18px] text-[#b8eedb]">auto_awesome</span>
+              </div>
+              <h3 class="font-headline-md text-lg text-white font-bold mt-1">Color Clash</h3>
+              <p class="font-body-md text-xs text-[#aecdc4] leading-relaxed">
+                Inhibitory impulse testing is proven to awaken executive brain networks when entering the sanctuary.
+              </p>
+              <div class="mt-space-sm pt-space-xs flex items-center justify-between">
+                <div class="flex items-center gap-1.5 text-[#b8eedb]">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span>
+                  <span class="font-label-sm text-xs">Estimated: 30s</span>
+                </div>
+                <button class="px-3.5 py-1.5 rounded-lg bg-white text-[#1e3a34] font-label-md text-xs hover:bg-[#d8f3e5] transition-colors shadow-sm font-semibold cursor-pointer" onclick="window.launchGameFromPillar('color-clash')">
+                  Begin Now
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. Weekly Exercise Breakdown Chart / Summary -->
+            <div class="bg-white border border-[#c2e5d5]/80 p-space-md rounded-2xl shadow-[0_2px_10px_rgba(20,50,40,0.03)] flex flex-col gap-space-sm text-left">
+              <div class="flex items-center justify-between">
+                <span class="font-label-sm text-[11px] text-[#414846] uppercase tracking-wider font-semibold">Weekly Drill Cadence</span>
+                <span class="font-label-sm text-[11px] text-[#356759] font-bold">Active Week</span>
+              </div>
+              <div class="pt-2 flex flex-col gap-2">
+                <div class="h-24 w-full flex items-end justify-between gap-2 px-1">
+                  <div class="flex flex-col items-center gap-1.5 flex-1">
+                    <div class="w-full bg-[#e1f2ea] rounded-t-sm h-10 hover:bg-[#4a7c6d] transition-colors"></div>
+                    <span class="font-label-sm text-[10px] text-[#414846]">M</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-1.5 flex-1">
+                    <div class="w-full bg-[#d8f3e5] rounded-t-sm h-16 hover:bg-[#4a7c6d] transition-colors"></div>
+                    <span class="font-label-sm text-[10px] text-[#414846]">T</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-1.5 flex-1">
+                    <div class="w-full bg-[#1e3a34] rounded-t-sm h-20 transition-colors shadow-sm"></div>
+                    <span class="font-label-sm text-[10px] text-[#1e3a34] font-bold">W</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-1.5 flex-1">
+                    <div class="w-full bg-[#e1f2ea] rounded-t-sm h-8 hover:bg-[#4a7c6d] transition-colors"></div>
+                    <span class="font-label-sm text-[10px] text-[#414846]">T</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-1.5 flex-1">
+                    <div class="w-full bg-[#b8eedb] rounded-t-sm h-14 hover:bg-[#4a7c6d] transition-colors"></div>
+                    <span class="font-label-sm text-[10px] text-[#414846]">F</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-1.5 flex-1">
+                    <div class="w-full bg-[#dcece4] rounded-t-sm h-4 hover:bg-[#4a7c6d] transition-colors"></div>
+                    <span class="font-label-sm text-[10px] text-[#414846]">S</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-1.5 flex-1">
+                    <div class="w-full bg-[#dcece4] rounded-t-sm h-6 hover:bg-[#4a7c6d] transition-colors"></div>
+                    <span class="font-label-sm text-[10px] text-[#414846]">S</span>
+                  </div>
+                </div>
+                <div class="bg-[#f4fbf7] border border-[#c2e5d5]/60 p-2.5 rounded-xl flex items-center justify-between mt-1">
+                  <span class="font-label-md text-xs text-[#414846]">Weekly Total</span>
+                  <span class="font-label-md text-xs text-[#1e3a34] font-bold" id="cadence-total-completions">0 Completions</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Atelier Protocol Guidance Note -->
+            <div class="bg-[#e7f7f0] border border-[#c2e5d5] p-space-md rounded-2xl flex flex-col gap-2 text-left">
+              <div class="flex items-center gap-2 text-[#1e3a34]">
+                <span class="material-symbols-outlined text-[18px] text-[#356759]">verified</span>
+                <span class="font-label-sm text-[11px] uppercase font-bold text-[#1e3a34]">Sanctuary Principle</span>
+              </div>
+              <p class="font-body-md text-xs text-[#414846] leading-relaxed">
+                Speed is secondary to inhibition accuracy. A single deliberate, un-compromised session yields superior plasticity to rapid fatigue.
+              </p>
+            </div>
+          </aside>
+        </div>
       </div>
     </section>
 
@@ -738,77 +1116,132 @@
   </div>
 
   <!-- ====================================================================
-       MODAL 2: SURNAME SETUP / EDIT
+       MODAL 2: STITCH SURNAME PERSONALIZATION / ONBOARDING SHEET (Screen 2)
        ==================================================================== -->
   <div class="modal-overlay" id="surname-modal" aria-hidden="true">
-    <div class="modal-content" style="max-width: 440px; text-align: center;">
-      <div style="font-size: 2.4rem;">🌿</div>
-      <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--primary);">Welcome to Chemsha Bongo</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
-        Please enter your <strong>surname</strong> to personalize your daily brain workout experience:
+    <div class="relative w-full max-w-[480px] bg-surface-container-lowest rounded-2xl shadow-[0_24px_54px_rgba(6,36,31,0.12)] border border-[#c2e5d5] p-8 flex flex-col text-left transition-all duration-200">
+      <div class="flex justify-between items-start mb-6">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-low border border-[#c2e5d5] flex items-center justify-center text-secondary">
+          <span class="material-symbols-outlined text-[24px]">spa</span>
+        </div>
+        <button aria-label="Close" class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer" id="btnDismissOnboarding">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <div class="w-6 h-0.5 bg-secondary mb-3 rounded-full"></div>
+      <h3 class="font-headline-lg text-headline-lg text-primary tracking-tight font-semibold">Welcome to Chemsha Bongo</h3>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-2">
+        Please enter your <strong class="text-on-surface font-medium">surname</strong> to personalize your daily brain workout experience and calibrate session logs:
       </p>
-
-      <form id="surname-form" style="display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.6rem;">
-        <input 
-          type="text" 
-          id="surname-input" 
-          placeholder="e.g. Mwamburi, Anderson, Miller..." 
-          autocomplete="family-name"
-          maxlength="25"
-          required 
-          style="width: 100%; padding: 0.85rem 1.25rem; border-radius: var(--radius-md); border: 1.5px solid var(--border-subtle); background: var(--surface-subdued); font-family: var(--font-sans); font-size: 1.05rem; font-weight: 600; color: var(--text-primary); outline: none; text-align: center;" 
-        />
-        <div style="display: flex; gap: 0.5rem;">
-          <button type="button" class="btn btn-outline cursor-pointer" id="surname-skip-btn" style="flex: 1; font-size: 0.88rem;">Skip for Now</button>
-          <button type="submit" class="btn btn-primary cursor-pointer" style="flex: 2; font-size: 0.95rem;">Save & Continue 🍃</button>
+      <form class="mt-6 flex flex-col gap-4" id="surname-form">
+        <div class="flex flex-col gap-1.5">
+          <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold" for="surname-input">Surname / Family Cognomen</label>
+          <input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md border border-[#c2e5d5] focus:outline-none focus:ring-2 focus:ring-primary-container transition-all" id="surname-input" placeholder="e.g. Mwams, Anderson, Kimani..." required type="text" autocomplete="family-name" maxlength="25"/>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-4">
+          <button class="px-4 py-2.5 rounded-lg bg-surface-container text-on-surface font-label-lg text-label-lg font-medium hover:bg-surface-container-high transition-colors border border-[#c2e5d5]/60 cursor-pointer" id="surname-skip-btn" type="button">
+            Skip for Now
+          </button>
+          <button class="px-5 py-2.5 rounded-lg bg-primary-container text-primary-fixed font-label-lg text-label-lg font-semibold hover:bg-primary transition-colors flex items-center gap-2 shadow-sm cursor-pointer" type="submit" id="surname-submit-btn">
+            <span>Save &amp; Continue</span>
+            <span class="material-symbols-outlined text-[16px]">eco</span>
+          </button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- ====================================================================
-       MODAL 3: CAREER STATS & RECORDS
+       MODAL 3: STITCH CAREER STATS & PERFORMANCE SHEET (Screen 2)
        ==================================================================== -->
   <div class="modal-overlay" id="stats-modal" aria-hidden="true">
-    <div class="modal-content" style="max-width: 520px; text-align: left;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--primary);">📊 Career Stats & Growth</h3>
-        <button class="btn btn-ghost cursor-pointer" id="close-stats-btn" style="padding: 0.4rem 0.6rem;">✕</button>
+    <div class="relative w-full max-w-[580px] bg-surface-container-lowest rounded-2xl shadow-[0_24px_54px_rgba(6,36,31,0.12)] border border-[#c2e5d5] flex flex-col overflow-hidden transition-all duration-200" id="statsModal">
+      <!-- Modal Header -->
+      <div class="px-6 pt-6 pb-4 flex items-start justify-between border-b border-[#e2f3ea]">
+        <div class="flex flex-col text-left">
+          <div class="w-7 h-0.5 bg-secondary mb-2 rounded-full"></div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[22px] text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span>
+            <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight font-semibold">Career Stats &amp; Cognitive Growth</h2>
+          </div>
+          <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">Cumulative Atelier Telemetry • Phase III</span>
+        </div>
+        <button aria-label="Dismiss Dialog" class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer" id="close-stats-btn">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
       </div>
 
-      <div class="summary-stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 0.5rem;">
-        <div class="summary-stat-item" style="text-align: center;">
-          <span class="hud-label">GAMES PLAYED</span>
-          <span class="val" id="stat-total-games">0</span>
+      <!-- Modal Body -->
+      <div class="px-6 py-4 flex flex-col gap-5 text-left">
+        <!-- 1. Top Metrics Row (3 Equal Architectural Panels in gentle pale eucalyptus / mint) -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="p-3.5 rounded-xl bg-surface-container-low border border-[#c2e5d5]/80 flex flex-col justify-between">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Games Played</span>
+            <div class="my-1.5">
+              <span class="font-headline-xl text-headline-xl text-primary-container font-semibold leading-none" id="stat-total-games">0</span>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Total completed</span>
+          </div>
+          <div class="p-3.5 rounded-xl bg-surface-container-low border border-[#c2e5d5]/80 flex flex-col justify-between">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Accuracy</span>
+            <div class="my-1.5">
+              <span class="font-headline-xl text-headline-xl text-primary-container font-semibold leading-none" id="stat-accuracy">100%</span>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Clean precision</span>
+          </div>
+          <div class="p-3.5 rounded-xl bg-surface-container-low border border-[#c2e5d5]/80 flex flex-col justify-between">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Max Streak</span>
+            <div class="my-1.5 flex items-baseline gap-1">
+              <span class="font-headline-xl text-headline-xl text-primary-container font-semibold leading-none" id="stat-max-streak">0</span>
+              <span class="font-label-lg text-label-lg text-secondary font-semibold">×</span>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Personal best</span>
+          </div>
         </div>
-        <div class="summary-stat-item" style="text-align: center;">
-          <span class="hud-label">ACCURACY</span>
-          <span class="val" id="stat-accuracy" style="color: var(--feedback-correct);">100%</span>
+
+        <!-- 2. Secondary Summary Card (Blitz Performance Index) -->
+        <div class="p-3.5 rounded-xl bg-surface-bright border border-[#c2e5d5] flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Current Standing</span>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="font-body-md text-body-md text-on-surface font-medium">Best Blitz Score</span>
+              <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+              <span class="font-body-md text-body-md text-primary font-semibold" id="stat-blitz-best">0 pts</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-label-md text-label-md text-on-surface-variant">Blitz Rating:</span>
+            <span class="px-2.5 py-1 rounded-md bg-[#ffddae] text-[#604100] font-label-sm text-label-sm font-semibold tracking-wide uppercase border border-[#efbf73]/50" id="stat-blitz-rating">Novice</span>
+          </div>
         </div>
-        <div class="summary-stat-item" style="text-align: center;">
-          <span class="hud-label">MAX STREAK</span>
-          <span class="val" id="stat-max-streak" style="color: var(--tertiary);">0x</span>
+
+        <!-- 3. Exercise Personal Bests Breakdown (Table / List) -->
+        <div class="flex flex-col">
+          <div class="flex items-center justify-between pb-2 border-b border-[#e2f3ea]">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Discipline Breakdown (Personal Bests)</span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Score / Streak</span>
+          </div>
+          <div class="divide-y divide-[#e2f3ea]" id="stat-games-breakdown">
+            <!-- Dynamically populated -->
+          </div>
         </div>
       </div>
 
-      <div style="background: var(--surface-subdued); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 0.5rem;">
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem;">
-          <span class="hud-label">BEST BLITZ SCORE</span>
-          <strong id="stat-blitz-best" style="font-family: var(--font-display); color: var(--primary);">0</strong>
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 bg-surface-container-low border-t border-[#c2e5d5] flex items-center justify-between">
+        <button class="font-label-md text-label-md text-error hover:text-on-error-container font-medium hover:underline transition-colors flex items-center gap-1.5 cursor-pointer" id="reset-stats-btn">
+          <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+          Reset All Records
+        </button>
+        <div class="flex items-center gap-3">
+          <button class="px-3.5 py-2 rounded-lg bg-surface-container-lowest text-on-surface font-label-lg text-label-lg font-medium hover:bg-surface-container hover:text-primary transition-colors flex items-center gap-1.5 border border-[#c2e5d5] shadow-sm cursor-pointer" id="export-stats-btn">
+            <span class="material-symbols-outlined text-[16px] text-secondary">file_download</span>
+            Export Stats (CSV)
+          </button>
+          <button class="px-4 py-2 rounded-lg bg-primary-container text-primary-fixed font-label-lg text-label-lg font-semibold hover:bg-primary transition-colors shadow-sm cursor-pointer" id="close-stats-footer-btn">
+            Close
+          </button>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-          <span class="hud-label">BEST BLITZ RATING</span>
-          <strong id="stat-blitz-rating" style="color: var(--secondary);">Novice</strong>
-        </div>
-      </div>
-
-      <div class="hud-label" style="margin-top: 0.5rem;">EXERCISE PERSONAL BESTS:</div>
-      <div class="blitz-breakdown-list" id="stat-games-breakdown" style="max-height: 180px; overflow-y: auto;">
-        <!-- Populated by app.js -->
-      </div>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
-        <button class="btn btn-ghost cursor-pointer" id="reset-stats-btn" style="color: var(--feedback-correction); font-size: 0.8rem;">Reset All Records</button>
       </div>
     </div>
   </div>
