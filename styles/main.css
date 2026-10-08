@@ -86,12 +86,11 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  /* NO align-items:center — let content stretch edge-to-edge */
   position: relative;
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(74, 124, 109, 0.08) 0%, transparent 60%),
-    radial-gradient(circle at 10% 100%, rgba(232, 184, 109, 0.06) 0%, transparent 50%);
+    radial-gradient(circle at 50% 0%, rgba(74, 124, 109, 0.06) 0%, transparent 55%),
+    radial-gradient(circle at 90% 80%, rgba(232, 184, 109, 0.05) 0%, transparent 45%);
   background-attachment: fixed;
 }
 
@@ -129,19 +128,20 @@ body {
   z-index: 999;
 }
 
-/* App Container with generous bottom clearance for fixed bottom nav (80px + safe area) */
+/* App Container — full viewport width with responsive breathing room */
 .app-container {
   width: 100%;
-  max-width: var(--max-w-app);
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding-top: calc(4.75rem + env(safe-area-inset-top, 0px));
+  /* Top clears the fixed header (64px) + safe area */
+  padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+  /* Bottom clears the fixed nav bar (80px) + generous breathing room */
   padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
-  padding-left: 1rem;
-  padding-right: 1rem;
-  margin: 0 auto;
+  /* Responsive horizontal padding — never crowded, never wasted */
+  padding-left: clamp(1rem, 4vw, 4rem);
+  padding-right: clamp(1rem, 4vw, 4rem);
   position: relative;
   z-index: 10;
   box-sizing: border-box;
@@ -150,16 +150,16 @@ body {
 
 @media (min-width: 640px) {
   .app-container {
-    padding-top: calc(5.25rem + env(safe-area-inset-top, 0px));
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
     padding-bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px));
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
   }
 }
 
 .app-container.in-game {
   padding-top: 1.25rem !important;
   padding-bottom: 2rem !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
 }
 
 /* Screen Transitions */
