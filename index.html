@@ -126,14 +126,17 @@
 
   <style>
     @layer base {
-      html, body {
-        width: 100vw;
-        margin: 0;
-        padding: 0;
+      html {
+        width: 100%;
         min-height: 100%;
+        -webkit-text-size-adjust: 100%;
       }
       body {
-        overscroll-behavior-y: none;
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        padding: 0;
         -webkit-tap-highlight-color: transparent;
       }
       .pb-safe {
@@ -142,12 +145,6 @@
       .pt-safe {
         padding-top: env(safe-area-inset-top, 0px);
       }
-    }
-    ::-webkit-scrollbar {
-      display: none;
-    }
-    body {
-      min-height: max(884px, 100dvh);
     }
   </style>
 
@@ -573,7 +570,7 @@
          SCREEN 2: STITCH EXERCISES DIRECTORY & SANCTUARY (Screen 1)
          ==================================================================== -->
     <section class="screen-view" data-screen="select" id="screen-select">
-      <div class="max-w-[1140px] w-full mx-auto flex flex-col gap-space-lg">
+      <div class="max-w-[1140px] w-full mx-auto flex flex-col gap-space-lg pb-space-2xl">
 
         <!-- Page Header (Strict Left-Anchored Asymmetric Hierarchy) -->
         <header class="flex flex-col gap-space-xs text-left">

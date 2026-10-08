@@ -34,6 +34,7 @@ export class ScreenManager {
       target.classList.add('active');
       target.setAttribute('aria-hidden', 'false');
       this.currentScreen = screenName;
+      window.scrollTo(0, 0);
     } else {
       console.warn(`Screen "${screenName}" not found in ScreenManager.`);
     }
