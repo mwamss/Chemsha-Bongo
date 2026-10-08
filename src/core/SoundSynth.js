@@ -179,4 +179,23 @@ export class SoundSynth {
       }, idx * 80);
     });
   }
+
+  playSingingBowl() {
+    if (this.muted || !this.ctx) return;
+    this.ensureContext();
+    const freqs = [216, 432, 648, 864];
+    freqs.forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+      const amp = 0.09 / (idx + 1);
+      gain.gain.setValueAtTime(amp, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 4.5);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 4.5);
+    });
+  }
 }

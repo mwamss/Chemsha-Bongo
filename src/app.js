@@ -20,6 +20,9 @@ class App {
     this.hud = null;
     this.screens = null;
     this.gameManager = null;
+    this.breathInterval = null;
+    this.isBreathingInhaling = true;
+    this.ambientPlaying = false;
   }
 
   init() {
@@ -68,6 +71,7 @@ class App {
     this.bindHomeEvents();
     this.bindSelectEvents();
     this.bindModalEvents();
+    this.bindBottomNavEvents();
 
     // 6. Initial Screen Setup & Dynamic Content
     this.updateGreetingAndDate();
@@ -86,15 +90,22 @@ class App {
     const salutationEl = document.getElementById('home-greeting-salutation');
     const surnameDisplayEl = document.getElementById('home-surname-display');
     const dateLabelEl = document.getElementById('home-date-label');
+    const timePhaseEl = document.getElementById('home-time-phase');
     const now = new Date();
     const hour = now.getHours();
 
-    let salutation = 'Welcome';
-    if (hour < 12) salutation = 'Good Morning';
-    else if (hour < 17) salutation = 'Good Afternoon';
-    else salutation = 'Good Evening';
+    let salutation = 'Good morning';
+    let phase = 'Morning Focus';
+    if (hour >= 12 && hour < 17) {
+      salutation = 'Good afternoon';
+      phase = 'Midday Clarity';
+    } else if (hour >= 17) {
+      salutation = 'Good evening';
+      phase = 'Evening Reflection';
+    }
 
     if (salutationEl) salutationEl.textContent = salutation;
+    if (timePhaseEl) timePhaseEl.textContent = phase;
 
     const savedSurname = this.storage.getSurname();
     if (surnameDisplayEl) {
@@ -112,18 +123,50 @@ class App {
     const dateNum = now.getDate();
 
     if (dateLabelEl) {
-      dateLabelEl.textContent = `${dayName}, ${monthName} ${dateNum} • Calm Focus`;
+      dateLabelEl.textContent = `${dayName}, ${monthName} ${dateNum}`;
     }
 
     // Highlight current day in 7-day pebble habit tracker
     // Days index in UI: M (0), T (1), W (2), T (3), F (4), S (5), S (6)
     const jsDay = now.getDay();
     const uiDayIndex = jsDay === 0 ? 6 : jsDay - 1;
-    const pebbles = document.querySelectorAll('.pebble-dot');
-    pebbles.forEach((p, idx) => {
-      p.classList.remove('today');
+    const pebbleItems = document.querySelectorAll('.pebble-item');
+    pebbleItems.forEach((item, idx) => {
+      const dot = item.querySelector('.pebble-dot');
+      const icon = item.querySelector('.material-symbols-outlined');
+      const label = item.querySelector('span:last-child');
+      if (!dot) return;
+
       if (idx === uiDayIndex) {
-        p.classList.add('today');
+        // Today
+        dot.className = 'w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md ring-2 ring-primary/20 pebble-dot';
+        if (icon) {
+          icon.textContent = 'spa';
+          icon.className = 'material-symbols-outlined text-secondary-fixed text-[18px]';
+        }
+        if (label) {
+          label.className = 'font-label-sm text-label-sm text-primary font-bold';
+        }
+      } else if (idx < uiDayIndex) {
+        // Earlier days
+        dot.className = 'w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shadow-sm pebble-dot';
+        if (icon) {
+          icon.textContent = 'eco';
+          icon.className = 'material-symbols-outlined text-on-secondary-container text-[18px]';
+        }
+        if (label) {
+          label.className = 'font-label-sm text-label-sm text-on-surface-variant font-medium';
+        }
+      } else {
+        // Later days
+        dot.className = 'w-10 h-10 rounded-full bg-surface-container flex items-center justify-center pebble-dot';
+        if (icon) {
+          icon.textContent = 'pause';
+          icon.className = 'material-symbols-outlined text-outline text-[16px]';
+        }
+        if (label) {
+          label.className = 'font-label-sm text-label-sm text-outline';
+        }
       }
     });
   }
@@ -132,10 +175,25 @@ class App {
     const isMuted = this.sound.toggleMute();
     this.storage.updateSettings({ soundMuted: isMuted });
     this.hud.setMuteState(isMuted);
+  }
 
-    const homeSoundBtn = document.getElementById('home-sound-btn');
-    if (homeSoundBtn) {
-      homeSoundBtn.textContent = isMuted ? '🔇 Sound: Off' : '🔊 Sound: On';
+  toggleAmbientSound() {
+    const ambientBtn = document.getElementById('ambient-play-toggle');
+    if (!ambientBtn) return;
+
+    this.ambientPlaying = !this.ambientPlaying;
+    const icon = ambientBtn.querySelector('.material-symbols-outlined');
+    if (icon) {
+      icon.textContent = this.ambientPlaying ? 'pause' : 'play_arrow';
+    }
+
+    if (this.ambientPlaying) {
+      ambientBtn.classList.add('bg-secondary', 'text-on-secondary');
+      ambientBtn.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+      this.sound.playSingingBowl();
+    } else {
+      ambientBtn.classList.remove('bg-secondary', 'text-on-secondary');
+      ambientBtn.classList.add('bg-surface-container-lowest', 'text-on-surface');
     }
   }
 
@@ -161,8 +219,7 @@ class App {
     const blitzBtn = document.getElementById('start-blitz-btn');
     if (blitzBtn) {
       blitzBtn.addEventListener('click', () => {
-        this.sound.playClick();
-        this.gameManager.startBlitzWorkout(3, 30);
+        this.openMindfulModal();
       });
     }
 
@@ -183,11 +240,27 @@ class App {
       });
     }
 
-    const homeSoundBtn = document.getElementById('home-sound-btn');
-    if (homeSoundBtn) {
-      homeSoundBtn.textContent = this.sound.muted ? '🔇 Sound: Off' : '🔊 Sound: On';
-      homeSoundBtn.addEventListener('click', () => {
-        this.toggleSound();
+    const ambientBtn = document.getElementById('ambient-play-toggle');
+    if (ambientBtn) {
+      ambientBtn.addEventListener('click', () => {
+        this.toggleAmbientSound();
+      });
+    }
+
+    const editSurnameBtn = document.getElementById('edit-surname-btn');
+    if (editSurnameBtn) {
+      editSurnameBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.sound.playClick();
+        this.openSurnameModal();
+      });
+    }
+
+    const surnameDisplay = document.getElementById('home-surname-display');
+    if (surnameDisplay) {
+      surnameDisplay.addEventListener('click', () => {
+        this.sound.playClick();
+        this.openSurnameModal();
       });
     }
   }
@@ -274,7 +347,7 @@ class App {
       });
     }
 
-    // --- Surname Modal Events ---
+    // Surname Modal Events
     const surnameForm = document.getElementById('surname-form');
     if (surnameForm) {
       surnameForm.addEventListener('submit', (e) => {
@@ -298,22 +371,112 @@ class App {
       });
     }
 
-    const editSurnameBtn = document.getElementById('edit-surname-btn');
-    if (editSurnameBtn) {
-      editSurnameBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
+    // Mindful Breathing Modal Events
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', () => {
+        this.sound.playClick();
+        this.closeMindfulModal();
+      });
+    }
+
+    const proceedWorkoutBtn = document.getElementById('proceed-workout-btn');
+    if (proceedWorkoutBtn) {
+      proceedWorkoutBtn.addEventListener('click', () => {
+        this.sound.playClick();
+        this.closeMindfulModal();
+        this.gameManager.startBlitzWorkout(3, 30);
+      });
+    }
+  }
+
+  bindBottomNavEvents() {
+    const bottomNav = document.getElementById('app-bottom-nav');
+    if (bottomNav) {
+      const navLinks = bottomNav.querySelectorAll('a[data-path]');
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.sound.playClick();
+          const path = link.getAttribute('data-path');
+          if (path === 'today') {
+            this.screens.showScreen('home');
+          } else if (path === 'sanctuary') {
+            this.renderGamePicker();
+            this.screens.showScreen('select');
+          } else if (path === 'insights') {
+            this.openStatsModal();
+          } else if (path === 'profile') {
+            this.openSurnameModal();
+          }
+        });
+      });
+    }
+
+    const headerProfileBtn = document.getElementById('header-profile-btn');
+    if (headerProfileBtn) {
+      headerProfileBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         this.sound.playClick();
         this.openSurnameModal();
       });
     }
 
-    const surnameDisplay = document.getElementById('home-surname-display');
-    if (surnameDisplay) {
-      surnameDisplay.addEventListener('click', () => {
+    const headerBrandBtn = document.getElementById('header-brand-btn');
+    if (headerBrandBtn) {
+      headerBrandBtn.addEventListener('click', () => {
         this.sound.playClick();
-        this.openSurnameModal();
+        this.screens.showScreen('home');
       });
     }
+  }
+
+  openMindfulModal() {
+    const modal = document.getElementById('mindful-modal');
+    if (!modal) {
+      this.gameManager.startBlitzWorkout(3, 30);
+      return;
+    }
+
+    this.sound.playClick();
+    modal.classList.remove('hidden');
+    modal.classList.add('flex', 'active');
+    modal.setAttribute('aria-hidden', 'false');
+
+    this.isBreathingInhaling = true;
+    this.runBreathCycle();
+    if (this.breathInterval) clearInterval(this.breathInterval);
+    this.breathInterval = setInterval(() => this.runBreathCycle(), 4000);
+  }
+
+  closeMindfulModal() {
+    const modal = document.getElementById('mindful-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex', 'active');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    if (this.breathInterval) {
+      clearInterval(this.breathInterval);
+      this.breathInterval = null;
+    }
+  }
+
+  runBreathCycle() {
+    const disk = document.getElementById('breath-disk');
+    const phase = document.getElementById('breath-phase');
+    if (!disk || !phase) return;
+
+    if (this.isBreathingInhaling) {
+      disk.classList.remove('scale-75');
+      disk.classList.add('scale-125');
+      phase.textContent = 'Inhale deeply';
+    } else {
+      disk.classList.remove('scale-125');
+      disk.classList.add('scale-75');
+      phase.textContent = 'Exhale softly';
+    }
+    this.isBreathingInhaling = !this.isBreathingInhaling;
   }
 
   openSurnameModal() {

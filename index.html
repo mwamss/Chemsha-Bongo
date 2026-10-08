@@ -1,248 +1,577 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <meta name="shell-type" content="mobile_tab"/>
   <title>Chemsha Bongo — Daily Brain Workout & Cognitive Sanctuary</title>
-  <meta name="description" content="Serene focus & cognitive sanctuary. A simple game that challenges the brain and increases dopamine.">
-  <meta name="theme-color" content="#1e3a34">
+  <meta name="description" content="Serene focus & cognitive sanctuary. A simple game that challenges the brain and increases dopamine."/>
+  <meta name="theme-color" content="#1e3a34"/>
 
-  <!-- Favicon Emoji -->
+  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
 
-  <!-- Google Fonts: Plus Jakarta Sans & Inter (Stitch Design System Tokens) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono, & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/components.css">
-  <link rel="stylesheet" href="styles/animations.css">
+  <!-- Tailwind CSS CDN with Stitch Design System Tokens -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-high": "#dcece4",
+            "surface-container-low": "#e7f7f0",
+            "surface-variant": "#d6e6df",
+            "secondary-fixed": "#b8eedb",
+            "error": "#ba1a1a",
+            "inverse-on-surface": "#e4f4ed",
+            "on-secondary-fixed-variant": "#1b4f42",
+            "on-secondary-container": "#3b6d5f",
+            "surface-tint": "#48645d",
+            "outline-variant": "#c1c8c5",
+            "outline": "#727976",
+            "error-container": "#ffdad6",
+            "tertiary-fixed": "#ffddae",
+            "primary-fixed": "#cae9e0",
+            "primary-fixed-dim": "#aecdc4",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "on-tertiary-container": "#c2964f",
+            "on-surface": "#101e1a",
+            "secondary-fixed-dim": "#9dd1c0",
+            "secondary-container": "#b8eedb",
+            "on-tertiary": "#ffffff",
+            "on-background": "#101e1a",
+            "inverse-primary": "#aecdc4",
+            "surface-container-highest": "#d6e6df",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#002019",
+            "primary": "#06241f",
+            "secondary": "#356759",
+            "on-primary-container": "#86a49c",
+            "surface-container": "#e1f2ea",
+            "on-tertiary-fixed": "#281800",
+            "inverse-surface": "#25332e",
+            "on-surface-variant": "#414846",
+            "surface-bright": "#edfdf5",
+            "primary-container": "#1e3a34",
+            "tertiary-container": "#493000",
+            "tertiary-fixed-dim": "#efbf73",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed-variant": "#604100",
+            "surface-dim": "#ceded6",
+            "tertiary": "#2d1c00",
+            "on-primary-fixed": "#02201b",
+            "background": "#edfdf5",
+            "surface": "#edfdf5",
+            "on-error": "#ffffff",
+            "on-primary-fixed-variant": "#304c46"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "margin": "1.25rem",
+            "margin-desktop": "3rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2.25rem",
+            "space-md": "1rem",
+            "gutter": "1.25rem",
+            "space-xs": "0.25rem",
+            "space-2xl": "3.5rem",
+            "gutter-tablet": "1.5rem",
+            "space-lg": "1.5rem",
+            "margin-tablet": "2rem",
+            "gutter-desktop": "2rem"
+          },
+          fontFamily: {
+            "body-xl": ["Inter"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "label-md": ["Inter"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "label-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"]
+          },
+          fontSize: {
+            "body-xl": ["20px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "headline-xl": ["28px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["18px", { "lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-lg": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "display-lg": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+      }
+      body {
+        overscroll-behavior-y: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+
+  <!-- Core App Stylesheets -->
+  <link rel="stylesheet" href="styles/main.css"/>
+  <link rel="stylesheet" href="styles/components.css"/>
+  <link rel="stylesheet" href="styles/animations.css"/>
 </head>
-<body>
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen selection:bg-secondary-container selection:text-on-secondary-container">
 
   <!-- Fullscreen Particle & Celebration Canvas -->
   <canvas id="fx-canvas"></canvas>
 
+  <!-- ====================================================================
+       FIXED TOP HEADER (Stitch Calm Design)
+       ==================================================================== -->
+  <header id="app-header" class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-b border-border-subtle/30">
+    <div class="h-16 px-margin flex items-center justify-between max-w-[760px] mx-auto">
+      <div class="flex items-center gap-space-sm cursor-pointer" id="header-brand-btn">
+        <img alt="Chemsha Bongo Calm Brain Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UCMzigjpyGsIjY_KDIvI1aDgw0AVKPqwqZg6QI1dZ_ytwHuZiuY7CDdStF4kRq0vTMQ_uuW4i7ZK3SK6kckRStYoZ6H7rWH7FcZwv14QcZByGxS361cyPLpj9MLty5gGqJ8PKH1YLKcIdw2vqBj-qAVm_xGTaoBue5_RUXJRnKvupvyhXhTwVnKby30QHdXZ5-vRb4dwsDDT516RmX8iq9o0KrT7PULKJRCfIpCI9zmA"/>
+        <div class="flex flex-col">
+          <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">Chemsha Bongo</span>
+          <h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none" id="header-title">Today</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <button class="relative p-space-xs rounded-full flex items-center justify-center min-w-[44px] min-h-[44px] transition-transform active:scale-95 cursor-pointer" id="header-profile-btn" data-path="profile" title="View or Edit Profile">
+          <img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_2px_8px_rgba(30,58,52,0.08)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA78kUWyWAC_f2W3_tRfDCeb1LEYfmjpWYaXUKOydLJ8vp65SnIklqYSoXj7qd1YZTqkXYqCCwU_hwt-FFc7-bkMPYo--z1TAvOIn_hzXzY4rh9qUbOLybEvOsEvQaUMEFLQ3mmeGO8CPGe8VlRQ4MTNhfoUg0GGHmsCj1e6IpKcFGwlRjzQ_JYdlwudBPNeW4-KgE5la91znSkpJj98ZbryNMouR0-dhe-FvoA-Bpu"/>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       APP CONTAINER: SCREEN VIEWS
+       ==================================================================== -->
   <main class="app-container">
 
     <!-- ====================================================================
          SCREEN 1: STITCH CALM HOME PAGE (Serene Focus & Cognitive Sanctuary)
          ==================================================================== -->
     <section class="screen-view active" data-screen="home" id="screen-home">
+      <div class="flex flex-col w-full space-y-space-lg pb-space-2xl">
 
-      <!-- 1. Warm Greeting & Focus Intention Header -->
-      <header class="mindful-header">
-        <div class="header-top-row">
-          <div class="greeting-text-group">
-            <h1 id="home-greeting-text" style="display: inline-flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
-              <span id="home-greeting-salutation">Welcome</span>, 
-              <span id="home-surname-display" class="editable-surname-badge" title="Click to edit surname">...</span>
-              <button id="edit-surname-btn" class="btn-edit-icon" title="Edit Surname" aria-label="Edit Surname">✎</button>
-            </h1>
-            <div class="date-pill">
-              <span>🍃</span>
-              <span id="home-date-label">Chemsha Bongo • Calm Focus</span>
+        <!-- 1. Greeting & Serene Mindset Status -->
+        <section class="flex flex-col space-y-space-md pt-space-xs">
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+                  <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                  <span id="home-date-label">Tuesday, Oct 8</span>
+                </span>
+                <span class="font-label-sm text-label-sm text-outline" id="home-time-phase">Morning Focus</span>
+              </div>
+              <h2 class="font-headline-xl text-headline-xl text-on-surface tracking-tight flex items-center gap-2 flex-wrap">
+                <span id="home-greeting-salutation">Good morning</span>, <span id="home-surname-display" class="editable-surname-badge cursor-pointer hover:underline text-primary" title="Click to edit surname">Player</span>
+                <button id="edit-surname-btn" class="btn-edit-icon text-secondary hover:text-primary transition-colors text-base" title="Edit Surname" aria-label="Edit Surname">✎</button>
+              </h2>
+            </div>
+
+            <!-- Serene Readiness Pebble Pill -->
+            <div class="flex flex-col items-end">
+              <div class="flex items-center gap-1.5 bg-surface-container-high px-3 py-1.5 rounded-full shadow-sm">
+                <svg class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-dasharray="56.5" stroke-dashoffset="5" stroke-linecap="round" stroke-width="2.5"></circle>
+                </svg>
+                <span class="font-label-md text-label-md text-primary font-semibold">92%</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-outline mt-1">Centered</span>
             </div>
           </div>
 
-          <!-- Serene Readiness Ring -->
-          <div class="readiness-widget" title="Daily Mindset & Focus Readiness">
-            <svg class="readiness-ring-svg" viewBox="0 0 36 36">
-              <path class="readiness-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <path class="readiness-ring-bar" stroke-dashoffset="8" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <!-- Daily Reflection Banner -->
+          <div class="flex items-center gap-space-sm bg-surface-container-low p-space-sm px-space-md rounded-xl text-on-surface-variant">
+            <span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">nature</span>
+            <p class="font-body-md text-body-md italic tracking-normal">
+              “One thoughtful breath before each challenge unlocks effortless clarity.”
+            </p>
+          </div>
+        </section>
+
+        <!-- 2. Hero Feature: Today's Mindful Brain Ritual -->
+        <section class="relative overflow-hidden rounded-xl bg-surface-container p-space-lg shadow-md transition-all">
+          <!-- Subtle organic background wave ring -->
+          <div class="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-secondary-fixed/30 pointer-events-none blur-2xl"></div>
+          <div class="absolute right-4 bottom-2 opacity-10 pointer-events-none">
+            <svg fill="none" height="120" viewBox="0 0 100 100" width="120">
+              <path d="M 20 60 A 30 30 0 1 1 80 60" stroke="#1E3A34" stroke-linecap="round" stroke-width="14"></path>
+              <path d="M 36 54 A 14 14 0 1 1 64 54" stroke="#1E3A34" stroke-dasharray="4 6" stroke-width="6"></path>
+              <circle cx="50" cy="52" fill="#356759" r="10"></circle>
             </svg>
-            <div class="readiness-meta">
-              <span class="readiness-percent">92%</span>
-              <span class="readiness-label">Ready</span>
+          </div>
+          <div class="relative z-10 flex flex-col space-y-space-md">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold tracking-wider uppercase">
+                  Curated Circuit
+                </span>
+                <span class="font-label-md text-label-md text-on-surface-variant">
+                  • 3 mins total
+                </span>
+              </div>
+              <span class="font-label-sm text-label-sm text-secondary flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">waves</span>
+                Zero pressure
+              </span>
+            </div>
+            <div>
+              <h3 class="font-headline-lg text-headline-lg text-on-surface">
+                Morning Cognitive Awakening
+              </h3>
+              <p class="font-body-md text-body-md text-on-surface-variant mt-1">
+                A soft 3-stage sequence designed to sharpen mental acuity, inhibit distractions, and boost dopamine.
+              </p>
+            </div>
+
+            <!-- Micro-breakdown Exercises -->
+            <div class="flex flex-col space-y-space-xs pt-1">
+              <!-- Step 1 -->
+              <div class="flex items-center justify-between p-space-sm bg-surface-container-lowest rounded-lg shadow-sm">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-sm text-label-sm font-semibold">
+                    1
+                  </span>
+                  <div class="flex flex-col">
+                    <span class="font-label-lg text-label-lg text-on-surface">Color Clash</span>
+                    <span class="font-label-sm text-label-sm text-outline">Attention &amp; Inhibition • 30s</span>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-outline text-[20px]">palette</span>
+              </div>
+              <!-- Step 2 -->
+              <div class="flex items-center justify-between p-space-sm bg-surface-container-lowest rounded-lg shadow-sm">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-sm text-label-sm font-semibold">
+                    2
+                  </span>
+                  <div class="flex flex-col">
+                    <span class="font-label-lg text-label-lg text-on-surface">Chimp Memory</span>
+                    <span class="font-label-sm text-label-sm text-outline">Working Memory Grid • 30s</span>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-outline text-[20px]">psychology</span>
+              </div>
+              <!-- Step 3 -->
+              <div class="flex items-center justify-between p-space-sm bg-surface-container-lowest rounded-lg shadow-sm">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-sm text-label-sm font-semibold">
+                    3
+                  </span>
+                  <div class="flex flex-col">
+                    <span class="font-label-lg text-label-lg text-on-surface">Rapid Math</span>
+                    <span class="font-label-sm text-label-sm text-outline">Mental Calculation • 30s</span>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-outline text-[20px]">calculate</span>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <button class="w-full h-[52px] mt-2 bg-primary text-on-primary rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md hover:bg-primary-container active:scale-[0.985] transition-all cursor-pointer" id="start-blitz-btn">
+              <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+              <span>Begin Today's Workout</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 3. Gentle Daily Rhythm: Non-punitive Habit Pebble Bar -->
+        <section class="flex flex-col space-y-space-sm bg-surface-container-low p-space-md rounded-xl">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary text-[22px]">energy_savings_leaf</span>
+              <h4 class="font-headline-md text-headline-md text-on-surface">Gentle Rhythm</h4>
+            </div>
+            <span class="font-label-md text-label-md text-on-secondary-container font-medium bg-secondary-container px-2.5 py-1 rounded-full">
+              <span id="home-best-streak">0</span>x Day Streak
+            </span>
+          </div>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            A mindful cadence with zero penalties for resting. Practice whenever your spirit welcomes it.
+          </p>
+
+          <!-- 7 Pebbles -->
+          <div class="grid grid-cols-7 gap-2 pt-2" id="pebble-tracker-grid">
+            <!-- Mon -->
+            <div class="flex flex-col items-center gap-1.5 pebble-item" data-day="0">
+              <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shadow-sm pebble-dot">
+                <span class="material-symbols-outlined text-on-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">M</span>
+            </div>
+            <!-- Tue -->
+            <div class="flex flex-col items-center gap-1.5 pebble-item" data-day="1">
+              <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shadow-sm pebble-dot">
+                <span class="material-symbols-outlined text-on-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">T</span>
+            </div>
+            <!-- Wed -->
+            <div class="flex flex-col items-center gap-1.5 pebble-item" data-day="2">
+              <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shadow-sm pebble-dot">
+                <span class="material-symbols-outlined text-on-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">W</span>
+            </div>
+            <!-- Thu -->
+            <div class="flex flex-col items-center gap-1.5 pebble-item" data-day="3">
+              <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shadow-sm pebble-dot">
+                <span class="material-symbols-outlined text-on-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">T</span>
+            </div>
+            <!-- Fri -->
+            <div class="flex flex-col items-center gap-1.5 pebble-item" data-day="4">
+              <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shadow-sm pebble-dot">
+                <span class="material-symbols-outlined text-on-secondary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">F</span>
+            </div>
+            <!-- Sat -->
+            <div class="flex flex-col items-center gap-1.5 pebble-item" data-day="5">
+              <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center pebble-dot">
+                <span class="material-symbols-outlined text-outline text-[16px]">pause</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-outline">S</span>
+            </div>
+            <!-- Sun -->
+            <div class="flex flex-col items-center gap-1.5 pebble-item" data-day="6">
+              <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center pebble-dot">
+                <span class="material-symbols-outlined text-outline text-[16px]">pause</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-outline">S</span>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- Daily Reflection Pill -->
-        <div class="reflection-banner">
-          <span class="reflection-icon">🕊️</span>
-          <span>"One thoughtful breath before each challenge."</span>
-        </div>
-      </header>
-
-
-      <!-- 2. Hero Feature: "Today's Mindful Brain Ritual" (Curated Circuit) -->
-      <article class="hero-ritual-card">
-        <div class="ritual-eyebrow">
-          <span class="ritual-tag">Today's Brain Ritual</span>
-          <span class="ritual-duration">Est. 2-3 mins • Low stress</span>
-        </div>
-        <h2 class="ritual-title">Morning Cognitive Awakening</h2>
-        <p class="ritual-desc">
-          A gentle 3-exercise cognitive circuit designed to sharpen mental acuity and boost dopamine without cognitive fatigue.
-        </p>
-
-        <!-- Micro-breakdown chips -->
-        <div class="ritual-circuit-chips">
-          <div class="circuit-chip">
-            <span>1</span> 🎨 Color Clash (Inhibition)
+        <!-- 4. Midday Reset & Ambient Soundscape Mini-Card -->
+        <section class="flex items-center justify-between p-space-md bg-surface-container-highest rounded-xl shadow-sm">
+          <div class="flex items-center gap-space-sm min-w-0">
+            <div class="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-primary-container flex items-center justify-center">
+              <img class="object-cover w-full h-full opacity-60" data-alt="Serene mist-covered bamboo forest in East Africa" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxJSDqr-kneemJGnFvEzPHUeJP1okLHbC3lUMH8R5lARnM5UVsJggRnZrPlMiAdcH9TN7jfv0Gy4OP8mKjwu9qdJ4WCeiw0N55y4dMvGhEPY64V0crXnNPIMQcg1hrPKvkkZ8LgqjCb-k1tS_5ISWR3Qw9wviTYw9dNqUEtad9UDzBa1i16zH42zP2pihs8UIcbHp7_QVH_Yxkmq4RErrriG3xhdLT4_MXbEwzU0Nx"/>
+              <span class="material-symbols-outlined text-on-primary absolute text-[24px]">graphic_eq</span>
+            </div>
+            <div class="flex flex-col min-w-0 pr-2">
+              <div class="flex items-center gap-1.5">
+                <span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Midday Reset</span>
+                <span class="text-outline text-label-sm">• Soundscape</span>
+              </div>
+              <h5 class="font-headline-md text-headline-md text-on-surface truncate">Forest Rain &amp; Singing Bowls</h5>
+              <p class="font-body-md text-body-md text-on-surface-variant truncate">Procedural tones to calm neural chatter</p>
+            </div>
           </div>
-          <div class="circuit-chip">
-            <span>2</span> 🐵 Chimp Memory (Recall)
-          </div>
-          <div class="circuit-chip">
-            <span>3</span> ⚡ Rapid Math (Speed)
-          </div>
-        </div>
-
-        <!-- Grounding CTA Button -->
-        <button class="ritual-cta-btn" id="start-blitz-btn">
-          <span>▶</span>
-          <span>Begin Today's Workout</span>
-        </button>
-      </article>
-
-
-      <!-- 3. Gentle Daily Rhythm (Weekly Streak & Habit Tracker) -->
-      <section class="habit-section">
-        <div class="habit-header">
-          <h3>Gentle Daily Rhythm</h3>
-          <span class="habit-badge"><span id="home-best-streak">0</span>x Day Streak</span>
-        </div>
-
-        <div class="pebble-row">
-          <div class="pebble-item">
-            <div class="pebble-dot active">🌿</div>
-            <span class="pebble-day-label">M</span>
-          </div>
-          <div class="pebble-item">
-            <div class="pebble-dot active">🌿</div>
-            <span class="pebble-day-label">T</span>
-          </div>
-          <div class="pebble-item">
-            <div class="pebble-dot active">🌿</div>
-            <span class="pebble-day-label">W</span>
-          </div>
-          <div class="pebble-item">
-            <div class="pebble-dot active">💧</div>
-            <span class="pebble-day-label">T</span>
-          </div>
-          <div class="pebble-item">
-            <div class="pebble-dot today">🌱</div>
-            <span class="pebble-day-label">F</span>
-          </div>
-          <div class="pebble-item">
-            <div class="pebble-dot">⚪</div>
-            <span class="pebble-day-label">S</span>
-          </div>
-          <div class="pebble-item">
-            <div class="pebble-dot">⚪</div>
-            <span class="pebble-day-label">S</span>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- 4. Targeted Mind Exercises (Browse by Cognitive Pillar) -->
-      <section class="pillars-section">
-        <div class="pillars-section-header">
-          <h3>Targeted Mind Exercises</h3>
-          <button class="btn btn-ghost" id="browse-games-btn" style="font-size: 0.85rem; padding: 0.2rem 0.5rem; color: var(--secondary);">
-            View All (5) →
+          <button aria-label="Play soundscape" class="w-11 h-11 rounded-full bg-surface-container-lowest text-on-surface flex items-center justify-center shrink-0 shadow-sm active:scale-95 transition-all cursor-pointer" id="ambient-play-toggle">
+            <span class="material-symbols-outlined text-[24px]">play_arrow</span>
           </button>
-        </div>
+        </section>
 
-        <div class="pillars-grid">
-          <!-- Pillar 1: Attention -->
-          <div class="pillar-card" onclick="window.launchGameFromPillar('color-clash')">
-            <div class="pillar-card-top">
-              <div class="pillar-icon-box" style="color: #ef4444;">🎨</div>
-              <span class="pillar-time-chip">30s drill</span>
+        <!-- 5. Targeted Mind Exercises (Pillars Grid) -->
+        <section class="flex flex-col space-y-space-md">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col">
+              <h3 class="font-headline-lg text-headline-lg text-on-surface">Targeted Mind Exercises</h3>
+              <p class="font-body-md text-body-md text-on-surface-variant">Self-directed micro-drills to deepen mental stamina</p>
             </div>
-            <h4>Color Clash</h4>
-            <p>Stroop inhibition: Select the ink color of the word without reading the text.</p>
-            <div class="pillar-card-footer">
-              <span>Attention & Focus</span>
-              <strong style="color: var(--secondary);">Play →</strong>
-            </div>
+            <button class="font-label-md text-label-md text-secondary font-semibold hover:underline cursor-pointer" id="browse-games-btn">
+              All (5) →
+            </button>
           </div>
 
-          <!-- Pillar 2: Memory -->
-          <div class="pillar-card" onclick="window.launchGameFromPillar('chimp-memory')">
-            <div class="pillar-card-top">
-              <div class="pillar-icon-box" style="color: #10b981;">🐵</div>
-              <span class="pillar-time-chip">Memory grid</span>
+          <!-- 2-Column Responsive Card Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+            <!-- Card 1: Color Clash -->
+            <div class="flex flex-col justify-between p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="window.launchGameFromPillar('color-clash')">
+              <div class="flex flex-col space-y-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[22px] text-red-500">palette</span>
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-secondary font-medium">
+                    Inhibition
+                  </span>
+                </div>
+                <h4 class="font-headline-md text-headline-md text-on-surface pt-2">Color Clash</h4>
+                <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                  Classic Stroop Effect: Select the ink color of the word without reading the text.
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-space-md mt-space-sm border-t border-outline-variant/30">
+                <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span> 30s drill
+                </span>
+                <span class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-secondary">
+                  <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </span>
+              </div>
             </div>
-            <h4>Chimp Memory</h4>
-            <p>Kyoto primate recall: Memorize numbers 1..N and click tiles in ascending order.</p>
-            <div class="pillar-card-footer">
-              <span>Working Memory</span>
-              <strong style="color: var(--secondary);">Play →</strong>
+
+            <!-- Card 2: Chimp Memory -->
+            <div class="flex flex-col justify-between p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="window.launchGameFromPillar('chimp-memory')">
+              <div class="flex flex-col space-y-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[22px] text-emerald-600">psychology</span>
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-secondary font-medium">
+                    Working Memory
+                  </span>
+                </div>
+                <h4 class="font-headline-md text-headline-md text-on-surface pt-2">Chimp Memory</h4>
+                <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                  Kyoto Primate Memory: Flash-memorize numbers 1..N and recall in ascending order.
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-space-md mt-space-sm border-t border-outline-variant/30">
+                <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span> Memory grid
+                </span>
+                <span class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-secondary">
+                  <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Card 3: Rapid Math -->
+            <div class="flex flex-col justify-between p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="window.launchGameFromPillar('rapid-math')">
+              <div class="flex flex-col space-y-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[22px] text-blue-500">calculate</span>
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-secondary font-medium">
+                    Calculation
+                  </span>
+                </div>
+                <h4 class="font-headline-md text-headline-md text-on-surface pt-2">Rapid Math</h4>
+                <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                  Mental arithmetic: Solve speed equations and True/False assertions against time.
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-space-md mt-space-sm border-t border-outline-variant/30">
+                <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span> 30s drill
+                </span>
+                <span class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-secondary">
+                  <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Card 4: Confusing Arrows -->
+            <div class="flex flex-col justify-between p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="window.launchGameFromPillar('confusing-arrows')">
+              <div class="flex flex-col space-y-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[22px] text-amber-500">explore</span>
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-secondary font-medium">
+                    Spatial Reflex
+                  </span>
+                </div>
+                <h4 class="font-headline-md text-headline-md text-on-surface pt-2">Confusing Arrows</h4>
+                <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                  Rule-switching: Green matches pointing direction, Red demands the direct opposite.
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-space-md mt-space-sm border-t border-outline-variant/30">
+                <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span> 30s drill
+                </span>
+                <span class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-secondary">
+                  <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Card 5: Pattern Sequence -->
+            <div class="sm:col-span-2 flex flex-col justify-between p-space-md bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="window.launchGameFromPillar('number-sequence')">
+              <div class="flex flex-col space-y-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[22px] text-purple-500">extension</span>
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-secondary font-medium">
+                    Logic Deduction
+                  </span>
+                </div>
+                <h4 class="font-headline-md text-headline-md text-on-surface pt-2">Pattern Sequence</h4>
+                <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                  Inductive logic: Deduce the hidden mathematical rule to find the missing number.
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-space-md mt-space-sm border-t border-outline-variant/30">
+                <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span> 30s drill
+                </span>
+                <span class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-secondary">
+                  <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </span>
+              </div>
             </div>
           </div>
+        </section>
 
-          <!-- Pillar 3: Calculation -->
-          <div class="pillar-card" onclick="window.launchGameFromPillar('rapid-math')">
-            <div class="pillar-card-top">
-              <div class="pillar-icon-box" style="color: #3b82f6;">⚡</div>
-              <span class="pillar-time-chip">Quick math</span>
-            </div>
-            <h4>Rapid Math</h4>
-            <p>Speed arithmetic: Solve equations and True/False questions under time pressure.</p>
-            <div class="pillar-card-footer">
-              <span>Calculation</span>
-              <strong style="color: var(--secondary);">Play →</strong>
-            </div>
+        <!-- 6. Footer Action Bar & Quick Stats Preview -->
+        <footer class="flex items-center justify-between p-space-md bg-surface-container-low rounded-xl border border-border-subtle/50">
+          <div class="text-xs text-on-surface-variant">
+            Best Rating: <strong id="home-best-bq" class="text-primary font-bold">—</strong> • Games: <strong id="home-total-games" class="text-primary font-bold">0</strong>
           </div>
+          <button class="btn btn-outline text-xs py-2 px-4 h-auto min-h-0 cursor-pointer" id="view-stats-btn">
+            📊 Career Stats
+          </button>
+        </footer>
 
-          <!-- Pillar 4: Reflex -->
-          <div class="pillar-card" onclick="window.launchGameFromPillar('confusing-arrows')">
-            <div class="pillar-card-top">
-              <div class="pillar-icon-box" style="color: #f59e0b;">🧭</div>
-              <span class="pillar-time-chip">Spatial reflex</span>
-            </div>
-            <h4>Confusing Arrows</h4>
-            <p>Spatial rule-switching: Green matches direction, Red demands the opposite.</p>
-            <div class="pillar-card-footer">
-              <span>Spatial Reflex</span>
-              <strong style="color: var(--secondary);">Play →</strong>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- 5. Ambient Reset & Audio Soundscape Bar -->
-      <div class="ambient-reset-card">
-        <div class="ambient-left">
-          <span class="ambient-icon">🎧</span>
-          <div>
-            <div class="ambient-title">Ambient Soundscape & Tones</div>
-            <div class="ambient-sub">Web Audio procedural feedback synthesizer</div>
-          </div>
-        </div>
-        <button class="btn btn-secondary" id="home-sound-btn" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
-          🔊 Sound: On
-        </button>
       </div>
-
-
-      <!-- Footer Action Bar -->
-      <footer class="menu-footer-bar">
-        <div style="font-size: 0.82rem; color: var(--text-muted);">
-          Best Rating: <strong id="home-best-bq" style="color: var(--primary);">—</strong> • Games: <strong id="home-total-games">0</strong>
-        </div>
-        <button class="btn btn-outline" id="view-stats-btn" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
-          📊 Career Stats
-        </button>
-      </footer>
     </section>
 
-
     <!-- ====================================================================
-         SCREEN 2: GAME SELECTOR (FREE PLAY)
+         SCREEN 2: GAME SELECTOR (FREE PLAY / SANCTUARY)
          ==================================================================== -->
     <section class="screen-view" data-screen="select" id="screen-select">
       <header class="picker-header" style="margin-bottom: 1.5rem;">
         <div>
-          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0; color: var(--secondary);">← Back to Main Menu</button>
+          <button class="btn btn-ghost" id="back-to-home-btn" style="padding-left: 0; color: var(--secondary);">← Back to Today</button>
           <h2 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-top: 0.25rem; color: var(--primary);">Choose an Exercise</h2>
         </div>
       </header>
@@ -251,7 +580,6 @@
         <!-- Dynamically rendered by app.js -->
       </div>
     </section>
-
 
     <!-- ====================================================================
          SCREEN 3: READY COUNTDOWN
@@ -269,7 +597,6 @@
       </div>
     </section>
 
-
     <!-- ====================================================================
          SCREEN 4: ACTIVE GAMEPLAY & HUD
          ==================================================================== -->
@@ -284,7 +611,6 @@
         <!-- Game class injects interactive puzzle DOM here -->
       </div>
     </section>
-
 
     <!-- ====================================================================
          SCREEN 5: ROUND SUMMARY
@@ -322,7 +648,6 @@
       </div>
     </section>
 
-
     <!-- ====================================================================
          SCREEN 6: FINAL BLITZ RESULTS
          ==================================================================== -->
@@ -357,6 +682,44 @@
 
   </main>
 
+  <!-- ====================================================================
+       FIXED BOTTOM NAVIGATION BAR (Stitch Calm Design)
+       ==================================================================== -->
+  <nav id="app-bottom-nav" class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.03)] border-t border-border-subtle/30" data-active-classes="text-primary font-semibold [&>div]:bg-secondary-container [&>div]:text-on-secondary-container">
+    <div class="flex justify-around items-center h-20 px-space-sm max-w-[760px] mx-auto">
+      <!-- Today Tab -->
+      <a aria-current="page" class="flex flex-col items-center justify-center gap-space-xs min-w-[44px] min-h-[44px] flex-1 py-space-xs transition-all active:scale-95 text-primary font-semibold [&>div]:bg-secondary-container [&>div]:text-on-secondary-container cursor-pointer" data-path="today" href="#today">
+        <div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined text-[22px]">spa</span>
+        </div>
+        <span class="font-label-md text-label-md tracking-tight">Today</span>
+      </a>
+
+      <!-- Sanctuary Tab -->
+      <a class="flex flex-col items-center justify-center gap-space-xs min-w-[44px] min-h-[44px] flex-1 py-space-xs text-on-surface-variant hover:text-on-surface transition-all active:scale-95 cursor-pointer" data-path="sanctuary" href="#sanctuary">
+        <div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined text-[22px]">self_improvement</span>
+        </div>
+        <span class="font-label-md text-label-md tracking-tight">Sanctuary</span>
+      </a>
+
+      <!-- Insights Tab -->
+      <a class="flex flex-col items-center justify-center gap-space-xs min-w-[44px] min-h-[44px] flex-1 py-space-xs text-on-surface-variant hover:text-on-surface transition-all active:scale-95 cursor-pointer" data-path="insights" href="#insights">
+        <div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined text-[22px]">water_drop</span>
+        </div>
+        <span class="font-label-md text-label-md tracking-tight">Insights</span>
+      </a>
+
+      <!-- Profile Tab -->
+      <a class="flex flex-col items-center justify-center gap-space-xs min-w-[44px] min-h-[44px] flex-1 py-space-xs text-on-surface-variant hover:text-on-surface transition-all active:scale-95 cursor-pointer" data-path="profile" href="#profile">
+        <div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined text-[22px]">psychology</span>
+        </div>
+        <span class="font-label-md text-label-md tracking-tight">Profile</span>
+      </a>
+    </div>
+  </nav>
 
   <!-- ====================================================================
        MODAL 1: PAUSE OVERLAY
@@ -368,12 +731,11 @@
       <p style="color: var(--text-muted); font-size: 0.9rem;">Take a gentle breath. Your timer is paused.</p>
       
       <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
-        <button class="btn btn-primary" id="pause-resume-btn">Resume Session ▶</button>
-        <button class="btn btn-outline" id="pause-quit-btn">Back to Main Menu ✕</button>
+        <button class="btn btn-primary cursor-pointer" id="pause-resume-btn">Resume Session ▶</button>
+        <button class="btn btn-outline cursor-pointer" id="pause-quit-btn">Back to Main Menu ✕</button>
       </div>
     </div>
   </div>
-
 
   <!-- ====================================================================
        MODAL 2: SURNAME SETUP / EDIT
@@ -390,20 +752,19 @@
         <input 
           type="text" 
           id="surname-input" 
-          placeholder="e.g. Mwamburi, Kiprop, Omondi..." 
+          placeholder="e.g. Mwamburi, Anderson, Miller..." 
           autocomplete="family-name"
           maxlength="25"
           required 
           style="width: 100%; padding: 0.85rem 1.25rem; border-radius: var(--radius-md); border: 1.5px solid var(--border-subtle); background: var(--surface-subdued); font-family: var(--font-sans); font-size: 1.05rem; font-weight: 600; color: var(--text-primary); outline: none; text-align: center;" 
         />
         <div style="display: flex; gap: 0.5rem;">
-          <button type="button" class="btn btn-outline" id="surname-skip-btn" style="flex: 1; font-size: 0.88rem;">Skip for Now</button>
-          <button type="submit" class="btn btn-primary" style="flex: 2; font-size: 0.95rem;">Save & Continue 🍃</button>
+          <button type="button" class="btn btn-outline cursor-pointer" id="surname-skip-btn" style="flex: 1; font-size: 0.88rem;">Skip for Now</button>
+          <button type="submit" class="btn btn-primary cursor-pointer" style="flex: 2; font-size: 0.95rem;">Save & Continue 🍃</button>
         </div>
       </form>
     </div>
   </div>
-
 
   <!-- ====================================================================
        MODAL 3: CAREER STATS & RECORDS
@@ -412,7 +773,7 @@
     <div class="modal-content" style="max-width: 520px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--primary);">📊 Career Stats & Growth</h3>
-        <button class="btn btn-ghost" id="close-stats-btn" style="padding: 0.4rem 0.6rem;">✕</button>
+        <button class="btn btn-ghost cursor-pointer" id="close-stats-btn" style="padding: 0.4rem 0.6rem;">✕</button>
       </div>
 
       <div class="summary-stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 0.5rem;">
@@ -447,7 +808,37 @@
       </div>
 
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
-        <button class="btn btn-ghost" id="reset-stats-btn" style="color: var(--feedback-correction); font-size: 0.8rem;">Reset All Records</button>
+        <button class="btn btn-ghost cursor-pointer" id="reset-stats-btn" style="color: var(--feedback-correction); font-size: 0.8rem;">Reset All Records</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 4: MINDFUL BREATHING INTERSTITIAL MODAL (Stitch Flow)
+       ==================================================================== -->
+  <div class="modal-overlay fixed inset-0 z-50 bg-primary/40 backdrop-blur-md hidden items-center justify-center p-margin" id="mindful-modal" aria-hidden="true">
+    <div class="relative w-full max-w-sm bg-surface rounded-xl p-space-xl shadow-xl flex flex-col items-center text-center space-y-space-md border border-border-subtle">
+      <!-- Organic Breathing Expanding/Contracting Disk -->
+      <div class="relative w-36 h-36 flex items-center justify-center my-2">
+        <div class="absolute w-28 h-28 rounded-full bg-secondary-fixed opacity-40 transition-transform duration-[4000ms] ease-in-out scale-75" id="breath-disk"></div>
+        <div class="relative z-10 w-20 h-20 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-md">
+          <span class="material-symbols-outlined text-[36px]">air</span>
+        </div>
+      </div>
+      <div class="flex flex-col space-y-1">
+        <span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-widest" id="breath-phase">Inhale deeply</span>
+        <h4 class="font-headline-lg text-headline-lg text-on-surface">Find Stillness</h4>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          Take one measured breath before starting stage one: Color Clash.
+        </p>
+      </div>
+      <div class="flex w-full gap-2 pt-2">
+        <button class="flex-1 h-12 bg-surface-container text-on-surface rounded-lg font-label-lg text-label-lg hover:bg-surface-container-high transition-colors cursor-pointer" id="close-modal-btn">
+          Later
+        </button>
+        <button class="flex-1 h-12 bg-primary text-on-primary rounded-lg font-label-lg text-label-lg hover:bg-primary-container transition-colors shadow-sm cursor-pointer" id="proceed-workout-btn">
+          Enter Flow
+        </button>
       </div>
     </div>
   </div>

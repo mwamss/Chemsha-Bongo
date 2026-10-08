@@ -82,3 +82,9 @@
   30%, 50%, 70% { transform: translate3d(-6px, -1px, 0); }
   40%, 60% { transform: translate3d(6px, 1px, 0); }
 }
+
+/* Mindful Breathing Disk */
+#breath-disk {
+  transition: transform 4000ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+

@@ -37,6 +37,39 @@ export class ScreenManager {
     } else {
       console.warn(`Screen "${screenName}" not found in ScreenManager.`);
     }
+
+    // Manage top header and bottom nav visibility
+    const headerEl = document.getElementById('app-header');
+    const navEl = document.getElementById('app-bottom-nav');
+    const isNavigationVisible = screenName === 'home' || screenName === 'select';
+
+    if (this.container) {
+      this.container.classList.toggle('in-game', !isNavigationVisible);
+    }
+
+    if (headerEl) {
+      headerEl.style.display = isNavigationVisible ? '' : 'none';
+      const titleEl = document.getElementById('header-title');
+      if (titleEl) {
+        titleEl.textContent = screenName === 'select' ? 'Sanctuary' : 'Today';
+      }
+    }
+
+    if (navEl) {
+      navEl.style.display = isNavigationVisible ? '' : 'none';
+      const navLinks = navEl.querySelectorAll('a[data-path]');
+      navLinks.forEach(link => {
+        const path = link.getAttribute('data-path');
+        const isActive = (screenName === 'home' && path === 'today') || (screenName === 'select' && path === 'sanctuary');
+        if (isActive) {
+          link.setAttribute('aria-current', 'page');
+          link.className = 'flex flex-col items-center justify-center gap-space-xs min-w-[44px] min-h-[44px] flex-1 py-space-xs transition-all active:scale-95 text-primary font-semibold [&>div]:bg-secondary-container [&>div]:text-on-secondary-container cursor-pointer';
+        } else {
+          link.removeAttribute('aria-current');
+          link.className = 'flex flex-col items-center justify-center gap-space-xs min-w-[44px] min-h-[44px] flex-1 py-space-xs text-on-surface-variant hover:text-on-surface transition-all active:scale-95 cursor-pointer';
+        }
+      });
+    }
   }
 
   showPauseOverlay(show = true) {
