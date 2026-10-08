@@ -120,6 +120,27 @@ class App {
       headerSurnameEl.textContent = savedSurname || 'Player';
     }
 
+    // Sync initials avatar (header) and sidebar profile card
+    const initial = savedSurname ? savedSurname.trim()[0].toUpperCase() : 'P';
+    const avatarBg = savedSurname ? '#1e3a34' : '#727976'; // primary dark vs muted grey when no name set
+
+    const headerAvatar = document.getElementById('header-avatar');
+    if (headerAvatar) {
+      headerAvatar.textContent = initial;
+      headerAvatar.style.backgroundColor = avatarBg;
+    }
+
+    const sidebarAvatar = document.getElementById('sidebar-avatar');
+    if (sidebarAvatar) {
+      sidebarAvatar.textContent = initial;
+      sidebarAvatar.style.backgroundColor = avatarBg;
+    }
+
+    const sidebarSurnameEl = document.getElementById('sidebar-surname-display');
+    if (sidebarSurnameEl) {
+      sidebarSurnameEl.textContent = savedSurname || 'Player';
+    }
+
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -217,7 +238,55 @@ class App {
       if ((e.key === 'Escape' || e.key.toLowerCase() === 'p') && this.screens.currentScreen === 'play') {
         this.gameManager.togglePause();
       }
+      // ESC also closes the sidebar
+      if (e.key === 'Escape') this.closeSidebar();
     });
+
+    // ── Sidebar controller ─────────────────────────────────────────────
+    const sidebarToggleBtn  = document.getElementById('sidebar-toggle-btn');
+    const sidebarCloseBtn   = document.getElementById('sidebar-close-btn');
+    const sidebarBackdrop   = document.getElementById('sidebar-backdrop');
+    const sidebarEditBtn    = document.getElementById('sidebar-edit-profile-btn');
+
+    if (sidebarToggleBtn)  sidebarToggleBtn.addEventListener('click',  () => { this.sound.playClick(); this.openSidebar();  });
+    if (sidebarCloseBtn)   sidebarCloseBtn.addEventListener('click',   () => { this.sound.playClick(); this.closeSidebar(); });
+    if (sidebarBackdrop)   sidebarBackdrop.addEventListener('click',   () => this.closeSidebar());
+    if (sidebarEditBtn)    sidebarEditBtn.addEventListener('click',    () => { this.sound.playClick(); this.closeSidebar(); this.openSurnameModal(); });
+
+    // Sidebar nav links — route to the correct screen and close sidebar
+    document.querySelectorAll('[data-sidebar-nav]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.getAttribute('data-sidebar-nav');
+        this.sound.playClick();
+        this.closeSidebar();
+        if (target === 'sanctuary') {
+          this.updateExerciseCatalogStats();
+          this.screens.showScreen('select');
+        } else {
+          this.updateHomeStatsPreview();
+          this.screens.showScreen('home');
+        }
+      });
+    });
+  }
+
+  openSidebar() {
+    const sidebar  = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const toggleBtn = document.getElementById('sidebar-toggle-btn');
+    if (sidebar)  { sidebar.classList.add('translate-x-0'); sidebar.classList.remove('-translate-x-full'); sidebar.setAttribute('aria-hidden', 'false'); }
+    if (backdrop) { backdrop.classList.remove('opacity-0', 'pointer-events-none'); backdrop.classList.add('opacity-100'); backdrop.setAttribute('aria-hidden', 'false'); }
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+  }
+
+  closeSidebar() {
+    const sidebar  = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const toggleBtn = document.getElementById('sidebar-toggle-btn');
+    if (sidebar)  { sidebar.classList.remove('translate-x-0'); sidebar.classList.add('-translate-x-full'); sidebar.setAttribute('aria-hidden', 'true'); }
+    if (backdrop) { backdrop.classList.add('opacity-0', 'pointer-events-none'); backdrop.classList.remove('opacity-100'); backdrop.setAttribute('aria-hidden', 'true'); }
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
   }
 
   bindHomeEvents() {

@@ -159,26 +159,166 @@
   <canvas id="fx-canvas"></canvas>
 
   <!-- ====================================================================
+       LEFT SIDEBAR DRAWER
+       Slide-in navigation panel. Toggle with #sidebar-toggle-btn.
+       Add components inside <!-- SIDEBAR SLOT --> sections below.
+       ==================================================================== -->
+
+  <!-- Sidebar Backdrop -->
+  <div
+    id="sidebar-backdrop"
+    class="fixed inset-0 z-[60] bg-primary/20 backdrop-blur-[2px] opacity-0 pointer-events-none transition-opacity duration-300"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Sidebar Drawer -->
+  <aside
+    id="app-sidebar"
+    class="fixed top-0 left-0 h-full w-72 z-[70] flex flex-col bg-surface border-r border-border-subtle/40 shadow-[4px_0_32px_rgba(6,36,31,0.10)] pt-safe -translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+    aria-label="Side navigation"
+    aria-hidden="true"
+  >
+    <!-- Sidebar Header -->
+    <div class="flex items-center justify-between px-5 h-16 border-b border-border-subtle/30 shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-[20px] text-secondary">spa</span>
+        <span class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none">Menu</span>
+      </div>
+      <button
+        id="sidebar-close-btn"
+        class="flex items-center justify-center w-9 h-9 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-95 cursor-pointer"
+        aria-label="Close menu"
+      >
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Scrollable content area -->
+    <div class="flex flex-col flex-1 overflow-y-auto px-4 py-5 gap-6">
+
+      <!-- ── SIDEBAR SLOT: Player Profile card ─────────────────────────── -->
+      <section class="flex flex-col gap-1" aria-label="Profile">
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container border border-border-subtle/40">
+          <!-- Dynamic avatar mirror -->
+          <div
+            id="sidebar-avatar"
+            class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-base select-none bg-[#1e3a34] text-white shadow-sm shrink-0"
+          >P</div>
+          <div class="flex flex-col min-w-0">
+            <span class="font-headline-md text-sm text-on-surface font-semibold truncate" id="sidebar-surname-display">Player</span>
+            <span class="font-label-sm text-[11px] text-secondary uppercase tracking-wider mt-0.5">Mindful Tier</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SIDEBAR SLOT: Quick Navigation ────────────────────────────── -->
+      <section class="flex flex-col gap-1" aria-label="Navigation">
+        <p class="font-label-sm text-[10px] text-outline uppercase tracking-widest px-1 mb-1">Navigate</p>
+        <nav class="flex flex-col gap-0.5">
+          <a
+            href="#today"
+            data-sidebar-nav="today"
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all cursor-pointer group"
+          >
+            <span class="material-symbols-outlined text-[20px] text-secondary group-hover:text-on-surface transition-colors">spa</span>
+            <span class="font-label-lg text-sm font-medium">Today</span>
+          </a>
+          <a
+            href="#sanctuary"
+            data-sidebar-nav="sanctuary"
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all cursor-pointer group"
+          >
+            <span class="material-symbols-outlined text-[20px] text-secondary group-hover:text-on-surface transition-colors">self_improvement</span>
+            <span class="font-label-lg text-sm font-medium">Sanctuary</span>
+          </a>
+          <a
+            href="#insights"
+            data-sidebar-nav="insights"
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all cursor-pointer group"
+          >
+            <span class="material-symbols-outlined text-[20px] text-secondary group-hover:text-on-surface transition-colors">water_drop</span>
+            <span class="font-label-lg text-sm font-medium">Insights</span>
+          </a>
+          <a
+            href="#profile"
+            data-sidebar-nav="profile"
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all cursor-pointer group"
+          >
+            <span class="material-symbols-outlined text-[20px] text-secondary group-hover:text-on-surface transition-colors">psychology</span>
+            <span class="font-label-lg text-sm font-medium">Profile</span>
+          </a>
+        </nav>
+      </section>
+
+      <!-- ── SIDEBAR SLOT: [Reserved for future components] ────────────── -->
+      <!-- Add new sidebar sections / widgets here -->
+
+    </div><!-- end scrollable content -->
+
+    <!-- Sidebar Footer -->
+    <div class="px-5 py-4 border-t border-border-subtle/30 shrink-0">
+      <button
+        id="sidebar-edit-profile-btn"
+        class="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all text-left cursor-pointer group"
+      >
+        <span class="material-symbols-outlined text-[18px] text-secondary group-hover:text-on-surface transition-colors">manage_accounts</span>
+        <span class="font-label-lg text-sm font-medium">Edit Surname / Profile</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ====================================================================
        FIXED TOP HEADER (Stitch Calm Design)
        ==================================================================== -->
   <header id="app-header" class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-b border-border-subtle/30">
     <div class="h-16 px-margin flex items-center justify-between max-w-[1140px] mx-auto">
-      <div class="flex items-center gap-space-sm cursor-pointer" id="header-brand-btn">
-        <img alt="Chemsha Bongo Calm Brain Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UCMzigjpyGsIjY_KDIvI1aDgw0AVKPqwqZg6QI1dZ_ytwHuZiuY7CDdStF4kRq0vTMQ_uuW4i7ZK3SK6kckRStYoZ6H7rWH7FcZwv14QcZByGxS361cyPLpj9MLty5gGqJ8PKH1YLKcIdw2vqBj-qAVm_xGTaoBue5_RUXJRnKvupvyhXhTwVnKby30QHdXZ5-vRb4dwsDDT516RmX8iq9o0KrT7PULKJRCfIpCI9zmA"/>
-        <div class="flex flex-col">
-          <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">Chemsha Bongo</span>
-          <h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none" id="header-title">Today</h1>
+
+      <!-- Left cluster: menu toggle + brand -->
+      <div class="flex items-center gap-space-sm">
+        <!-- Hamburger / sidebar toggle -->
+        <button
+          id="sidebar-toggle-btn"
+          class="relative flex items-center justify-center w-10 h-10 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-95 cursor-pointer"
+          aria-label="Open menu"
+          aria-controls="app-sidebar"
+          aria-expanded="false"
+        >
+          <span class="material-symbols-outlined text-[22px]">menu</span>
+        </button>
+
+        <!-- Brand -->
+        <div class="flex items-center gap-space-sm cursor-pointer" id="header-brand-btn">
+          <img alt="Chemsha Bongo Calm Brain Emblem" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UCMzigjpyGsIjY_KDIvI1aDgw0AVKPqwqZg6QI1dZ_ytwHuZiuY7CDdStF4kRq0vTMQ_uuW4i7ZK3SK6kckRStYoZ6H7rWH7FcZwv14QcZByGxS361cyPLpj9MLty5gGqJ8PKH1YLKcIdw2vqBj-qAVm_xGTaoBue5_RUXJRnKvupvyhXhTwVnKby30QHdXZ5-vRb4dwsDDT516RmX8iq9o0KrT7PULKJRCfIpCI9zmA"/>
+          <div class="flex flex-col">
+            <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">Chemsha Bongo</span>
+            <h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none" id="header-title">Today</h1>
+          </div>
         </div>
       </div>
+
+      <!-- Right cluster: name label + initials avatar -->
       <div class="flex items-center gap-space-sm">
         <div class="hidden sm:flex flex-col text-right cursor-pointer" id="header-name-box">
           <span class="font-label-lg text-xs text-[#1e3a34] font-semibold leading-none" id="header-surname-display">Player</span>
           <span class="font-label-sm text-[10px] text-[#414846] mt-0.5">Mindful Tier</span>
         </div>
-        <button class="relative p-space-xs rounded-full flex items-center justify-center min-w-[44px] min-h-[44px] transition-transform active:scale-95 cursor-pointer" id="header-profile-btn" data-path="profile" title="View or Edit Profile">
-          <img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_2px_8px_rgba(30,58,52,0.08)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA78kUWyWAC_f2W3_tRfDCeb1LEYfmjpWYaXUKOydLJ8vp65SnIklqYSoXj7qd1YZTqkXYqCCwU_hwt-FFc7-bkMPYo--z1TAvOIn_hzXzY4rh9qUbOLybEvOsEvQaUMEFLQ3mmeGO8CPGe8VlRQ4MTNhfoUg0GGHmsCj1e6IpKcFGwlRjzQ_JYdlwudBPNeW4-KgE5la91znSkpJj98ZbryNMouR0-dhe-FvoA-Bpu"/>
+
+        <!-- Dynamic initials avatar (replaces hardcoded photo) -->
+        <button
+          class="relative flex items-center justify-center min-w-[44px] min-h-[44px] transition-transform active:scale-95 cursor-pointer"
+          id="header-profile-btn"
+          data-path="profile"
+          title="View or Edit Profile"
+          aria-label="Profile"
+        >
+          <div
+            id="header-avatar"
+            class="w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm select-none shadow-[0_2px_8px_rgba(30,58,52,0.12)] bg-[#1e3a34] text-white transition-all"
+            aria-hidden="true"
+          >P</div>
         </button>
       </div>
+
     </div>
   </header>
 
