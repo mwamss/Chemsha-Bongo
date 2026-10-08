@@ -271,64 +271,51 @@
        FIXED TOP HEADER (Stitch Calm Design)
        ==================================================================== -->
   <header id="app-header" class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-b border-border-subtle/30">
-    <div class="h-16 px-margin flex items-center justify-between max-w-[1140px] mx-auto">
+    <div class="h-16 px-4 flex items-center justify-between w-full max-w-[1140px] mx-auto">
 
-      <!-- Left cluster: menu toggle + brand -->
-      <div class="flex items-center gap-2">
-        <!-- Hamburger / sidebar toggle -->
-        <button
-          id="sidebar-toggle-btn"
-          class="relative flex items-center justify-center w-10 h-10 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-95 cursor-pointer"
-          aria-label="Open menu"
-          aria-controls="app-sidebar"
-          aria-expanded="false"
+      <!-- ── LEFT: Brand button (click anywhere → opens sidebar) ─────── -->
+      <button
+        id="sidebar-toggle-btn"
+        class="flex items-center gap-2 rounded-xl px-2 py-1.5 -ml-2 text-left transition-all hover:bg-surface-container active:scale-[0.98] cursor-pointer group"
+        aria-label="Open menu"
+        aria-controls="app-sidebar"
+        aria-expanded="false"
+      >
+        <!-- Brain emblem SVG -->
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          class="h-8 w-8 shrink-0 transition-transform group-hover:scale-105"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <span class="material-symbols-outlined text-[22px]">menu</span>
-        </button>
+          <path d="M8 22 C8 11 32 11 32 22" stroke="#1e3a34" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M12 22 C12 16 28 16 28 22" stroke="#356759" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="20" y1="11" x2="20" y2="28" stroke="#9dd1c0" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M10 19 Q8 17 10 15" stroke="#1e3a34" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M30 19 Q32 17 30 15" stroke="#1e3a34" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M16 28 Q20 32 24 28" stroke="#356759" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="20" cy="22" r="2" fill="#b8eedb"/>
+        </svg>
 
-        <!-- Brand: inline SVG logo + wordmark -->
-        <div class="flex items-center gap-2 cursor-pointer" id="header-brand-btn">
-          <!-- Inline SVG brain emblem (self-hosted, always renders) -->
-          <svg
-            aria-label="Chemsha Bongo Calm Brain Emblem"
-            role="img"
-            class="h-8 w-8 shrink-0"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <!-- Outer arc — upper hemisphere of brain -->
-            <path d="M8 22 C8 11 32 11 32 22" stroke="#1e3a34" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-            <!-- Inner arc — lower fold -->
-            <path d="M12 22 C12 16 28 16 28 22" stroke="#356759" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-            <!-- Centre hemisphere divider -->
-            <line x1="20" y1="11" x2="20" y2="28" stroke="#9dd1c0" stroke-width="1.6" stroke-linecap="round"/>
-            <!-- Left gyrus curl -->
-            <path d="M10 19 Q8 17 10 15" stroke="#1e3a34" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-            <!-- Right gyrus curl -->
-            <path d="M30 19 Q32 17 30 15" stroke="#1e3a34" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-            <!-- Brain stem -->
-            <path d="M16 28 Q20 32 24 28" stroke="#356759" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-            <!-- Nucleus dot -->
-            <circle cx="20" cy="22" r="2" fill="#b8eedb"/>
-          </svg>
-
-          <div class="flex flex-col">
-            <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase leading-none">Chemsha Bongo</span>
-            <h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none mt-0.5" id="header-title">Today</h1>
-          </div>
+        <!-- Wordmark -->
+        <div class="flex flex-col text-left">
+          <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase leading-none">Chemsha Bongo</span>
+          <span class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none mt-0.5" id="header-title">Today</span>
         </div>
-      </div>
 
+        <!-- Inline menu chevron indicator -->
+        <span class="material-symbols-outlined text-[16px] text-on-surface-variant ml-1 opacity-50 group-hover:opacity-100 transition-opacity">expand_more</span>
+      </button>
 
-      <!-- Right cluster: name label + initials avatar -->
+      <!-- ── RIGHT: Name label + initials avatar ─────────────────────── -->
       <div class="flex items-center gap-space-sm">
         <div class="hidden sm:flex flex-col text-right cursor-pointer" id="header-name-box">
           <span class="font-label-lg text-xs text-[#1e3a34] font-semibold leading-none" id="header-surname-display">Player</span>
           <span class="font-label-sm text-[10px] text-[#414846] mt-0.5">Mindful Tier</span>
         </div>
 
-        <!-- Dynamic initials avatar (replaces hardcoded photo) -->
         <button
           class="relative flex items-center justify-center min-w-[44px] min-h-[44px] transition-transform active:scale-95 cursor-pointer"
           id="header-profile-btn"
@@ -346,6 +333,7 @@
 
     </div>
   </header>
+
 
   <!-- ====================================================================
        APP CONTAINER: SCREEN VIEWS

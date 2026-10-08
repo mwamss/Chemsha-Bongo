@@ -568,13 +568,7 @@ class App {
       });
     }
 
-    const headerBrandBtn = document.getElementById('header-brand-btn');
-    if (headerBrandBtn) {
-      headerBrandBtn.addEventListener('click', () => {
-        this.sound.playClick();
-        this.screens.showScreen('home');
-      });
-    }
+    // header-brand-btn is now merged into sidebar-toggle-btn (handled in bindGlobalEvents)
   }
 
   openMindfulModal() {
