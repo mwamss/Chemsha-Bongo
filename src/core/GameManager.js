@@ -39,6 +39,10 @@ export class GameManager {
     this.roundCorrect = 0;
     this.roundWrong = 0;
     this.roundDurationSec = 30;
+
+    // Lifecycle state guards
+    this.isRoundActive = false;
+    this.isCountdownActive = false;
   }
 
   getMultiplier() {
@@ -48,22 +52,43 @@ export class GameManager {
     return 1;
   }
 
+  // --- Safe Lifecycle Cancellation ---
+
+  abortCurrentGame() {
+    this.isRoundActive = false;
+    this.isCountdownActive = false;
+    this.timer.stop();
+    this.screens.cancelCountdown();
+    if (this.activeGameInstance) {
+      this.activeGameInstance.cleanup();
+      this.activeGameInstance = null;
+    }
+    this.hud.reset();
+    this.screens.showPauseOverlay(false);
+  }
+
   // --- Starting Game Modes ---
 
   startFreePlay(gameId, durationSec = 30) {
     const meta = getGameById(gameId);
     if (!meta) return;
 
+    this.abortCurrentGame();
+
     this.currentMode = MODES.FREE_PLAY;
     this.activeGameMeta = meta;
     this.roundDurationSec = durationSec;
+    this.isCountdownActive = true;
 
     this.screens.showReadyCountdown(meta, () => {
+      this.isCountdownActive = false;
       this.launchRound(meta, durationSec);
     }, this.sound);
   }
 
   startBlitzWorkout(gameCount = 3, roundDurationSec = 30) {
+    this.abortCurrentGame();
+
     this.currentMode = MODES.BLITZ;
     this.blitzPlaylist = getRandomBlitzGames(gameCount);
     this.blitzCurrentIndex = 0;
@@ -80,10 +105,14 @@ export class GameManager {
       return;
     }
 
+    this.abortCurrentGame();
+
     const currentMeta = this.blitzPlaylist[this.blitzCurrentIndex];
     this.activeGameMeta = currentMeta;
+    this.isCountdownActive = true;
 
     this.screens.showReadyCountdown(currentMeta, () => {
+      this.isCountdownActive = false;
       this.launchRound(currentMeta, this.roundDurationSec);
     }, this.sound);
   }
@@ -91,6 +120,15 @@ export class GameManager {
   // --- Round Execution ---
 
   launchRound(gameMeta, durationSec) {
+    // Abort any lingering timers or instances first
+    this.timer.stop();
+    if (this.activeGameInstance) {
+      this.activeGameInstance.cleanup();
+      this.activeGameInstance = null;
+    }
+
+    this.isCountdownActive = false;
+    this.isRoundActive = true;
     // Reset metrics
     this.roundScore = 0;
     this.roundStreak = 0;
@@ -176,6 +214,12 @@ export class GameManager {
   // --- Round Completion & Summary ---
 
   completeRound() {
+    // Guard: A round can ONLY complete once
+    if (!this.isRoundActive) return;
+    this.isRoundActive = false;
+
+    this.timer.stop();
+
     if (this.activeGameInstance) {
       this.activeGameInstance.cleanup();
       this.activeGameInstance = null;
@@ -318,12 +362,7 @@ export class GameManager {
   }
 
   quitToMenu() {
-    this.timer.stop();
-    if (this.activeGameInstance) {
-      this.activeGameInstance.cleanup();
-      this.activeGameInstance = null;
-    }
-    this.screens.showPauseOverlay(false);
+    this.abortCurrentGame();
     this.screens.showScreen('home');
   }
 }

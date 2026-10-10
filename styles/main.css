@@ -78,6 +78,15 @@ html {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   user-select: none;
   -webkit-user-select: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Safe area padding utilities (notch / home indicator clearance) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 body {

@@ -237,6 +237,9 @@ class App {
     window.addEventListener('keydown', (e) => {
       if ((e.key === 'Escape' || e.key.toLowerCase() === 'p') && this.screens.currentScreen === 'play') {
         this.gameManager.togglePause();
+      } else if (e.key === 'Escape' && this.screens.currentScreen === 'countdown') {
+        this.gameManager.abortCurrentGame();
+        this.screens.showScreen('home');
       }
       // ESC also closes the sidebar
       if (e.key === 'Escape') this.closeSidebar();
@@ -260,6 +263,9 @@ class App {
         const target = link.getAttribute('data-sidebar-nav');
         this.sound.playClick();
         this.closeSidebar();
+        if (this.screens.currentScreen === 'play' || this.screens.currentScreen === 'countdown') {
+          this.gameManager.abortCurrentGame();
+        }
         if (target === 'sanctuary') {
           this.updateExerciseCatalogStats();
           this.screens.showScreen('select');
@@ -344,6 +350,7 @@ class App {
     if (backBtn) {
       backBtn.addEventListener('click', () => {
         this.sound.playClick();
+        this.gameManager.abortCurrentGame();
         this.updateHomeStatsPreview();
         this.screens.showScreen('home');
       });
@@ -396,6 +403,7 @@ class App {
     if (summaryHomeBtn) {
       summaryHomeBtn.addEventListener('click', () => {
         this.sound.playClick();
+        this.gameManager.abortCurrentGame();
         this.updateHomeStatsPreview();
         this.screens.showScreen('home');
       });
@@ -414,6 +422,7 @@ class App {
     if (blitzHomeBtn) {
       blitzHomeBtn.addEventListener('click', () => {
         this.sound.playClick();
+        this.gameManager.abortCurrentGame();
         this.updateHomeStatsPreview();
         this.screens.showScreen('home');
       });
@@ -536,6 +545,9 @@ class App {
         link.addEventListener('click', (e) => {
           e.preventDefault();
           this.sound.playClick();
+          if (this.screens.currentScreen === 'play' || this.screens.currentScreen === 'countdown') {
+            this.gameManager.abortCurrentGame();
+          }
           const path = link.getAttribute('data-path');
           if (path === 'today') {
             this.screens.showScreen('home');

@@ -2,7 +2,7 @@
 
 > *A simple game that challenges the brain and increases dopamine. (in theory)*
 
-**Chemsha Bongo** is a sleek, fast-paced cognitive reflex and mental workout suite built with modern web technologies. Designed for quick 30–60 second mental resets, it features zero external dependencies, native Web Audio API sound synthesis, precision timers, combo streaks, and five challenging brain games.
+**Chemsha Bongo** is a sleek, fast-paced cognitive reflex and mental workout suite built with modern web technologies. Designed for quick 30–60 second mental resets, it features a custom zero-framework vanilla JavaScript game engine, real-time procedural Web Audio synthesis, precision timers, combo multipliers, and five focused brain drills.
 
 ---
 
@@ -38,11 +38,15 @@
 
 ---
 
-## 🔊 Audio & Visuals
+## 🏗️ Architecture & Dependencies
 
-- **100% Native Web Audio API**: No external `.mp3` downloads required; sounds are synthesized procedurally in real-time.
-- **Particle & Confetti FX**: Smooth HTML5 Canvas particle bursts on combos and confetti celebrations on new high scores.
-- **Dark-First Cyber-Clean UI**: Glassmorphic styling with high-contrast cues and responsive touch/keyboard navigation.
+- **Zero Game Frameworks**: The core simulation, game logic, state machines, and timer loops are implemented in 100% pure vanilla JavaScript (ES6 modules). There are no third-party game engine dependencies (no Phaser, Pixi, or canvas engines).
+- **Procedural Audio (Web Audio API)**: All sound effects, clicks, feedback chimes, and singing bowl ambient drones are procedurally synthesized in real time. No `.mp3` or `.wav` sound files are downloaded.
+- **Particle & Confetti FX**: Built-in HTML5 Canvas particle system for combo streaks and record-breaking confetti.
+- **Calm Design System & Presentation**: Built with a Japandi minimalist aesthetic (deep forest teal, eucalyptus, soft celadon, and tactile ceramic surfaces).
+  - *Styling*: Tailwind CSS loaded via CDN for rapid utility classes, combined with custom CSS tokens in `styles/`.
+  - *Typography & Icons*: Google Fonts (`Inter`, `Plus Jakarta Sans`, `JetBrains Mono`) and Google Material Symbols loaded via Google CDN.
+  - *Offline Note*: For fully air-gapped / offline deployments, fonts and the Tailwind runtime can be bundled locally.
 
 ---
 

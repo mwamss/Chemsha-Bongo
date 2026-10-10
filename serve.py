@@ -9,6 +9,7 @@ import webbrowser
 import os
 import sys
 
+HOST = "127.0.0.1"
 PORT = 8000
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -20,14 +21,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 def main():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     print(f"==================================================")
-    print(f"🧠 Chemsha Bongo Game Server running on port {PORT}")
-    print(f"👉 Opening http://localhost:{PORT} in your browser...")
+    print(f"🧠 Chemsha Bongo Game Server running on {HOST}:{PORT}")
+    print(f"👉 Opening http://{HOST}:{PORT} in your browser...")
     print(f"Press Ctrl+C to stop the server.")
     print(f"==================================================")
     
-    webbrowser.open(f"http://localhost:{PORT}")
+    webbrowser.open(f"http://{HOST}:{PORT}")
     
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer((HOST, PORT), Handler) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

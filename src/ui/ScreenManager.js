@@ -9,6 +9,8 @@ export class ScreenManager {
     this.container = containerEl;
     this.currentScreen = null;
     this.screens = {};
+    this.countdownInterval = null;
+    this.countdownCallback = null;
 
     this.cacheScreens();
   }
@@ -24,6 +26,10 @@ export class ScreenManager {
   }
 
   showScreen(screenName) {
+    if (screenName !== 'countdown') {
+      this.cancelCountdown();
+    }
+
     Object.values(this.screens).forEach(el => {
       el.classList.remove('active');
       el.setAttribute('aria-hidden', 'true');
@@ -81,8 +87,25 @@ export class ScreenManager {
     }
   }
 
+  cancelCountdown() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = null;
+    }
+    this.countdownCallback = null;
+    const numberEl = document.getElementById('countdown-number');
+    if (numberEl) {
+      numberEl.classList.remove('countdown-num-pulse', 'countdown-go');
+    }
+  }
+
   showReadyCountdown(gameMeta, onStartCallback, soundSynth) {
+    // Cancel any already-running countdown first to avoid overlapping intervals
+    this.cancelCountdown();
+
     this.showScreen('countdown');
+    this.countdownCallback = onStartCallback;
+
     const titleEl = document.getElementById('countdown-game-title');
     const iconEl = document.getElementById('countdown-game-icon');
     const instructionEl = document.getElementById('countdown-instructions');
@@ -102,7 +125,13 @@ export class ScreenManager {
 
     if (soundSynth) soundSynth.playCountdown(false);
 
-    const interval = setInterval(() => {
+    this.countdownInterval = setInterval(() => {
+      // Guard: if screen changed away from countdown or countdown was cancelled, abort
+      if (this.currentScreen !== 'countdown' || !this.countdownInterval) {
+        this.cancelCountdown();
+        return;
+      }
+
       count--;
       if (count > 0) {
         if (numberEl) {
@@ -120,8 +149,11 @@ export class ScreenManager {
         }
         if (soundSynth) soundSynth.playCountdown(true);
       } else {
-        clearInterval(interval);
-        if (onStartCallback) onStartCallback();
+        const callbackToRun = this.countdownCallback;
+        this.cancelCountdown();
+        if (typeof callbackToRun === 'function') {
+          callbackToRun();
+        }
       }
     }, 900);
   }
