@@ -188,6 +188,28 @@ body {
   transform: translateY(0);
 }
 
+.screen-view > * {
+  width: 100%;
+  max-width: var(--max-w-app);
+  margin-inline: auto;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding-top: calc(4.25rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+    padding-left: clamp(0.75rem, 3vw, 1.25rem);
+    padding-right: clamp(0.75rem, 3vw, 1.25rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .app-container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
 /* Tactile Ceramic Cards */
 .calm-card {
   background: var(--surface);
