@@ -11,6 +11,7 @@ import { GameManager } from './core/GameManager.js';
 import { ScreenManager } from './ui/ScreenManager.js';
 import { HUD } from './ui/HUD.js';
 import { getAllGames } from './games/registry.js';
+import { getDailyPackageQuote, getRandomPackageQuote, PACKAGE_QUOTES } from './data/packageQuotes.js';
 
 class App {
   constructor() {
@@ -76,6 +77,7 @@ class App {
     // 6. Initial Screen Setup & Dynamic Content
     this.updateGreetingAndDate();
     this.updateHomeStatsPreview();
+    this.loadDailyQuote();
     this.screens.showScreen('home');
 
     // Prompt for surname on start if not already set
@@ -150,6 +152,15 @@ class App {
 
     if (dateLabelEl) {
       dateLabelEl.textContent = `${dayName}, ${monthName} ${dateNum}`;
+    }
+
+    const flowRangeEl = document.getElementById('weekly-flow-range');
+    if (flowRangeEl) {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      flowRangeEl.textContent = `${months[startOfWeek.getMonth()]} ${startOfWeek.getDate()} — ${months[endOfWeek.getMonth()]} ${endOfWeek.getDate()}`;
     }
 
     // Highlight current day in 7-day pebble habit tracker
@@ -342,6 +353,134 @@ class App {
         this.sound.playClick();
         this.openSurnameModal();
       });
+    }
+
+    const logSessionBtn = document.getElementById('btn-log-session');
+    if (logSessionBtn) {
+      logSessionBtn.addEventListener('click', () => {
+        this.sound.playClick();
+        this.openMindfulModal();
+      });
+    }
+
+    const logRestBtn = document.getElementById('btn-log-rest');
+    if (logRestBtn) {
+      logRestBtn.addEventListener('click', () => {
+        this.sound.playCorrect(3);
+        logRestBtn.innerHTML = '<span class="material-symbols-outlined text-[15px] mr-1">check</span><span>Rest Honored ✓</span>';
+        logRestBtn.classList.add('bg-surface-container-highest', 'text-primary');
+        const restCountEl = document.getElementById('rest-days-count-display');
+        if (restCountEl) {
+          restCountEl.textContent = '3 Honored';
+        }
+      });
+    }
+
+    // Inspirational Quotes Handlers
+    const quoteShuffleBtn = document.getElementById('legacy-quote-shuffle-btn');
+    if (quoteShuffleBtn) {
+      quoteShuffleBtn.addEventListener('click', async () => {
+        this.sound.playClick();
+        const icon = quoteShuffleBtn.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.add('animate-spin');
+        const startTime = Date.now();
+        try {
+          const currentText = document.getElementById('legacy-quote-text')?.textContent || '';
+          const currentClean = currentText.replace(/^[“"]|[”"]$/g, '').trim();
+          const res = await fetch(`/api/v1/quotes/random?exclude=${encodeURIComponent(currentClean)}&_t=${Date.now()}`);
+          if (res.ok) {
+            const data = await res.json();
+            this.renderQuoteToUI(data);
+          } else {
+            const fallback = getRandomPackageQuote(currentClean);
+            this.renderQuoteToUI(fallback);
+          }
+        } catch {
+          const currentText = document.getElementById('legacy-quote-text')?.textContent || '';
+          const currentClean = currentText.replace(/^[“"]|[”"]$/g, '').trim();
+          const fallback = getRandomPackageQuote(currentClean);
+          this.renderQuoteToUI(fallback);
+        } finally {
+          const elapsed = Date.now() - startTime;
+          if (elapsed < 250) {
+            await new Promise(r => setTimeout(r, 250 - elapsed));
+          }
+          if (icon) icon.classList.remove('animate-spin');
+        }
+      });
+    }
+
+    const quoteCopyBtn = document.getElementById('legacy-quote-copy-btn');
+    if (quoteCopyBtn) {
+      quoteCopyBtn.addEventListener('click', async () => {
+        this.sound.playClick();
+        const textEl = document.getElementById('legacy-quote-text');
+        const subtextEl = document.getElementById('legacy-quote-subtext');
+        const authorEl = document.getElementById('legacy-quote-author');
+        const labelEl = document.getElementById('legacy-quote-copy-label');
+        const iconEl = document.getElementById('legacy-quote-copy-icon');
+        const text = textEl ? textEl.textContent.trim() : '';
+        const subtext = subtextEl ? subtextEl.textContent.trim() : '';
+        const author = authorEl ? authorEl.textContent.trim() : '';
+        try {
+          await navigator.clipboard.writeText(`${text} ${author}\n${subtext}`.trim());
+          if (labelEl) labelEl.textContent = 'Copied!';
+          if (iconEl) iconEl.textContent = 'check';
+          setTimeout(() => {
+            if (labelEl) labelEl.textContent = 'Copy';
+            if (iconEl) iconEl.textContent = 'content_copy';
+          }, 2000);
+        } catch {
+          if (labelEl) labelEl.textContent = 'Copied!';
+          setTimeout(() => {
+            if (labelEl) labelEl.textContent = 'Copy';
+          }, 2000);
+        }
+      });
+    }
+  }
+
+  loadDailyQuote() {
+    // 1. Immediately apply deterministic daily quote from the package variable
+    const initial = getDailyPackageQuote();
+    this.renderQuoteToUI(initial);
+
+    // 2. Fetch live quote from the backend API if available
+    fetch(`/api/v1/quotes/daily?_t=${Date.now()}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && (data.quote || data.primary_text)) {
+          this.renderQuoteToUI(data);
+        }
+      })
+      .catch(() => {
+        // Keeps local package quote seamlessly
+      });
+  }
+
+  renderQuoteToUI(data) {
+    if (!data) return;
+    const textEl = document.getElementById('legacy-quote-text');
+    const subtextEl = document.getElementById('legacy-quote-subtext');
+    const authorEl = document.getElementById('legacy-quote-author');
+    const catEl = document.getElementById('legacy-quote-category');
+    const collEl = document.getElementById('legacy-quote-collection');
+    const numEl = document.getElementById('legacy-quote-number');
+
+    const rawQuote = data.quote || data.primary_text || data.text || '';
+    const cleanQuote = rawQuote.replace(/^[“"]|[”"]$/g, '').trim();
+    const authorName = data.author || data.from || '';
+
+    if (textEl && cleanQuote) textEl.textContent = `“${cleanQuote}”`;
+    if (authorEl && authorName) authorEl.textContent = `— ${authorName}`;
+    if (catEl && data.category) catEl.textContent = data.category;
+    if (collEl) collEl.textContent = data.collection || 'Inspirational Quotes Library';
+    if (numEl) {
+      const aphNum = data.aphorism_number || (data.index ? `#${data.index}` : '#1');
+      numEl.textContent = aphNum.startsWith('Quote') ? aphNum : `Quote ${aphNum}`;
+    }
+    if (subtextEl) {
+      subtextEl.textContent = data.secondary_text || '';
     }
   }
 

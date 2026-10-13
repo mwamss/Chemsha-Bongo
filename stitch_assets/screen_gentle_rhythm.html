@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#F4F7F5] antialiased" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gentle Rhythm — Mindful Cadence &amp; Streak Redesign</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            forest: {
+              900: '#10221D',
+              800: '#162E27',
+              700: '#1E3A34',
+              600: '#2A5249',
+            },
+            sage: {
+              50: '#F5FAF7',
+              100: '#E8F3EE',
+              200: '#D2E7DC',
+              300: '#AED5C2',
+              400: '#7EBA9E',
+              500: '#4D9676',
+              600: '#387B5E',
+              700: '#285C46',
+            },
+            stone: {
+              subtle: '#F8FAF9',
+              border: '#E3ECE7',
+              muted: '#71877F',
+            }
+          },
+          boxShadow: {
+            'subtle': '0 1px 3px 0 rgba(22, 46, 39, 0.04), 0 4px 16px 0 rgba(22, 46, 39, 0.03)',
+            'card': '0 2px 8px -2px rgba(22, 46, 39, 0.05), 0 12px 32px -4px rgba(22, 46, 39, 0.04)',
+            'pulse-glow': '0 0 0 3px rgba(77, 150, 118, 0.15)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom styles for micro-animations and custom scroll -->
+<style data-purpose="custom-transitions">
+    .smooth-transition {
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .node-active-ring {
+      box-shadow: 0 0 0 3px rgba(56, 123, 94, 0.18);
+    }
+  </style>
+</head>
+<body class="min-h-full font-sans text-forest-800 flex flex-col justify-between selection:bg-sage-200 selection:text-forest-900">
+<!-- BEGIN: TopNavigation -->
+<header class="w-full border-b border-stone-border/80 bg-white/80 backdrop-blur-md sticky top-0 z-30">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-lg bg-sage-100 text-sage-600 flex items-center justify-center border border-sage-200">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
+<path d="M12 6v6l4 2"></path>
+</svg>
+</div>
+<div>
+<span class="text-sm font-bold tracking-tight text-forest-800">Atelier Wellness</span>
+<span class="text-xs text-stone-muted ml-1.5 hidden sm:inline">Design System / Rhythm Redesign</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sage-50 text-sage-700 border border-sage-200">
+<span class="w-1.5 h-1.5 rounded-full bg-sage-500 animate-pulse"></span>
+          Non-punitive Cadence Model
+        </span>
+</div>
+</div>
+</header>
+<!-- END: TopNavigation -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-12">
+<!-- BEGIN: ContextIntro -->
+<div class="max-w-2xl space-y-2">
+<div class="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-sage-600">
+<span>Component Refactor</span>
+<span class="text-stone-300">•</span>
+<span>Original: Gentle Rhythm Streak</span>
+</div>
+<h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-forest-800">
+        Sustainable Consistency over Toxic Streaks
+      </h1>
+<p class="text-sm sm:text-base text-stone-muted leading-relaxed">
+        Replacing gamified, anxiety-inducing streak loops with an elevated, calming rhythm tracker. Resting is a first-class citizen, fully honored without penalty resets.
+      </p>
+</div>
+<!-- END: ContextIntro -->
+<!-- BEGIN: MainShowcaseCard -->
+<section class="space-y-4" data-purpose="primary-hero-component">
+<div class="flex items-center justify-between">
+<h2 class="text-xs font-semibold uppercase tracking-wider text-stone-muted">
+          1. Hero Component: Expanded Desktop / Tablet Layout
+        </h2>
+<span class="text-xs text-stone-muted">Interactive Demo</span>
+</div>
+<!-- Elevated Card Container -->
+<div class="bg-white rounded-2xl border border-stone-border p-6 sm:p-8 shadow-card relative overflow-hidden transition-all">
+<!-- Soft Ambient Background Gradient Accent -->
+<div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-gradient-to-br from-sage-100/60 to-transparent blur-3xl pointer-events-none"></div>
+<!-- Component Header Block -->
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b border-stone-border/60">
+<div class="space-y-1.5 max-w-xl">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-sage-50 text-sage-600 border border-sage-200 flex items-center justify-center">
+<!-- Mindful Wave/Leaf Icon -->
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+<path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+</svg>
+</div>
+<h3 class="text-lg font-bold text-forest-800 tracking-tight">Gentle Rhythm</h3>
+</div>
+<p class="text-sm text-stone-muted leading-relaxed">
+              A mindful cadence with zero penalties for resting. Practice whenever your spirit welcomes it.
+            </p>
+</div>
+<!-- Rest-Honoring Streak Pill -->
+<div class="self-start sm:self-auto flex items-center gap-2 bg-sage-50/80 border border-sage-200/90 rounded-full px-3.5 py-1.5 text-sage-700 shadow-sm">
+<!-- Calming ember / spark -->
+<svg class="w-4 h-4 text-sage-600" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2c.4 3.4 2.8 6 6 6-3.2 0-5.6 2.6-6 6-.4-3.4-2.8-6-6-6 3.2 0 5.6-2.6 6-6Z"></path>
+<path d="M17 15c.2 2 1.5 3.5 3.5 3.5-2 0-3.3 1.5-3.5 3.5-.2-2-1.5-3.5-3.5-3.5 2 0 3.3-1.5 3.5-3.5Z" opacity="0.6"></path>
+</svg>
+<span class="text-xs font-semibold tracking-wide text-forest-800">31-Day Mindful Rhythm</span>
+</div>
+</div>
+<!-- 7-Day Mindful Cadence Tracker -->
+<div class="py-7" data-purpose="weekly-tracker-grid">
+<div class="flex items-center justify-between text-xs text-stone-muted mb-4 font-medium px-1">
+<span>Weekly Flow: <strong class="text-forest-800 font-semibold">Apr 8 — Apr 14</strong></span>
+<span class="text-[11px] text-sage-600 bg-sage-50 px-2 py-0.5 rounded border border-sage-200/60">Rest is Progress</span>
+</div>
+<!-- Week Days Node Grid -->
+<div class="grid grid-cols-7 gap-2 sm:gap-4 items-center" id="tracker-node-container">
+<!-- Monday: Focused -->
+<div class="cadence-node flex flex-col items-center group cursor-pointer" data-day="Mon" data-state="focused">
+<span class="text-xs font-medium text-stone-muted group-hover:text-forest-800 transition-colors mb-2">Mon</span>
+<button class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-600 text-white flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative" title="Focused: 20 min session">
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="20 6 9 17 4 12"></polyline>
+</svg>
+</button>
+<span class="mt-2 text-[11px] font-medium text-sage-700">Focused</span>
+<span class="text-[10px] text-stone-muted font-normal">25m</span>
+</div>
+<!-- Tuesday: Focused -->
+<div class="cadence-node flex flex-col items-center group cursor-pointer" data-day="Tue" data-state="focused">
+<span class="text-xs font-medium text-stone-muted group-hover:text-forest-800 transition-colors mb-2">Tue</span>
+<button class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-600 text-white flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative" title="Focused: 30 min session">
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="20 6 9 17 4 12"></polyline>
+</svg>
+</button>
+<span class="mt-2 text-[11px] font-medium text-sage-700">Focused</span>
+<span class="text-[10px] text-stone-muted font-normal">30m</span>
+</div>
+<!-- Wednesday: Rest Day Honored -->
+<div class="cadence-node flex flex-col items-center group cursor-pointer" data-day="Wed" data-state="rested">
+<span class="text-xs font-medium text-stone-muted group-hover:text-forest-800 transition-colors mb-2">Wed</span>
+<button class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-100 text-sage-700 border border-sage-300 flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative" title="Mindful Rest Day Honored">
+<!-- Calm Pause / Rest Glyph -->
+<svg class="w-4 h-4 text-sage-600" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"></path>
+</svg>
+</button>
+<span class="mt-2 text-[11px] font-semibold text-forest-700">Rested</span>
+<span class="text-[10px] text-stone-muted font-normal">Honored</span>
+</div>
+<!-- Thursday: Focused -->
+<div class="cadence-node flex flex-col items-center group cursor-pointer" data-day="Thu" data-state="focused">
+<span class="text-xs font-medium text-stone-muted group-hover:text-forest-800 transition-colors mb-2">Thu</span>
+<button class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-600 text-white flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative" title="Focused: 15 min session">
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="20 6 9 17 4 12"></polyline>
+</svg>
+</button>
+<span class="mt-2 text-[11px] font-medium text-sage-700">Focused</span>
+<span class="text-[10px] text-stone-muted font-normal">15m</span>
+</div>
+<!-- Friday: Focused -->
+<div class="cadence-node flex flex-col items-center group cursor-pointer" data-day="Fri" data-state="focused">
+<span class="text-xs font-medium text-stone-muted group-hover:text-forest-800 transition-colors mb-2">Fri</span>
+<button class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-600 text-white flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative" title="Focused: 45 min session">
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="20 6 9 17 4 12"></polyline>
+</svg>
+</button>
+<span class="mt-2 text-[11px] font-medium text-sage-700">Focused</span>
+<span class="text-[10px] text-stone-muted font-normal">45m</span>
+</div>
+<!-- Saturday: Rest Day Honored -->
+<div class="cadence-node flex flex-col items-center group cursor-pointer" data-day="Sat" data-state="rested">
+<span class="text-xs font-medium text-stone-muted group-hover:text-forest-800 transition-colors mb-2">Sat</span>
+<button class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-100 text-sage-700 border border-sage-300 flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative" title="Rest Day Honored">
+<svg class="w-4 h-4 text-sage-600" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"></path>
+</svg>
+</button>
+<span class="mt-2 text-[11px] font-semibold text-forest-700">Rested</span>
+<span class="text-[10px] text-stone-muted font-normal">Honored</span>
+</div>
+<!-- Sunday: Today / Active In-Progress (Current Day) -->
+<div class="cadence-node flex flex-col items-center group cursor-pointer" data-day="Sun" data-state="today">
+<div class="flex items-center gap-1 mb-2">
+<span class="text-xs font-bold text-forest-800">Sun</span>
+<span class="w-1 h-1 rounded-full bg-forest-700"></span>
+</div>
+<button class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-forest-800 text-white flex items-center justify-center shadow-md node-active-ring transition-transform duration-200 group-hover:scale-105 active:scale-95 relative" title="Today: Open for practice">
+<!-- Calming Pulsing Dot -->
+<span class="w-2.5 h-2.5 rounded-full bg-sage-300 ring-2 ring-forest-800 animate-pulse"></span>
+</button>
+<span class="mt-2 text-[11px] font-bold text-forest-800">Today</span>
+<span class="text-[10px] text-sage-600 font-medium">Ready</span>
+</div>
+</div>
+</div>
+<!-- Mindful Metrics & Contextual Summary Strip -->
+<div class="pt-5 mt-2 border-t border-stone-border/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-stone-muted">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>Cadence: <strong class="text-forest-800 font-medium">Harmonious</strong></span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-sage-300"></span>
+<span>Rest Days: <strong class="text-forest-800 font-medium">2 Honored</strong></span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-sage-500"></span>
+<span>Active Time: <strong class="text-forest-800 font-medium">1h 55m</strong></span>
+</div>
+</div>
+<!-- Quick Micro-Actions -->
+<div class="flex items-center gap-2.5 w-full sm:w-auto">
+<button class="flex-1 sm:flex-initial inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-forest-800 text-white hover:bg-forest-700 transition-colors shadow-sm" id="btn-log-session">
+              Complete Today
+            </button>
+<button class="flex-1 sm:flex-initial inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg text-xs font-medium bg-sage-50 text-sage-700 hover:bg-sage-100 border border-sage-200 transition-colors" id="btn-log-rest">
+              Honor Rest Day
+            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: MainShowcaseCard -->
+<!-- BEGIN: ComparativeSection -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Compact / Sidebar Widget (2. Compact Adaptation) -->
+<div class="lg:col-span-5 space-y-4" data-purpose="compact-widget-preview">
+<div>
+<h2 class="text-xs font-semibold uppercase tracking-wider text-stone-muted">
+            2. Responsive Scalability: Sidebar / Mobile Widget
+          </h2>
+<p class="text-xs text-stone-muted mt-0.5">Compact view (320px) for dashboards and side rails.</p>
+</div>
+<div class="w-full max-w-sm bg-white rounded-xl border border-stone-border p-4 shadow-subtle space-y-4">
+<!-- Widget Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-md bg-sage-50 text-sage-600 flex items-center justify-center border border-sage-200">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
+</svg>
+</div>
+<div>
+<h4 class="text-xs font-bold text-forest-800">Gentle Rhythm</h4>
+<p class="text-[10px] text-stone-muted">Zero-penalty habit track</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-sage-700 bg-sage-50 px-2 py-0.5 rounded-full border border-sage-200">
+              31d
+            </span>
+</div>
+<!-- Compact Day Row -->
+<div class="flex items-center justify-between gap-1 pt-1">
+<!-- Mon -->
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-stone-muted mb-1 font-medium">M</span>
+<div class="w-7 h-7 rounded-full bg-sage-600 text-white flex items-center justify-center">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</div>
+</div>
+<!-- Tue -->
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-stone-muted mb-1 font-medium">T</span>
+<div class="w-7 h-7 rounded-full bg-sage-600 text-white flex items-center justify-center">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</div>
+</div>
+<!-- Wed -->
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-stone-muted mb-1 font-medium">W</span>
+<div class="w-7 h-7 rounded-full bg-sage-100 text-sage-600 border border-sage-300 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-sage-500"></div>
+</div>
+</div>
+<!-- Thu -->
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-stone-muted mb-1 font-medium">T</span>
+<div class="w-7 h-7 rounded-full bg-sage-600 text-white flex items-center justify-center">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</div>
+</div>
+<!-- Fri -->
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-stone-muted mb-1 font-medium">F</span>
+<div class="w-7 h-7 rounded-full bg-sage-600 text-white flex items-center justify-center">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+</div>
+</div>
+<!-- Sat -->
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-stone-muted mb-1 font-medium">S</span>
+<div class="w-7 h-7 rounded-full bg-sage-100 text-sage-600 border border-sage-300 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-sage-500"></div>
+</div>
+</div>
+<!-- Sun (Today) -->
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-forest-800 font-bold mb-1">S</span>
+<div class="w-7 h-7 rounded-full bg-forest-800 text-white ring-2 ring-forest-800 ring-offset-1 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-sage-300"></span>
+</div>
+</div>
+</div>
+<div class="text-[11px] text-stone-muted flex items-center justify-between pt-1 border-t border-stone-border/60">
+<span>Harmonious flow</span>
+<span class="text-forest-700 font-medium">5/7 days</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Design Philosophy & State Logic Matrix (3. Logic Spec) -->
+<div class="lg:col-span-7 space-y-4" data-purpose="design-tokens-matrix">
+<div>
+<h2 class="text-xs font-semibold uppercase tracking-wider text-stone-muted">
+            3. Behavioral Architecture &amp; State Logic
+          </h2>
+<p class="text-xs text-stone-muted mt-0.5">How this solves the flaws seen in the original snippet.</p>
+</div>
+<div class="bg-white rounded-xl border border-stone-border p-5 shadow-subtle space-y-4">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<!-- State 1 -->
+<div class="p-3 rounded-lg bg-[#FAFBFB] border border-stone-border space-y-1.5">
+<div class="flex items-center gap-2">
+<span class="w-3.5 h-3.5 rounded-full bg-sage-600 inline-block"></span>
+<span class="text-xs font-semibold text-forest-800">Focused Day</span>
+</div>
+<p class="text-[11px] text-stone-muted leading-relaxed">
+                Represents deliberate practice (10m+). Soft forest sage badge with accessible checkmark.
+              </p>
+</div>
+<!-- State 2 -->
+<div class="p-3 rounded-lg bg-sage-50/50 border border-sage-200/80 space-y-1.5">
+<div class="flex items-center gap-2">
+<span class="w-3.5 h-3.5 rounded-full bg-sage-100 border border-sage-300 inline-block"></span>
+<span class="text-xs font-semibold text-forest-800">Rest Honored</span>
+</div>
+<p class="text-[11px] text-stone-muted leading-relaxed">
+                Protects the 31-day rhythm. Zero streak penalties. Recognizes recharge as vital effort.
+              </p>
+</div>
+<!-- State 3 -->
+<div class="p-3 rounded-lg bg-[#FAFBFB] border border-stone-border space-y-1.5">
+<div class="flex items-center gap-2">
+<span class="w-3.5 h-3.5 rounded-full bg-forest-800 inline-block"></span>
+<span class="text-xs font-semibold text-forest-800">Today / Active</span>
+</div>
+<p class="text-[11px] text-stone-muted leading-relaxed">
+                High-contrast forest slate target with a calm breathing indicator welcoming practice today.
+              </p>
+</div>
+</div>
+<!-- Why This Works Note -->
+<div class="p-3.5 rounded-lg bg-sage-50/80 border border-sage-200/70 text-xs text-forest-800 flex items-start gap-3">
+<svg class="w-4 h-4 text-sage-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="m9 12 2 2 4-4"></path>
+</svg>
+<div class="space-y-0.5">
+<span class="font-semibold text-forest-900">Cognitive Load &amp; Tone Correction</span>
+<p class="text-stone-muted leading-relaxed">
+                The original snippet repeated a confusing <code class="text-forest-700 bg-white px-1 py-0.5 rounded text-[10px]">"eco"</code> label across 6 days without status clarity. This redesign replaces ambiguous text with unmistakable visual semantics, warm microcopy, and accessible focus states.
+              </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- END: ComparativeSection -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: SiteFooter -->
+<footer class="border-t border-stone-border/80 bg-white py-6 mt-12 text-center text-xs text-stone-muted">
+<div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+<p>Gentle Rhythm Experience • Atelier Cognitive Wellness Component</p>
+<p class="text-[11px]">Click any day node above to experience interactive feedback.</p>
+</div>
+</footer>
+<!-- END: SiteFooter -->
+<!-- BEGIN: ClientInteractivityScript -->
+<script data-purpose="node-interaction-handler">
+    document.addEventListener('DOMContentLoaded', () => {
+      const todayNode = document.querySelector('[data-day="Sun"]');
+      const btnLogSession = document.getElementById('btn-log-session');
+      const btnLogRest = document.getElementById('btn-log-rest');
+      const trackerContainer = document.getElementById('tracker-node-container');
+
+      // Handler for logging session for Today
+      if (btnLogSession && todayNode) {
+        btnLogSession.addEventListener('click', () => {
+          const button = todayNode.querySelector('button');
+          const subText = todayNode.querySelector('span:last-child');
+          
+          button.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-600 text-white flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative";
+          button.innerHTML = `
+            <svg class="w-5 h-5 text-white animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          `;
+          subText.textContent = "20m Completed";
+          subText.className = "text-[10px] text-sage-700 font-semibold";
+          
+          btnLogSession.textContent = "Done ✓";
+          btnLogSession.classList.replace('bg-forest-800', 'bg-sage-600');
+        });
+      }
+
+      // Handler for honoring rest day for Today
+      if (btnLogRest && todayNode) {
+        btnLogRest.addEventListener('click', () => {
+          const button = todayNode.querySelector('button');
+          const subText = todayNode.querySelector('span:last-child');
+
+          button.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sage-100 text-sage-700 border border-sage-300 flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative";
+          button.innerHTML = `
+            <svg class="w-4 h-4 text-sage-600" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+            </svg>
+          `;
+          subText.textContent = "Rest Honored";
+          subText.className = "text-[10px] text-forest-700 font-medium";
+
+          btnLogRest.textContent = "Rest Honored ✓";
+        });
+      }
+
+      // Interactive day selection feedback
+      if (trackerContainer) {
+        trackerContainer.querySelectorAll('.cadence-node').forEach(node => {
+          node.addEventListener('click', () => {
+            const day = node.getAttribute('data-day');
+            const state = node.getAttribute('data-state');
+            console.log(`Inspecting day: ${day}, Current state: ${state}`);
+          });
+        });
+      }
+    });
+  </script>
+<!-- END: ClientInteractivityScript -->
+</body></html>

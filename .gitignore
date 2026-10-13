@@ -2,12 +2,25 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.sqlite
+*.sqlite3
+*.db
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Frontend
+node_modules/
+dist/
+.vite/
+
+# Environments & IDEs
+.env
+.env.*
+!.env.example
+.antigravity/
+.vscode/settings.json
 
 # OS metadata
 .DS_Store
 Thumbs.db
-
-# Local MCP credentials
-.env
-.env.*
-!.env.example

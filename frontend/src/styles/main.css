@@ -1,0 +1,203 @@
+/* ==========================================================================
+   Chemsha Bongo — Serene Focus & Cognitive Sanctuary (Stitch Design System)
+   Theme: Japandi Minimalist Mindful Brain Retreat
+   ========================================================================== */
+
+:root {
+  /* Stitch Design System Palette */
+  --bg-canvas: #f8f9f5;
+  --bg-canvas-tint: #edfdf5;
+  --surface: #ffffff;
+  --surface-subdued: #f0f2eb;
+  --surface-container: #e1f2ea;
+  --surface-sunken: #e3e7de;
+  --surface-highlight: #fdfdfb;
+
+  /* Borders & Dividers */
+  --border-subtle: #dde2d8;
+  --border-focus: #4a7c6d;
+  --border-light: rgba(30, 58, 52, 0.08);
+
+  /* Primary, Secondary & Accent Colors */
+  --primary: #1e3a34;              /* Deep Serene Forest Teal */
+  --primary-hover: #152b26;
+  --primary-light: #cae9e0;
+  --secondary: #4a7c6d;            /* Soothing Eucalyptus */
+  --secondary-light: #b8eedb;
+  --tertiary: #e8b86d;             /* Warm Ochre & Calming Sand */
+  --tertiary-light: #ffddae;
+
+  /* Typography Colors */
+  --text-primary: #1f2926;         /* Slate Charcoal */
+  --text-secondary: #414846;
+  --text-muted: #5a6963;           /* Muted Moss Gray */
+  --text-inverse: #f8fafc;
+
+  /* Non-Punitive Feedback Colors */
+  --feedback-correct: #3e7960;     /* Celadon Moss */
+  --feedback-correct-bg: #ebf5f0;
+  --feedback-correction: #c86a58;  /* Soft Terracotta */
+  --feedback-correction-bg: #fbf0ed;
+
+  /* Typography Tokens */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Elevation & Ambient Shadows */
+  --shadow-level-1: 0 4px 16px -2px rgba(30, 58, 52, 0.04), 0 1px 3px 0 rgba(30, 58, 52, 0.02);
+  --shadow-level-2: 0 8px 24px -4px rgba(30, 58, 52, 0.07), 0 2px 6px 0 rgba(30, 58, 52, 0.03);
+  --shadow-level-3: 0 16px 40px -8px rgba(30, 58, 52, 0.10), 0 4px 12px -2px rgba(30, 58, 52, 0.04);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Layout */
+  --max-w-app: 1140px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Safe area padding utilities (notch / home indicator clearance) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* NO align-items:center — let content stretch edge-to-edge */
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(74, 124, 109, 0.06) 0%, transparent 55%),
+    radial-gradient(circle at 90% 80%, rgba(232, 184, 109, 0.05) 0%, transparent 45%);
+  background-attachment: fixed;
+}
+
+/* Subtle, elegant scrollbar matching calm design tokens */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 124, 109, 0.22);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 124, 109, 0.42);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(74, 124, 109, 0.22) transparent;
+}
+
+#fx-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* App Container — full viewport width with responsive breathing room */
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* Top clears the fixed header (64px) + safe area */
+  padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+  /* Bottom clears the fixed nav bar (80px) + generous breathing room */
+  padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+  /* Responsive horizontal padding — never crowded, never wasted */
+  padding-left: clamp(1rem, 4vw, 4rem);
+  padding-right: clamp(1rem, 4vw, 4rem);
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+  transition: padding 0.22s ease;
+}
+
+@media (min-width: 640px) {
+  .app-container {
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.app-container.in-game {
+  padding-top: 1.25rem !important;
+  padding-bottom: 2rem !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Screen Transitions */
+.screen-view {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  flex: 1;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.screen-view.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Tactile Ceramic Cards */
+.calm-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-level-1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.calm-card:hover {
+  box-shadow: var(--shadow-level-2);
+  border-color: var(--secondary);
+}
