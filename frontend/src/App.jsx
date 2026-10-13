@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Header } from './components/layout/Header.jsx';
 import { Sidebar } from './components/layout/Sidebar.jsx';
+import { BottomNav } from './components/layout/BottomNav.jsx';
 import { HomeScreen } from './components/screens/HomeScreen.jsx';
 import { SelectScreen } from './components/screens/SelectScreen.jsx';
 import { StatsScreen } from './components/screens/StatsScreen.jsx';
@@ -79,15 +80,6 @@ export function App() {
 
       const updatedRounds = [...blitzRoundsStats, roundRecord];
       setBlitzRoundsStats(updatedRounds);
-
-      const nextIndex = blitzCurrentIndex + 1;
-      setBlitzCurrentIndex(nextIndex);
-
-      if (nextIndex >= blitzPlaylist.length) {
-        // All blitz rounds complete! Calculate final rating
-        finishBlitzWorkout(nextTotal, updatedRounds);
-        return;
-      }
     }
 
     setGamePlayState('summary');
@@ -130,8 +122,15 @@ export function App() {
   };
 
   const advanceBlitzNextGame = () => {
-    setActiveGameId(blitzPlaylist[blitzCurrentIndex].id);
-    setGamePlayState('countdown');
+    const nextIndex = blitzCurrentIndex + 1;
+    if (nextIndex >= blitzPlaylist.length) {
+      // All blitz rounds complete! Transition to final summary
+      finishBlitzWorkout(blitzTotalScore, blitzRoundsStats);
+    } else {
+      setBlitzCurrentIndex(nextIndex);
+      setActiveGameId(blitzPlaylist[nextIndex].id);
+      setGamePlayState('countdown');
+    }
   };
 
   const exitGameToScreen = (screen = 'home') => {
@@ -159,9 +158,10 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 pt-16 flex flex-col">
+      <main className="flex-1 pt-16 pb-16 md:pb-4 flex flex-col">
         {gamePlayState === 'countdown' && activeMeta && (
           <ReadyCountdown
+            key={`countdown-${activeGameId}-${blitzCurrentIndex}`}
             meta={activeMeta}
             onFinished={handleCountdownFinished}
           />
@@ -169,6 +169,7 @@ export function App() {
 
         {gamePlayState === 'playing' && activeGameId && (
           <GameViewport
+            key={`viewport-${activeGameId}-${blitzCurrentIndex}`}
             gameId={activeGameId}
             mode={blitzMode ? 'blitz' : 'free-play'}
             durationSec={30}
@@ -181,13 +182,13 @@ export function App() {
           <RoundSummaryModal
             stats={roundStats}
             meta={activeMeta}
-            onPlayAgain={() => {
-              if (blitzMode) {
-                advanceBlitzNextGame();
-              } else {
-                launchFreePlay(activeGameId);
-              }
-            }}
+            isBlitz={blitzMode}
+            blitzCurrentRound={blitzCurrentIndex + 1}
+            blitzTotalRounds={blitzPlaylist.length || 3}
+            blitzCumulativeScore={blitzTotalScore}
+            nextGameMeta={blitzPlaylist[blitzCurrentIndex + 1] || null}
+            onNext={advanceBlitzNextGame}
+            onPlayAgain={() => launchFreePlay(activeGameId)}
             onExit={() => exitGameToScreen('home')}
           />
         )}
@@ -268,6 +269,14 @@ export function App() {
           </>
         )}
       </main>
+
+      {/* Mobile Sticky Bottom Navigation (Hidden during active gameplay) */}
+      {(!gamePlayState || (gamePlayState !== 'playing' && gamePlayState !== 'countdown')) && (
+        <BottomNav
+          currentScreen={currentScreen}
+          onNavigate={(screen) => exitGameToScreen(screen)}
+        />
+      )}
 
       {/* Non-intrusive Guest Migration Banner */}
       <MigrationBanner />

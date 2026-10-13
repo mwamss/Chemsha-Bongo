@@ -130,10 +130,14 @@ export function AuthModal() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-semibold text-outline">Username</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-semibold text-outline">Username</label>
+                  <span className="text-[10px] text-outline">letters, numbers, _ or -</span>
+                </div>
                 <input
                   type="text"
                   required
+                  pattern="^[a-zA-Z0-9_-]+$"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="px-3.5 py-2.5 rounded-xl bg-surface-container/60 border border-border-subtle focus:bg-surface focus:outline-none focus:border-secondary text-sm"

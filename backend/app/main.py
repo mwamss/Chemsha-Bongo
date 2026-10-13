@@ -12,7 +12,14 @@ from backend.app.api.v1.endpoints.games import ensure_canonical_games
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: ensure canonical games exist in DB using the configured get_db dependency
+    # Startup: ensure all database tables exist before accessing them
+    import backend.app.models  # noqa: F401
+    from backend.app.db.base import Base
+    from backend.app.db.session import engine
+
+    Base.metadata.create_all(bind=engine)
+
+    # Ensure canonical games exist in DB using the configured get_db dependency
     db_gen = get_db()
     db = next(db_gen)
     try:
@@ -34,13 +41,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS Configuration
+# CORS Configuration - permits local dev, LAN/Wi-Fi mobile access, and dev servers
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Mount API v1

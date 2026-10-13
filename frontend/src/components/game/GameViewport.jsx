@@ -298,11 +298,11 @@ export function GameViewport({
       </div>
 
       {/* --- NATIVE GAME CONTAINER --- */}
-      <div className="relative w-full aspect-square max-w-md flex items-center justify-center bg-surface rounded-3xl p-6 border border-border-subtle/50 shadow-md">
+      <div className="relative w-full min-h-[380px] sm:min-h-[420px] max-w-md flex flex-col items-center justify-center bg-surface rounded-3xl p-4 sm:p-6 border border-border-subtle/50 shadow-md">
         <div
           ref={containerRef}
           id="active-game-board"
-          className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden"
+          className="w-full flex-1 flex flex-col items-center justify-center relative"
         />
 
         {/* Pause Overlay */}

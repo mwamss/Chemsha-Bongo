@@ -37,10 +37,15 @@ export class ChimpMemoryGame extends BaseGame {
     this.container.innerHTML = `
       <div class="game-wrapper chimp-view">
         <div class="memory-hud-bar">
-          <span class="memory-level-badge">SEQUENCE LENGTH: <strong id="sequence-len">${this.currentNumCount}</strong></span>
+          <div class="memory-level-chip">
+            <span class="material-symbols-outlined text-[15px]">psychology</span>
+            <span>SEQUENCE: <strong id="sequence-len">${this.currentNumCount}</strong></span>
+          </div>
           <span id="memory-instruction-hint" class="memory-status-hint">Memorize the positions...</span>
         </div>
-        <div id="chimp-grid" class="chimp-grid-board"></div>
+        <div class="chimp-board-frame">
+          <div id="chimp-grid" class="chimp-grid-board"></div>
+        </div>
       </div>
     `;
 

@@ -89,6 +89,12 @@ html {
   padding-top: env(safe-area-inset-top, 0px);
 }
 
+/* Mobile touch responsiveness & click delay elimination */
+button, a, input, select, textarea, .cadence-node, .btn, .color-choice-btn, .chimp-tile, .dpad-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   width: 100%;
   min-height: 100vh;

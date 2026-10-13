@@ -129,7 +129,7 @@ export function GentleRhythmTracker({ onLaunchBlitz }) {
           </div>
 
           {/* 7 Days Node Grid */}
-          <div className="grid grid-cols-7 gap-2 sm:gap-4 items-center" id="tracker-node-container">
+          <div className="grid grid-cols-7 gap-1 sm:gap-3 items-center" id="tracker-node-container">
             {days.map((item, idx) => {
               const isToday = item.day === 'Sun';
 
@@ -142,8 +142,8 @@ export function GentleRhythmTracker({ onLaunchBlitz }) {
                   data-state={item.state}
                 >
                   {/* Day Label */}
-                  <div className="flex items-center gap-1 mb-2">
-                    <span className={`text-xs ${isToday ? 'font-bold text-primary' : 'font-medium text-outline group-hover:text-on-surface transition-colors'}`}>
+                  <div className="flex items-center gap-0.5 sm:gap-1 mb-1 sm:mb-2">
+                    <span className={`text-[10px] sm:text-xs ${isToday ? 'font-bold text-primary' : 'font-medium text-outline group-hover:text-on-surface transition-colors'}`}>
                       {item.day}
                     </span>
                     {isToday && <span className="w-1 h-1 rounded-full bg-primary" />}
@@ -152,10 +152,10 @@ export function GentleRhythmTracker({ onLaunchBlitz }) {
                   {/* Node Button */}
                   {item.state === 'focused' && (
                     <button
-                      className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#356759] text-white flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative"
+                      className="w-8 h-8 min-[380px]:w-10 min-[380px]:h-10 sm:w-12 sm:h-12 rounded-full bg-[#356759] text-white flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative"
                       title={item.title}
                     >
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" viewBox="0 0 24 24">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </button>
@@ -163,10 +163,10 @@ export function GentleRhythmTracker({ onLaunchBlitz }) {
 
                   {item.state === 'rested' && (
                     <button
-                      className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-surface-container text-secondary border border-secondary/40 flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative"
+                      className="w-8 h-8 min-[380px]:w-10 min-[380px]:h-10 sm:w-12 sm:h-12 rounded-full bg-surface-container text-secondary border border-secondary/40 flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 relative"
                       title={item.title}
                     >
-                      <svg className="w-4 h-4 text-secondary" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4 text-secondary" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
                       </svg>
                     </button>
@@ -174,22 +174,22 @@ export function GentleRhythmTracker({ onLaunchBlitz }) {
 
                   {item.state === 'today' && (
                     <button
-                      className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-md ring-4 ring-primary/20 transition-transform duration-200 group-hover:scale-105 active:scale-95 relative"
+                      className="w-8 h-8 min-[380px]:w-10 min-[380px]:h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-md ring-2 sm:ring-4 ring-primary/20 transition-transform duration-200 group-hover:scale-105 active:scale-95 relative"
                       title={item.title}
                     >
-                      <span className="w-2.5 h-2.5 rounded-full bg-secondary-fixed ring-2 ring-primary animate-pulse" />
+                      <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-secondary-fixed ring-2 ring-primary animate-pulse" />
                     </button>
                   )}
 
                   {/* Subtext Status */}
-                  <span className={`mt-2 text-[11px] font-semibold ${
+                  <span className={`mt-1.5 sm:mt-2 text-[9px] min-[380px]:text-[10px] sm:text-[11px] font-semibold text-center leading-tight ${
                     item.state === 'focused' ? 'text-secondary' :
                     item.state === 'rested' ? 'text-primary' :
                     'text-primary font-bold'
                   }`}>
                     {item.state === 'focused' ? 'Focused' : item.state === 'rested' ? 'Rested' : 'Today'}
                   </span>
-                  <span className="text-[10px] text-outline font-normal">
+                  <span className="text-[9px] sm:text-[10px] text-outline font-normal">
                     {item.duration}
                   </span>
                 </div>

@@ -1,19 +1,51 @@
 /**
  * apiClient.js
  * Centralized HTTP client communicating with the Chemsha Bongo FastAPI backend.
- * Uses credentials: 'include' for HttpOnly cookie authentication and automatic CSRF header injection.
+ * Uses both Bearer tokens (via localStorage for resilient cross-device / mobile session persistence)
+ * and HttpOnly cookies with CSRF header injection as a dual-layer strategy.
  */
 
 const API_BASE = '/api/v1';
+const TOKEN_KEY = 'chemsha_auth_token';
+const CSRF_KEY = 'chemsha_csrf_token';
 
 class ApiClient {
   constructor() {
-    this.csrfToken = null;
+    this.authToken = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
+    this.csrfToken = typeof window !== 'undefined' ? localStorage.getItem(CSRF_KEY) : null;
     this.currentUser = null;
+  }
+
+  setAuthToken(token) {
+    this.authToken = token;
+    if (typeof window !== 'undefined') {
+      if (token) {
+        localStorage.setItem(TOKEN_KEY, token);
+      } else {
+        localStorage.removeItem(TOKEN_KEY);
+      }
+    }
   }
 
   setCsrfToken(token) {
     this.csrfToken = token;
+    if (typeof window !== 'undefined') {
+      if (token) {
+        localStorage.setItem(CSRF_KEY, token);
+      } else {
+        localStorage.removeItem(CSRF_KEY);
+      }
+    }
+  }
+
+  clearTokens() {
+    this.authToken = null;
+    this.csrfToken = null;
+    this.currentUser = null;
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(CSRF_KEY);
+    }
   }
 
   async request(endpoint, options = {}) {
@@ -22,6 +54,11 @@ class ApiClient {
       'Content-Type': 'application/json',
       ...(options.headers || {}),
     };
+
+    // Attach Bearer token for cross-origin and mobile resilience
+    if (this.authToken) {
+      headers['Authorization'] = `Bearer ${this.authToken}`;
+    }
 
     // Attach CSRF token on state-changing requests if present
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase())) {
@@ -41,7 +78,12 @@ class ApiClient {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const errorMsg = data.detail || `Request failed with status ${response.status}`;
+        let errorMsg = `Request failed with status ${response.status}`;
+        if (typeof data.detail === 'string') {
+          errorMsg = data.detail;
+        } else if (Array.isArray(data.detail) && data.detail.length > 0) {
+          errorMsg = data.detail.map((err) => err.msg || JSON.stringify(err)).join(', ');
+        }
         throw new Error(errorMsg);
       }
 
@@ -59,6 +101,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ email, username, password, surname }),
     });
+    if (data.access_token) this.setAuthToken(data.access_token);
     if (data.csrf_token) this.setCsrfToken(data.csrf_token);
     this.currentUser = data;
     return data;
@@ -69,15 +112,19 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ username_or_email, password }),
     });
+    if (data.access_token) this.setAuthToken(data.access_token);
     if (data.csrf_token) this.setCsrfToken(data.csrf_token);
     this.currentUser = data;
     return data;
   }
 
   async logout() {
-    await this.request('/auth/logout', { method: 'POST' });
-    this.csrfToken = null;
-    this.currentUser = null;
+    try {
+      await this.request('/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.warn('Backend logout notification skipped:', e);
+    }
+    this.clearTokens();
   }
 
   async getMe() {
@@ -87,6 +134,9 @@ class ApiClient {
       this.currentUser = data;
       return data;
     } catch (err) {
+      if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('authentication required'))) {
+        this.clearTokens();
+      }
       this.currentUser = null;
       return null;
     }
