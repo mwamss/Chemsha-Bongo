@@ -31,3 +31,18 @@ def get_db() -> Generator[Session, None, None]:
     finally:
         db.close()
 
+
+def init_db():
+    """Ensure database tables exist."""
+    try:
+        import backend.app.models  # noqa: F401
+        from backend.app.db.base import Base
+
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"Warning: Database table creation encountered an issue: {e}")
+
+
+# Initialize database tables on load so missing tables can never cause 500 errors
+init_db()
+

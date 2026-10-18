@@ -1,0 +1,741 @@
+{
+  "title": "Chemsha Bongo Reflection and Mental Check-In Questions",
+  "description": "160 reflection prompts organized by topic, including the original 100 questions and 60 additional original prompts for mental check-ins, gentle distraction, open-ended discussion, perspective, support, and next steps.",
+  "question_count": 160,
+  "categories": [
+    {
+      "name": "Questions About Your Past",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Are you uncomfortable discussing anything from past events?"
+        },
+        {
+          "id": 2,
+          "question": "What would you say about your early years?"
+        },
+        {
+          "id": 3,
+          "question": "What are a few of your favorite childhood memories?"
+        },
+        {
+          "id": 4,
+          "question": "What characteristics and beliefs have been influenced by your past?"
+        },
+        {
+          "id": 5,
+          "question": "Is there a particular moment in your life you would like to share about how your values or viewpoint changed significantly?"
+        },
+        {
+          "id": 6,
+          "question": "Do you still feel the effects of any major past events on you now?"
+        },
+        {
+          "id": 7,
+          "question": "Would you like to go back and revisit any past experiences?"
+        },
+        {
+          "id": 8,
+          "question": "Do you have a special family ritual or tradition from your early years that you cherish?"
+        },
+        {
+          "id": 9,
+          "question": "Do you see any recurring themes or patterns in your earlier experiences? If so, how do you deal with them in your present life?"
+        },
+        {
+          "id": 10,
+          "question": "How does nostalgia affect your current feelings and what part does it play in your thoughts about the past?"
+        },
+        {
+          "id": 11,
+          "question": "Do you feel that unresolved problems from previous experiences are impeding your happiness or personal development?"
+        },
+        {
+          "id": 12,
+          "question": "What aspects of your past decisions—both successful and unsuccessful—still affect the way you make decisions now?"
+        },
+        {
+          "id": 13,
+          "question": "What effects did the good and bad relationships you had in the past have on your capacity to trust people?"
+        }
+      ]
+    },
+    {
+      "name": "Questions About Your Emotions",
+      "questions": [
+        {
+          "id": 14,
+          "question": "In three words, how would you sum up your emotional condition right now?"
+        },
+        {
+          "id": 15,
+          "question": "Which certain situations or incidents make you feel happy?"
+        },
+        {
+          "id": 16,
+          "question": "How do you manage intense feelings on a daily basis?"
+        },
+        {
+          "id": 17,
+          "question": "Is there a particular memory from your early years that still affects your feelings now?"
+        },
+        {
+          "id": 18,
+          "question": "How do your fundamental concepts influence the way you feel and behave?"
+        },
+        {
+          "id": 19,
+          "question": "Is there a good way for you to let out your anger? How do you do that?"
+        },
+        {
+          "id": 20,
+          "question": "Do you have any feelings that you usually repress? If yes, why?"
+        },
+        {
+          "id": 21,
+          "question": "What effects do your feelings have on the people you interact with?"
+        },
+        {
+          "id": 22,
+          "question": "Which forms of self-care do you use to keep your emotional health in check?"
+        },
+        {
+          "id": 23,
+          "question": "Can you identify any stress or anxiety-related emotional triggers in your life?"
+        },
+        {
+          "id": 24,
+          "question": "How do you tell the difference between real feelings and ones that are influenced by other forces?"
+        },
+        {
+          "id": 25,
+          "question": "Do you have any particular objectives in mind to strengthen your emotional resilience?"
+        },
+        {
+          "id": 26,
+          "question": "Regarding the emotional development, how at ease are you with vulnerability?"
+        },
+        {
+          "id": 27,
+          "question": "How can self-reflection help you recognize and control your emotions?"
+        }
+      ]
+    },
+    {
+      "name": "Questions About Your Thoughts",
+      "questions": [
+        {
+          "id": 28,
+          "question": "What would you say best describes the primary thoughts that cross your head every day?"
+        },
+        {
+          "id": 29,
+          "question": "Would you like to look into any negative thought patterns that seem to come back?"
+        },
+        {
+          "id": 30,
+          "question": "What is your approach to dealing with self-critical thoughts, and how do they affect your sense of worth as an individual?"
+        },
+        {
+          "id": 31,
+          "question": "Is there anything that you can see that might be causing you to perceive reality differently?"
+        },
+        {
+          "id": 32,
+          "question": "How much do your current cognitive processes originate from your previous experiences?"
+        },
+        {
+          "id": 33,
+          "question": "Are you prone to having intrusive or nervous thoughts in certain situations?"
+        },
+        {
+          "id": 34,
+          "question": "What is your procedure for making decisions, and are there any particular ideas that get in the way?"
+        },
+        {
+          "id": 35,
+          "question": "Do you have any instinctive beliefs that exacerbate stress or feelings of being overwhelmed?"
+        },
+        {
+          "id": 36,
+          "question": "What effects do your thoughts have on your capacity to establish and accomplish goals?"
+        },
+        {
+          "id": 37,
+          "question": "In what ways do you strike a balance in your everyday thinking between acceptable and inappropriate ideas?"
+        },
+        {
+          "id": 38,
+          "question": "Do you see any patterns of thinking that might be causing problems in your relationships?"
+        },
+        {
+          "id": 39,
+          "question": "What effects does your self-talk have on your determination and ability to persevere in the face of difficulty?"
+        },
+        {
+          "id": 40,
+          "question": "Are you always thinking about any unsolved problems or unanswered questions?"
+        },
+        {
+          "id": 41,
+          "question": "How do you deal with overthinking, and does it make it harder for you to unwind?"
+        },
+        {
+          "id": 42,
+          "question": "Which techniques do you regularly use to encourage constructive and optimistic thinking?"
+        }
+      ]
+    },
+    {
+      "name": "Questions About Your Healthy Habits",
+      "questions": [
+        {
+          "id": 43,
+          "question": "What benefits do your present healthful activities provide for your general well-being?"
+        },
+        {
+          "id": 44,
+          "question": "Do you have any particular daily practices that promote your mental and physical well-being?"
+        },
+        {
+          "id": 45,
+          "question": "How well do your food choices support your overall wellness and health objectives?"
+        },
+        {
+          "id": 46,
+          "question": "Do you have any bad habits that you think might be affecting your general health?"
+        },
+        {
+          "id": 47,
+          "question": "As sleep is essential to living a healthy lifestyle, how do you prioritize getting enough of it?"
+        },
+        {
+          "id": 48,
+          "question": "How do you stay motivated to be active? What part does regular exercise represent in your daily routine?"
+        },
+        {
+          "id": 49,
+          "question": "What particular methods or strategies do you employ to handle stress in every aspect of your life?"
+        },
+        {
+          "id": 50,
+          "question": "How do you keep a balanced fluid intake throughout the day and make sure you’re properly hydrated?"
+        },
+        {
+          "id": 51,
+          "question": "To enhance your mental well-being, do you engage in mindfulness or meditation practices? If so, how has it changed your day-to-day activities?"
+        },
+        {
+          "id": 52,
+          "question": "What actions do you take to keep a good work-life balance, and how has it affected your general well-being?"
+        },
+        {
+          "id": 53,
+          "question": "In everyday routine, how do you maintain a healthy relationship with technology and regulate screen time?"
+        },
+        {
+          "id": 54,
+          "question": "How do you respond to obstacles or failures in upholding your healthful patterns?"
+        },
+        {
+          "id": 55,
+          "question": "Do you adhere to any particular dietary guidelines or nutritional targets in order to maintain a healthy lifestyle?"
+        },
+        {
+          "id": 56,
+          "question": "How can your general health and well-being benefit from your relationships and social connections?"
+        }
+      ]
+    },
+    {
+      "name": "Questions About Your Beliefs",
+      "questions": [
+        {
+          "id": 57,
+          "question": "What effects do your underlying beliefs have on how you see the world and yourself?"
+        },
+        {
+          "id": 58,
+          "question": "Is there any belief that you can think of that limits your growth or well-being?"
+        },
+        {
+          "id": 59,
+          "question": "How have your relationships beliefs changed over time, and how do they affect how you connect with other people?"
+        },
+        {
+          "id": 60,
+          "question": "What fundamental beliefs do you have about success and failure, and how do they influence the way you tackle obstacles?"
+        },
+        {
+          "id": 61,
+          "question": "What aspects of your identity and decision-making are influenced by your cultural or religious beliefs?"
+        },
+        {
+          "id": 62,
+          "question": "Did you ever doubt or reevaluate some of your long-held beliefs? If so, why did you think that way?"
+        },
+        {
+          "id": 63,
+          "question": "To what extent does your mental and emotional health depend on what you believe about your own value and affection?"
+        },
+        {
+          "id": 64,
+          "question": "Which belief systems in your life can be a cause behind your tension or anxiety?"
+        },
+        {
+          "id": 65,
+          "question": "How can you better handle life transitions if your beliefs about change and adaptability are different?"
+        },
+        {
+          "id": 66,
+          "question": "Do any messages or beliefs from your early years still affect the way you think and act now?"
+        },
+        {
+          "id": 67,
+          "question": "How does your sense of purpose and involvement in the community stem from your political or social beliefs?"
+        },
+        {
+          "id": 68,
+          "question": "Which decisions and priorities in life are influenced by your beliefs about happiness and fulfillment?"
+        },
+        {
+          "id": 69,
+          "question": "Have you seen any changes in your beliefs as a result of remarkable experiences or personal development?"
+        },
+        {
+          "id": 70,
+          "question": "What are your methods for finding balance and how do you resolve contradictory beliefs inside yourself?"
+        },
+        {
+          "id": 71,
+          "question": "Could you describe a situation in which refuting or altering a certain belief resulted in a beneficial change in yourself?"
+        }
+      ]
+    },
+    {
+      "name": "Questions About Your Relationships",
+      "questions": [
+        {
+          "id": 72,
+          "question": "In what ways does your present approach to building connections with others draw from your past relationships, both good and bad?"
+        },
+        {
+          "id": 73,
+          "question": "In your relationships, what are the most important values you look for, and how do they make you feel satisfied overall?"
+        },
+        {
+          "id": 74,
+          "question": "Do you see any trends in your previous relationships that you would like to alter or enhance?"
+        },
+        {
+          "id": 75,
+          "question": "What techniques do you employ to protect healthy communication in your relationships, and how do you handle conflict in them?"
+        },
+        {
+          "id": 76,
+          "question": "How do you handle disagreements in a relationship and what aspects of your expectations match those of your partner?"
+        },
+        {
+          "id": 77,
+          "question": "How do you strike a good balance and set priorities for your friendships, family ties, and romantic relationships?"
+        },
+        {
+          "id": 78,
+          "question": "How do you establish and maintain trust with others, and what part does trust play in your relationships?"
+        },
+        {
+          "id": 79,
+          "question": "What are some changes you would like to make to the way you give and receive love in your relationships?"
+        },
+        {
+          "id": 80,
+          "question": "Do you have any concerns or insecurities that might be getting in the way of your capacity to build and sustain meaningful relationships?"
+        },
+        {
+          "id": 81,
+          "question": "In order to build mutual respect and understanding, how do you establish and convey limits in your relationships?"
+        }
+      ]
+    },
+    {
+      "name": "Questions About Your Career",
+      "questions": [
+        {
+          "id": 82,
+          "question": "Can you spot any trends in the way you decide on a career, and if so, how have they affected your route in the workplace?"
+        },
+        {
+          "id": 83,
+          "question": "What coping strategies do you employ to deal with the pressure and stress you face at work?"
+        },
+        {
+          "id": 84,
+          "question": "How does the career you’re pursuing now help you feel fulfilled and purposeful?"
+        },
+        {
+          "id": 85,
+          "question": "Is there anything that you are afraid of or insecure about that could be impeding your career growth? If so, how do you intend to overcome it?"
+        },
+        {
+          "id": 86,
+          "question": "In making job decisions, how do you strike a balance between following your passion and being realistic?"
+        },
+        {
+          "id": 87,
+          "question": "How important is work-life balance to your sense of overall job satisfaction?"
+        },
+        {
+          "id": 88,
+          "question": "How can you make sure your health and well-being are top priorities at work?"
+        },
+        {
+          "id": 89,
+          "question": "How do your professional decisions fit into your long-term financial objectives?"
+        },
+        {
+          "id": 90,
+          "question": "What is your definition of success in your career, and has it changed over time?"
+        }
+      ]
+    },
+    {
+      "name": "Questions About Your Future Plans",
+      "questions": [
+        {
+          "id": 91,
+          "question": "How does your perfect future appear to you?"
+        },
+        {
+          "id": 92,
+          "question": "Do you have any concerns regarding your future?"
+        },
+        {
+          "id": 93,
+          "question": "How well do your present objectives fit with your long-term plan?"
+        },
+        {
+          "id": 94,
+          "question": "Which goals are more important to you, long-term or short-term?"
+        },
+        {
+          "id": 95,
+          "question": "What impact do your core values have on your future plans?"
+        },
+        {
+          "id": 96,
+          "question": "How do you respond to unanticipated modifications to your long-term plans?"
+        },
+        {
+          "id": 97,
+          "question": "How do you strike a balance between your career and personal goals?"
+        },
+        {
+          "id": 98,
+          "question": "Do any self-limiting thoughts prevent you from pursuing your goals?"
+        },
+        {
+          "id": 99,
+          "question": "How do you handle uncertainty regarding the future in your life?"
+        },
+        {
+          "id": 100,
+          "question": "How do you make sure your plans for the future help you feel fulfilled?"
+        }
+      ]
+    },
+    {
+      "name": "Daily Mental Check-In",
+      "questions": [
+        {
+          "id": 101,
+          "question": "What has taken up the most space in your mind today?"
+        },
+        {
+          "id": 102,
+          "question": "If your mood had a weather forecast, what would it be and why?"
+        },
+        {
+          "id": 103,
+          "question": "What feeling has been easiest to notice today, and what feeling has been harder to name?"
+        },
+        {
+          "id": 104,
+          "question": "What has felt manageable today, and what has felt heavier than expected?"
+        },
+        {
+          "id": 105,
+          "question": "What do you need more of right now: rest, connection, movement, clarity, or something else?"
+        },
+        {
+          "id": 106,
+          "question": "What is one thing that has helped you get through today?"
+        },
+        {
+          "id": 107,
+          "question": "What has surprised you about your mood or energy recently?"
+        },
+        {
+          "id": 108,
+          "question": "What would make the next hour feel a little easier?"
+        },
+        {
+          "id": 109,
+          "question": "What have you been carrying quietly that you might want to acknowledge?"
+        },
+        {
+          "id": 110,
+          "question": "If you could check in with yourself without judging the answer, what would you ask?"
+        }
+      ]
+    },
+    {
+      "name": "Grounding and Gentle Distraction",
+      "questions": [
+        {
+          "id": 111,
+          "question": "What are five things you can see around you that you have not paid much attention to?"
+        },
+        {
+          "id": 112,
+          "question": "Which sounds can you hear right now, from the nearest to the farthest away?"
+        },
+        {
+          "id": 113,
+          "question": "What is one object nearby, and how would you describe its shape, texture, color, and purpose?"
+        },
+        {
+          "id": 114,
+          "question": "What small detail in your surroundings feels interesting or comforting?"
+        },
+        {
+          "id": 115,
+          "question": "If you had to describe the room you are in to someone who has never seen it, what would you mention first?"
+        },
+        {
+          "id": 116,
+          "question": "What song, sound, or kind of music helps you feel more present, and what do you notice as you listen?"
+        },
+        {
+          "id": 117,
+          "question": "What is a simple activity that can occupy your attention for five minutes without adding pressure?"
+        },
+        {
+          "id": 118,
+          "question": "If you could take a peaceful walk anywhere familiar, what would you notice along the way?"
+        },
+        {
+          "id": 119,
+          "question": "What are three ordinary things around you that are useful, beautiful, or well made?"
+        },
+        {
+          "id": 120,
+          "question": "What small, harmless curiosity could you explore for a few minutes just for fun?"
+        }
+      ]
+    },
+    {
+      "name": "Open-Ended Mental Discussion",
+      "questions": [
+        {
+          "id": 121,
+          "question": "What topic have you wanted to talk about but have not found the right moment for?"
+        },
+        {
+          "id": 122,
+          "question": "What feels complicated in your life at the moment, and which part would you like to untangle first?"
+        },
+        {
+          "id": 123,
+          "question": "What do you wish people understood about your experience without you having to explain it repeatedly?"
+        },
+        {
+          "id": 124,
+          "question": "What question about yourself are you currently trying to understand?"
+        },
+        {
+          "id": 125,
+          "question": "What would you say if you knew you could be honest without needing to make your thoughts sound perfect?"
+        },
+        {
+          "id": 126,
+          "question": "Which part of your life feels most in need of attention, and why?"
+        },
+        {
+          "id": 127,
+          "question": "What is something you have changed your mind about recently?"
+        },
+        {
+          "id": 128,
+          "question": "What would a useful conversation about your current worries look like?"
+        },
+        {
+          "id": 129,
+          "question": "When you talk through a problem, what kind of response helps you most: listening, questions, practical ideas, or a different perspective?"
+        },
+        {
+          "id": 130,
+          "question": "What would you like to understand better about the way you react to difficult situations?"
+        }
+      ]
+    },
+    {
+      "name": "Thoughts and Perspective",
+      "questions": [
+        {
+          "id": 131,
+          "question": "What story are you telling yourself about a situation, and what other explanations might also fit the facts?"
+        },
+        {
+          "id": 132,
+          "question": "Which parts of a current worry are known facts, and which parts are predictions or assumptions?"
+        },
+        {
+          "id": 133,
+          "question": "If a friend had the same thought you are having, how might you respond to them?"
+        },
+        {
+          "id": 134,
+          "question": "What evidence supports your current interpretation, and what evidence might you be overlooking?"
+        },
+        {
+          "id": 135,
+          "question": "Is there an all-or-nothing conclusion you are drawing, and what might a more balanced version sound like?"
+        },
+        {
+          "id": 136,
+          "question": "What thought keeps returning, and what might it be asking you to pay attention to?"
+        },
+        {
+          "id": 137,
+          "question": "How does your mood affect the way you interpret other people's words or actions?"
+        },
+        {
+          "id": 138,
+          "question": "What is within your influence in this situation, and what is outside your control?"
+        },
+        {
+          "id": 139,
+          "question": "What would you think about this problem after a good night's sleep or a little distance from it?"
+        },
+        {
+          "id": 140,
+          "question": "What is a kinder but still realistic way to describe what happened?"
+        }
+      ]
+    },
+    {
+      "name": "Coping, Needs, and Support",
+      "questions": [
+        {
+          "id": 141,
+          "question": "When stress builds up, what early signs do you notice in your body, thoughts, or behavior?"
+        },
+        {
+          "id": 142,
+          "question": "What has helped you cope with a difficult day before, even if it only helped a little?"
+        },
+        {
+          "id": 143,
+          "question": "What usually makes a hard moment more difficult, and what tends to make it more manageable?"
+        },
+        {
+          "id": 144,
+          "question": "Who could you contact if you wanted company, practical help, or someone to listen?"
+        },
+        {
+          "id": 145,
+          "question": "How could you ask for support in a way that makes clear what you need from the other person?"
+        },
+        {
+          "id": 146,
+          "question": "What boundary might protect your time, energy, or peace of mind this week?"
+        },
+        {
+          "id": 147,
+          "question": "What can you postpone, simplify, or ask for help with instead of carrying it all at once?"
+        },
+        {
+          "id": 148,
+          "question": "What does taking care of yourself look like when you have very little energy?"
+        },
+        {
+          "id": 149,
+          "question": "What would help you feel safer or more settled in your current environment?"
+        },
+        {
+          "id": 150,
+          "question": "If your usual coping strategy is not helping, what is one different, low-pressure option you could try?"
+        }
+      ]
+    },
+    {
+      "name": "Meaning, Values, and Next Steps",
+      "questions": [
+        {
+          "id": 151,
+          "question": "What has mattered to you lately, even if it has not received much of your time?"
+        },
+        {
+          "id": 152,
+          "question": "Which personal value would you like your next decision to reflect?"
+        },
+        {
+          "id": 153,
+          "question": "What is one small action you could take today that would support the person you want to become?"
+        },
+        {
+          "id": 154,
+          "question": "What would progress look like if it did not have to be perfect or dramatic?"
+        },
+        {
+          "id": 155,
+          "question": "What can you give yourself permission not to solve today?"
+        },
+        {
+          "id": 156,
+          "question": "What is one thing you would like to make room for in your week?"
+        },
+        {
+          "id": 157,
+          "question": "What recent moment reminded you of something you care about?"
+        },
+        {
+          "id": 158,
+          "question": "What would you like to thank your past self for handling or learning?"
+        },
+        {
+          "id": 159,
+          "question": "What is one realistic thing you can look forward to, however small?"
+        },
+        {
+          "id": 160,
+          "question": "What would help you finish this reflection feeling a little clearer or more supported?"
+        }
+      ]
+    }
+  ],
+  "source_notes": [
+    {
+      "title": "WHO — Doing What Matters in Times of Stress",
+      "url": "https://www.who.int/thailand/news/feature-stories/detail/doing-what-matters-in-times-of-stress",
+      "use": "General inspiration for grounding, noticing thoughts and feelings, values-based action, and self-kindness. The new questions are original wording, not copied exercises."
+    },
+    {
+      "title": "NHS — Thought record",
+      "url": "https://www.nhs.uk/every-mind-matters/mental-wellbeing-tips/self-help-cbt-techniques/thought-record/",
+      "use": "General inspiration for separating situations, feelings, interpretations, evidence, and alternative perspectives. The new questions are original wording."
+    },
+    {
+      "title": "NHS — How to talk about your mental health",
+      "url": "https://www.nhs.uk/every-mind-matters/mental-wellbeing-tips/how-to-talk-about-your-mental-health/",
+      "use": "General inspiration for identifying trusted support and communicating what kind of help would be useful."
+    },
+    {
+      "title": "U.S. Department of Veterans Affairs — Grounding and the senses",
+      "url": "https://news.va.gov/104529/live-whole-health-125-grounding-exercise-and-connecting-with-our-senses/",
+      "use": "General inspiration for present-moment sensory attention and gentle grounding prompts."
+    }
+  ],
+  "usage_note": "These prompts support personal reflection and are not a diagnostic tool or substitute for professional mental-health care. Let users skip questions or stop whenever they wish."
+}
+

@@ -9,6 +9,8 @@ export class SoundSynth {
     this.ctx = null;
     this.muted = false;
     this.initialized = false;
+    this.ambientNodes = [];
+    this.ambientMasterGain = null;
   }
 
   init() {
@@ -35,10 +37,13 @@ export class SoundSynth {
 
   setMuted(isMuted) {
     this.muted = !!isMuted;
+    if (this.ambientMasterGain && this.ctx) {
+      this.ambientMasterGain.gain.setValueAtTime(this.muted ? 0.0001 : 0.09, this.ctx.currentTime);
+    }
   }
 
   toggleMute() {
-    this.muted = !this.muted;
+    this.setMuted(!this.muted);
     return this.muted;
   }
 
@@ -197,5 +202,129 @@ export class SoundSynth {
       osc.start();
       osc.stop(this.ctx.currentTime + 4.5);
     });
+  }
+
+  playAmbientMeditation() {
+    this.ensureContext();
+    if (!this.ctx) return;
+    if (this.ambientMasterGain) {
+      return;
+    }
+
+    try {
+      const now = this.ctx.currentTime;
+      const masterGain = this.ctx.createGain();
+      masterGain.gain.setValueAtTime(0.0001, now);
+      masterGain.gain.exponentialRampToValueAtTime(this.muted ? 0.0001 : 0.09, now + 1.8);
+      masterGain.connect(this.ctx.destination);
+      this.ambientMasterGain = masterGain;
+
+      // 1. Binaural Alpha Pair: 432 Hz & 441.4 Hz (9.4 Hz alpha difference)
+      const osc1 = this.ctx.createOscillator();
+      const osc2 = this.ctx.createOscillator();
+      const oscSub = this.ctx.createOscillator();
+      const oscFifth = this.ctx.createOscillator();
+
+      const gain1 = this.ctx.createGain();
+      const gain2 = this.ctx.createGain();
+      const gainSub = this.ctx.createGain();
+      const gainFifth = this.ctx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(432, now);
+      gain1.gain.setValueAtTime(0.22, now);
+
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(441.4, now); // 9.4 Hz Alpha resonance
+      gain2.gain.setValueAtTime(0.22, now);
+
+      oscSub.type = 'triangle';
+      oscSub.frequency.setValueAtTime(216, now); // Sub-octave warm body
+      gainSub.gain.setValueAtTime(0.15, now);
+
+      oscFifth.type = 'sine';
+      oscFifth.frequency.setValueAtTime(324, now); // Harmonic fifth
+      gainFifth.gain.setValueAtTime(0.10, now);
+
+      // Lowpass filter for warm tone
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(650, now);
+
+      osc1.connect(gain1);
+      gain1.connect(filter);
+      osc2.connect(gain2);
+      gain2.connect(filter);
+      oscSub.connect(gainSub);
+      gainSub.connect(filter);
+      oscFifth.connect(gainFifth);
+      gainFifth.connect(filter);
+
+      filter.connect(masterGain);
+
+      // 2. Soft rainfall pink noise generator
+      const bufferSize = this.ctx.sampleRate * 2;
+      const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        output[i] = (b0 + b1 + b2) * 0.035;
+      }
+
+      const whiteNoise = this.ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const rainFilter = this.ctx.createBiquadFilter();
+      rainFilter.type = 'lowpass';
+      rainFilter.frequency.setValueAtTime(1200, now);
+
+      const rainGain = this.ctx.createGain();
+      rainGain.gain.setValueAtTime(0.14, now);
+
+      whiteNoise.connect(rainFilter);
+      rainFilter.connect(rainGain);
+      rainGain.connect(masterGain);
+
+      // Start voices
+      osc1.start(now);
+      osc2.start(now);
+      oscSub.start(now);
+      oscFifth.start(now);
+      whiteNoise.start(now);
+
+      this.ambientNodes = [osc1, osc2, oscSub, oscFifth, whiteNoise];
+    } catch (e) {
+      console.warn('Ambient synthesis failed:', e);
+    }
+  }
+
+  stopAmbientMeditation() {
+    if (!this.ambientMasterGain || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      this.ambientMasterGain.gain.cancelScheduledValues(now);
+      this.ambientMasterGain.gain.setValueAtTime(this.ambientMasterGain.gain.value, now);
+      this.ambientMasterGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+
+      const nodesToStop = this.ambientNodes;
+      const masterToDisconnect = this.ambientMasterGain;
+      this.ambientNodes = [];
+      this.ambientMasterGain = null;
+
+      setTimeout(() => {
+        nodesToStop.forEach(node => {
+          try { node.stop(); } catch (_) {}
+          try { node.disconnect(); } catch (_) {}
+        });
+        try { masterToDisconnect.disconnect(); } catch (_) {}
+      }, 900);
+    } catch (e) {
+      console.warn('Failed to stop ambient:', e);
+    }
   }
 }

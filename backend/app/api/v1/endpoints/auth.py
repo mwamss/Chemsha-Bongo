@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
@@ -16,6 +17,7 @@ from backend.app.models.settings import UserSettings
 from backend.app.models.stats import UserAggregatedStats
 from backend.app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse, AuthMeResponse
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -40,54 +42,63 @@ def register(
     db: Session = Depends(get_db)
 ):
     """Register a new player account and establish authenticated session."""
-    # Check if username or email exists
-    existing = db.scalar(
-        select(User).where(
-            or_(User.email == payload.email.lower(), User.username == payload.username.lower())
+    try:
+        # Check if username or email exists
+        existing = db.scalar(
+            select(User).where(
+                or_(User.email == payload.email.lower(), User.username == payload.username.lower())
+            )
         )
-    )
-    if existing:
-        if existing.email.lower() == payload.email.lower():
-            raise HTTPException(status_code=400, detail="An account with this email already exists.")
-        raise HTTPException(status_code=400, detail="Username is already taken.")
+        if existing:
+            if existing.email.lower() == payload.email.lower():
+                raise HTTPException(status_code=400, detail="An account with this email already exists.")
+            raise HTTPException(status_code=400, detail="Username is already taken.")
 
-    # Create User
-    new_user = User(
-        email=payload.email.lower(),
-        username=payload.username.lower(),
-        hashed_password=get_password_hash(payload.password),
-        is_active=True,
-    )
-    db.add(new_user)
-    db.flush()  # populate new_user.id
+        # Create User
+        new_user = User(
+            email=payload.email.lower(),
+            username=payload.username.lower(),
+            hashed_password=get_password_hash(payload.password),
+            is_active=True,
+        )
+        db.add(new_user)
+        db.flush()  # populate new_user.id
 
-    # Create associated Profile, Settings, and Stats
-    profile = UserProfile(
-        user_id=new_user.id,
-        surname=payload.surname or "",
-        avatar_color="#1e3a34",
-    )
-    user_settings = UserSettings(user_id=new_user.id)
-    aggregated_stats = UserAggregatedStats(user_id=new_user.id)
+        # Create associated Profile, Settings, and Stats
+        profile = UserProfile(
+            user_id=new_user.id,
+            surname=payload.surname or "",
+            avatar_color="#1e3a34",
+        )
+        user_settings = UserSettings(user_id=new_user.id)
+        aggregated_stats = UserAggregatedStats(user_id=new_user.id)
 
-    db.add_all([profile, user_settings, aggregated_stats])
-    db.commit()
-    db.refresh(new_user)
+        db.add_all([profile, user_settings, aggregated_stats])
+        db.commit()
+        db.refresh(new_user)
 
-    # Issue access token
-    access_token = create_access_token(str(new_user.id))
-    csrf_token = generate_csrf_token(str(new_user.id))
-    set_auth_cookie(response, access_token)
+        # Issue access token
+        access_token = create_access_token(str(new_user.id))
+        csrf_token = generate_csrf_token(str(new_user.id))
+        set_auth_cookie(response, access_token)
 
-    return TokenResponse(
-        access_token=access_token,
-        token_type="bearer",
-        expires_in_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
-        csrf_token=csrf_token,
-        user_id=new_user.id,
-        username=new_user.username,
-        surname=profile.surname,
-    )
+        return TokenResponse(
+            access_token=access_token,
+            token_type="bearer",
+            expires_in_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
+            csrf_token=csrf_token,
+            user_id=new_user.id,
+            username=new_user.username,
+            surname=profile.surname,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Unexpected error during registration:")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Registration error: {str(exc)}"
+        )
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -97,39 +108,48 @@ def login(
     db: Session = Depends(get_db)
 ):
     """Authenticate via username/email and password."""
-    ident = payload.username_or_email.lower().strip()
-    user = db.scalar(
-        select(User).where(
-            or_(User.email == ident, User.username == ident)
+    try:
+        ident = payload.username_or_email.lower().strip()
+        user = db.scalar(
+            select(User).where(
+                or_(User.email == ident, User.username == ident)
+            )
         )
-    )
-    if not user or not verify_password(payload.password, user.hashed_password):
+        if not user or not verify_password(payload.password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect username/email or password.",
+            )
+
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User account is deactivated.",
+            )
+
+        access_token = create_access_token(str(user.id))
+        csrf_token = generate_csrf_token(str(user.id))
+        set_auth_cookie(response, access_token)
+
+        surname = user.profile.surname if user.profile else ""
+
+        return TokenResponse(
+            access_token=access_token,
+            token_type="bearer",
+            expires_in_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
+            csrf_token=csrf_token,
+            user_id=user.id,
+            username=user.username,
+            surname=surname,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Unexpected error during login:")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username/email or password.",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Login service error: {str(exc)}",
         )
-
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User account is deactivated.",
-        )
-
-    access_token = create_access_token(str(user.id))
-    csrf_token = generate_csrf_token(str(user.id))
-    set_auth_cookie(response, access_token)
-
-    surname = user.profile.surname if user.profile else ""
-
-    return TokenResponse(
-        access_token=access_token,
-        token_type="bearer",
-        expires_in_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
-        csrf_token=csrf_token,
-        user_id=user.id,
-        username=user.username,
-        surname=surname,
-    )
 
 
 @router.post("/logout")

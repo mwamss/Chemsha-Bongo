@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 
 const AVATAR_PALETTE = [
   { name: 'Forest Teal', hex: '#1e3a34' },
@@ -31,6 +32,7 @@ export function ProfileScreen() {
   } = useAuth();
 
   const { muted, toggleMute, ambientPlaying, toggleAmbient, playTestChime, playClick } = useAudio();
+  const { theme, setTheme, isDark, toggleTheme } = useTheme();
 
   const [inputSurname, setInputSurname] = useState(displayName);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
@@ -237,6 +239,125 @@ export function ProfileScreen() {
                 )}
               </button>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── VISUAL THEME & SANCTUARY ATMOSPHERE ──────────────────────────── */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col gap-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex flex-col">
+            <h3 className="font-headline-md text-lg font-bold text-on-surface flex items-center gap-2">
+              <span className="material-symbols-outlined text-secondary">palette</span>
+              <span>Visual Theme &amp; Sanctuary Atmosphere</span>
+            </h3>
+            <span className="text-xs text-on-surface-variant mt-0.5">
+              Toggle between the bright Mint Alabaster palette and the contemplative Obsidian Sanctuary dark suite.
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => { playClick(); toggleTheme(); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 self-start sm:self-auto shadow-xs ${
+              isDark ? 'bg-[#181d1b] text-[#95d3c0] border border-[#2d3a35]' : 'bg-secondary text-white'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              {isDark ? 'light_mode' : 'dark_mode'}
+            </span>
+            <span>{isDark ? 'Switch to Light' : 'Switch to Dark'}</span>
+          </button>
+        </div>
+
+        {/* Theme Cards Selection */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          {/* Card 1: Light Theme (Mint Alabaster) */}
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => { playClick(); setTheme('light'); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { playClick(); setTheme('light'); } }}
+            className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+              !isDark
+                ? 'border-secondary bg-surface-container/60 shadow-sm ring-2 ring-secondary/20'
+                : 'border-border-subtle bg-surface hover:border-secondary/50'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-secondary border border-border-subtle shadow-xs">
+                  <span className="material-symbols-outlined text-[18px]">light_mode</span>
+                </span>
+                <span className="font-bold text-sm text-on-surface">Mint Alabaster</span>
+              </div>
+              {!isDark && (
+                <span className="px-2 py-0.5 rounded-full bg-secondary text-white text-[10px] font-bold uppercase tracking-wider">
+                  Active
+                </span>
+              )}
+            </div>
+
+            {/* Visual Swatch Preview */}
+            <div className="rounded-xl p-3 bg-[#f8f9f5] border border-[#dde2d8] flex items-center justify-between text-xs">
+              <div className="space-y-1">
+                <span className="block text-[10px] uppercase font-bold text-[#356759]">Light Sanctuary</span>
+                <span className="font-serif text-[#101e1a] font-medium text-xs">“Let the answer unfold”</span>
+              </div>
+              <div className="flex gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-[#1e3a34] border border-[#dde2d8]"></span>
+                <span className="w-4 h-4 rounded-full bg-[#356759]"></span>
+                <span className="w-4 h-4 rounded-full bg-[#edfdf5] border border-[#dde2d8]"></span>
+              </div>
+            </div>
+
+            <p className="text-xs text-on-surface-variant leading-relaxed">
+              Airy, crisp daylight atmosphere with high legibility and calming mint hues.
+            </p>
+          </div>
+
+          {/* Card 2: Dark Theme (Obsidian Sanctuary) */}
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => { playClick(); setTheme('dark'); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { playClick(); setTheme('dark'); } }}
+            className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+              isDark
+                ? 'border-[#528e7d] bg-[#181d1b] shadow-md ring-2 ring-[#528e7d]/30'
+                : 'border-border-subtle bg-surface hover:border-secondary/50'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-[#0a0f0d] flex items-center justify-center text-[#95d3c0] border border-[#2d3a35] shadow-xs">
+                  <span className="material-symbols-outlined text-[18px]">dark_mode</span>
+                </span>
+                <span className="font-bold text-sm text-[#f0f4f2]">Obsidian Sanctuary</span>
+              </div>
+              {isDark && (
+                <span className="px-2 py-0.5 rounded-full bg-[#528e7d] text-[#0a0f0d] text-[10px] font-bold uppercase tracking-wider">
+                  Active
+                </span>
+              )}
+            </div>
+
+            {/* Visual Swatch Preview */}
+            <div className="rounded-xl p-3 bg-[#0a0f0d] border border-[#2d3a35] flex items-center justify-between text-xs">
+              <div className="space-y-1">
+                <span className="block text-[10px] uppercase font-bold text-[#95d3c0]">Deep Reflection</span>
+                <span className="font-serif text-[#f0f4f2] font-medium text-xs">“Holding onto what serves”</span>
+              </div>
+              <div className="flex gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-[#0a0f0d] border border-[#2d3a35]"></span>
+                <span className="w-4 h-4 rounded-full bg-[#181d1b] border border-[#2d3a35]"></span>
+                <span className="w-4 h-4 rounded-full bg-[#95d3c0]"></span>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#8e9e97] leading-relaxed">
+              Quiet slate-forest cards on deep obsidian (#0A0F0D) with eucalyptus accents and alabaster serif text.
+            </p>
           </div>
         </div>
       </div>

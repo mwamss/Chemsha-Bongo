@@ -213,6 +213,34 @@ class ApiClient {
   async getAllAphorisms() {
     return this.request('/quotes/all');
   }
+
+  // --- Reflection & Mental Check-In Questions ---
+
+  async getReflectionMetadata() {
+    return this.request('/reflections/metadata');
+  }
+
+  async getReflectionCategories() {
+    return this.request('/reflections/categories');
+  }
+
+  async getDailyReflection() {
+    return this.request('/reflections/daily');
+  }
+
+  async getRandomReflection(category = null, excludeId = null) {
+    const params = new URLSearchParams({ _t: Date.now() });
+    if (category) params.append('category', category);
+    if (excludeId !== null) params.append('exclude_id', excludeId);
+    return this.request(`/reflections/random?${params.toString()}`);
+  }
+
+  async getAllReflections(category = null) {
+    const params = new URLSearchParams();
+    if (category) params.append('category', category);
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return this.request(`/reflections/all${queryString}`);
+  }
 }
 
 export const api = new ApiClient();

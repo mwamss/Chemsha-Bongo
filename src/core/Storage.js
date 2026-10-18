@@ -26,7 +26,8 @@ const DEFAULT_DATA = {
   settings: {
     soundMuted: false,
     hapticsEnabled: true
-  }
+  },
+  isMigrated: false
 };
 
 export class StorageManager {
@@ -60,7 +61,8 @@ export class StorageManager {
             totals: { ...DEFAULT_DATA.totals, ...(parsed.totals || {}) },
             blitzStats: { ...DEFAULT_DATA.blitzStats, ...(parsed.blitzStats || {}) },
             highScores: { ...DEFAULT_DATA.highScores, ...(parsed.highScores || {}) },
-            bestStreaks: { ...DEFAULT_DATA.bestStreaks, ...(parsed.bestStreaks || {}) }
+            bestStreaks: { ...DEFAULT_DATA.bestStreaks, ...(parsed.bestStreaks || {}) },
+            isMigrated: !!parsed.isMigrated
           };
         }
       } catch (err) {
@@ -166,6 +168,15 @@ export class StorageManager {
       bestBlitzScore: this.data.blitzStats.bestScore,
       bestBlitzRating: this.data.blitzStats.bestRating
     };
+  }
+
+  isMigrated() {
+    return !!this.data.isMigrated;
+  }
+
+  markMigrated() {
+    this.data.isMigrated = true;
+    this.save();
   }
 
   resetAll() {

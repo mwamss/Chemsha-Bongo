@@ -138,6 +138,21 @@ export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
               </button>
 
               <button
+                onClick={() => handleNav('banja')}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all cursor-pointer ${
+                  currentScreen === 'banja'
+                    ? 'bg-secondary text-white font-semibold shadow-sm'
+                    : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[20px]">auto_stories</span>
+                <div className="flex flex-col leading-tight">
+                  <span className="text-sm">Banja</span>
+                  <span className={`text-[10px] ${currentScreen === 'banja' ? 'text-white/80' : 'text-outline'} font-normal`}>Writing Sanctuary</span>
+                </div>
+              </button>
+
+              <button
                 onClick={() => handleNav('profile')}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all cursor-pointer ${
                   currentScreen === 'profile'

@@ -1,10 +1,12 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 
 export function Header({ onOpenSidebar, onNavigate }) {
   const { displayName, avatarInitial, avatarColor, isAuthenticated, setShowAuthModal } = useAuth();
   const { muted, toggleMute, playClick } = useAudio();
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <header className="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-b border-border-subtle/30">
@@ -34,6 +36,18 @@ export function Header({ onOpenSidebar, onNavigate }) {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2.5">
+          {/* Theme Mode Toggle (Obsidian Dark / Mint Light) */}
+          <button
+            onClick={() => { playClick(); toggleTheme(); }}
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-all cursor-pointer"
+            title={isDark ? "Switch to Light Mode (Mint Alabaster)" : "Switch to Dark Mode (Obsidian Sanctuary)"}
+            aria-label="Toggle theme mode"
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              {isDark ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
+
           {/* Audio Mute Toggle */}
           <button
             onClick={toggleMute}

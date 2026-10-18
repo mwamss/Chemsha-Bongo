@@ -60,6 +60,48 @@
   --max-w-app: 1140px;
 }
 
+html.dark {
+  /* Obsidian Sanctuary Palette */
+  --bg-canvas: #0a0f0d;
+  --bg-canvas-tint: #0f1412;
+  --surface: #181d1b;
+  --surface-subdued: #141a17;
+  --surface-container: #1f2724;
+  --surface-sunken: #111614;
+  --surface-highlight: #262b29;
+
+  /* Borders & Dividers */
+  --border-subtle: #2d3a35;
+  --border-focus: #528e7d;
+  --border-light: rgba(45, 58, 53, 0.4);
+
+  /* Primary, Secondary & Accent Colors */
+  --primary: #95d3c0;              /* Luminous Mint Alabaster Accent */
+  --primary-hover: #b1efdb;
+  --primary-light: #204f43;
+  --secondary: #528e7d;            /* Soothing Eucalyptus */
+  --secondary-light: #1f2824;
+  --tertiary: #53e076;             /* Emerald Flow */
+  --tertiary-light: #72fe8f;
+
+  /* Typography Colors */
+  --text-primary: #f0f4f2;         /* Warm Alabaster */
+  --text-secondary: #dfe4e0;
+  --text-muted: #8e9e97;           /* Muted Eucalyptus Gray */
+  --text-inverse: #0f1412;
+
+  /* Non-Punitive Feedback Colors */
+  --feedback-correct: #528e7d;
+  --feedback-correct-bg: #14221d;
+  --feedback-correction: #e07a65;
+  --feedback-correction-bg: #291a18;
+
+  /* Elevation & Ambient Shadows */
+  --shadow-level-1: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-level-2: 0 8px 24px -4px rgba(0, 0, 0, 0.6), 0 2px 6px 0 rgba(0, 0, 0, 0.4);
+  --shadow-level-3: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -107,6 +149,14 @@ body {
     radial-gradient(circle at 50% 0%, rgba(74, 124, 109, 0.06) 0%, transparent 55%),
     radial-gradient(circle at 90% 80%, rgba(232, 184, 109, 0.05) 0%, transparent 45%);
   background-attachment: fixed;
+}
+
+html.dark body {
+  background-color: #0a0f0d;
+  color: #dfe4e0;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(32, 79, 67, 0.22) 0%, transparent 60%),
+    radial-gradient(circle at 90% 80%, rgba(20, 39, 34, 0.4) 0%, transparent 50%);
 }
 
 /* Subtle, elegant scrollbar matching calm design tokens */

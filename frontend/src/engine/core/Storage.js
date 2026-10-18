@@ -25,8 +25,11 @@ const DEFAULT_DATA = {
   },
   settings: {
     soundMuted: false,
-    hapticsEnabled: true
-  }
+    hapticsEnabled: true,
+    theme: 'dark'
+  },
+  isMigrated: false,
+  banjaEntries: []
 };
 
 export class StorageManager {
@@ -60,7 +63,9 @@ export class StorageManager {
             totals: { ...DEFAULT_DATA.totals, ...(parsed.totals || {}) },
             blitzStats: { ...DEFAULT_DATA.blitzStats, ...(parsed.blitzStats || {}) },
             highScores: { ...DEFAULT_DATA.highScores, ...(parsed.highScores || {}) },
-            bestStreaks: { ...DEFAULT_DATA.bestStreaks, ...(parsed.bestStreaks || {}) }
+            bestStreaks: { ...DEFAULT_DATA.bestStreaks, ...(parsed.bestStreaks || {}) },
+            isMigrated: !!parsed.isMigrated,
+            banjaEntries: Array.isArray(parsed.banjaEntries) ? parsed.banjaEntries : []
           };
         }
       } catch (err) {
@@ -166,6 +171,53 @@ export class StorageManager {
       bestBlitzScore: this.data.blitzStats.bestScore,
       bestBlitzRating: this.data.blitzStats.bestRating
     };
+  }
+
+  isMigrated() {
+    return !!this.data.isMigrated;
+  }
+
+  markMigrated() {
+    this.data.isMigrated = true;
+    this.save();
+  }
+
+  // --- Banja Sanctuary Journal Entries ---
+
+  getBanjaEntries() {
+    if (!this.data.banjaEntries || !Array.isArray(this.data.banjaEntries)) {
+      this.data.banjaEntries = [];
+      this.save();
+    } else {
+      // Purge any lingering template mock seed entries
+      const cleaned = this.data.banjaEntries.filter(e => !e.id || !e.id.startsWith('banja-seed-'));
+      if (cleaned.length !== this.data.banjaEntries.length) {
+        this.data.banjaEntries = cleaned;
+        this.save();
+      }
+    }
+    return this.data.banjaEntries;
+  }
+
+  saveBanjaEntry(entry) {
+    if (!this.data.banjaEntries) {
+      this.getBanjaEntries();
+    }
+    const index = this.data.banjaEntries.findIndex(e => e.id === entry.id);
+    if (index >= 0) {
+      this.data.banjaEntries[index] = { ...this.data.banjaEntries[index], ...entry, updatedAt: Date.now() };
+    } else {
+      this.data.banjaEntries.unshift({ ...entry, updatedAt: Date.now() });
+    }
+    this.save();
+    return this.data.banjaEntries;
+  }
+
+  deleteBanjaEntry(id) {
+    if (!this.data.banjaEntries) return [];
+    this.data.banjaEntries = this.data.banjaEntries.filter(e => e.id !== id);
+    this.save();
+    return this.data.banjaEntries;
   }
 
   resetAll() {

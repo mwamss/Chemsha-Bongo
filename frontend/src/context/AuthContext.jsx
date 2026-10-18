@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
 
           // Check if local guest data exists that can be merged
           const localTotals = storage.getTotals();
-          if (localTotals.gamesPlayed > 0) {
+          if (localTotals.gamesPlayed > 0 && !storage.isMigrated()) {
             setMigrationPrompt(true);
           }
         }
@@ -66,9 +66,9 @@ export function AuthProvider({ children }) {
     }
     setShowAuthModal(false);
 
-    // Prompt for migration if local data exists
+    // Prompt for migration if local data exists and hasn't been merged
     const localTotals = storage.getTotals();
-    if (localTotals.gamesPlayed > 0) {
+    if (localTotals.gamesPlayed > 0 && !storage.isMigrated()) {
       setMigrationPrompt(true);
     }
     return res;
@@ -157,21 +157,32 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const syncLocalData = async () => {
+  const handleMigrate = async () => {
     setSyncStatus('syncing');
     const localData = storage.load();
     try {
       const res = await api.migrateLocalStorage(localData);
+      storage.markMigrated();
       setSyncStatus('synced');
       setMigrationPrompt(false);
+
+      // Refresh account details from backend to reflect newly merged high scores & stats
+      const updatedUser = await api.getMe();
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
+
       setTimeout(() => setSyncStatus('idle'), 3000);
       return res;
     } catch (e) {
+      console.warn('Migration error:', e);
       setSyncStatus('error');
       setTimeout(() => setSyncStatus('idle'), 3000);
       throw e;
     }
   };
+
+  const syncLocalData = handleMigrate;
 
   const dismissMigration = () => {
     setMigrationPrompt(false);
@@ -193,6 +204,7 @@ export function AuthProvider({ children }) {
     migrationPrompt,
     syncStatus,
     syncLocalData,
+    handleMigrate,
     dismissMigration,
     login,
     register,

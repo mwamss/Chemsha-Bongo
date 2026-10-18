@@ -4,6 +4,12 @@ from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
+DEFAULT_DB_FILE = (ROOT_DIR / "chemsha_dev.db").as_posix()
+
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Chemsha Bongo API"
     VERSION: str = "1.0.0"
@@ -29,8 +35,8 @@ class Settings(BaseSettings):
     COOKIE_SAMESITE: str = "lax"
     COOKIE_DOMAIN: Union[str, None] = None
     
-    # Database
-    DATABASE_URL: str = "sqlite:///./chemsha_dev.db"  # Defaults to local SQLite if Postgres not set
+    # Database (defaults to absolute path to chemsha_dev.db in project root)
+    DATABASE_URL: str = f"sqlite:///{DEFAULT_DB_FILE}"
     
     # CORS
     CORS_ORIGINS: Union[List[str], str] = [

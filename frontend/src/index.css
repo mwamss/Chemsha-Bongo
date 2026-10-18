@@ -12,6 +12,12 @@ html, body {
   background-color: #edfdf5;
   color: #101e1a;
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark, html.dark body {
+  background-color: #0a0f0d;
+  color: #dfe4e0;
 }
 
 #root {

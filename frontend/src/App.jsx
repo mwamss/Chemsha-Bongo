@@ -8,6 +8,7 @@ import { StatsScreen } from './components/screens/StatsScreen.jsx';
 import { LeaderboardScreen } from './components/screens/LeaderboardScreen.jsx';
 import { ProfileScreen } from './components/screens/ProfileScreen.jsx';
 import { QuotesScreen } from './components/screens/QuotesScreen.jsx';
+import { BanjaScreen } from './components/screens/BanjaScreen.jsx';
 import { ReadyCountdown } from './components/game/ReadyCountdown.jsx';
 import { GameViewport } from './components/game/GameViewport.jsx';
 import { RoundSummaryModal } from './components/game/RoundSummaryModal.jsx';
@@ -266,12 +267,16 @@ export function App() {
             {currentScreen === 'quotes' && (
               <QuotesScreen onNavigate={setCurrentScreen} />
             )}
+
+            {currentScreen === 'banja' && (
+              <BanjaScreen onNavigate={setCurrentScreen} />
+            )}
           </>
         )}
       </main>
 
-      {/* Mobile Sticky Bottom Navigation (Hidden during active gameplay) */}
-      {(!gamePlayState || (gamePlayState !== 'playing' && gamePlayState !== 'countdown')) && (
+      {/* Mobile Sticky Bottom Navigation (Hidden during active gameplay and Banja sanctuary) */}
+      {(!gamePlayState || (gamePlayState !== 'playing' && gamePlayState !== 'countdown')) && currentScreen !== 'banja' && (
         <BottomNav
           currentScreen={currentScreen}
           onNavigate={(screen) => exitGameToScreen(screen)}

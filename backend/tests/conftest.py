@@ -24,22 +24,14 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
-    # Create tables on both test_engine and db_session_module.engine
+    # Create tables ONLY on isolated in-memory test engine
     Base.metadata.create_all(bind=test_engine)
-    try:
-        Base.metadata.create_all(bind=db_session_module.engine)
-    except Exception:
-        pass
 
     db = TestingSessionLocal()
     ensure_canonical_games(db)
     db.close()
     yield
     Base.metadata.drop_all(bind=test_engine)
-    try:
-        Base.metadata.drop_all(bind=db_session_module.engine)
-    except Exception:
-        pass
 
 
 @pytest.fixture()

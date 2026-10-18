@@ -88,6 +88,7 @@ export default {
         "body-lg": ["Inter", "sans-serif"],
         "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
         "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+        "serif": ["Newsreader", "Georgia", "serif"],
         "mono": ["JetBrains Mono", "monospace"]
       },
       fontSize: {
