@@ -20,6 +20,19 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     PORT: int = 8000
 
+    @field_validator("DEBUG", mode="before")
+    @classmethod
+    def assemble_debug(cls, v: Union[str, bool]) -> bool:
+        if isinstance(v, bool):
+            return v
+        if isinstance(v, str):
+            v_lower = v.strip().lower()
+            if v_lower in ("true", "1", "t", "yes", "y", "dev", "development"):
+                return True
+            if v_lower in ("false", "0", "f", "no", "n", "prod", "production", "release"):
+                return False
+        return True
+
     # Security
     SECRET_KEY: str = "chemsha_bongo_insecure_dev_secret_key_change_in_production_32chars"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
