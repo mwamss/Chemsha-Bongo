@@ -81,17 +81,17 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1e3a34] via-[#244740] to-[#162e29] p-6 sm:p-8 text-white shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col max-w-lg">
-            <div className="flex items-center gap-2 text-secondary-fixed text-xs font-bold uppercase tracking-wider mb-2">
+            <div className="flex items-center gap-2 text-secondary-fixed dark:text-[#bce8d7] text-xs font-bold uppercase tracking-wider mb-2">
               <span className="material-symbols-outlined text-sm">bolt</span>
               <span>Official Daily Workout</span>
             </div>
             <h2 className="font-headline-xl text-2xl sm:text-3xl font-bold leading-tight tracking-tight">
               3-Round Daily Blitz
             </h2>
-            <p className="text-sm text-surface-container/90 mt-2 leading-relaxed font-light">
+            <p className="text-sm text-white/85 mt-2 leading-relaxed font-light">
               Sharpen cognitive inhibition, spatial reflex, and arithmetic memory in an unhurried 90-second circuit. Compete on the daily leaderboard!
             </p>
-            <div className="flex items-center gap-6 mt-5 text-xs text-secondary-fixed/90">
+            <div className="flex items-center gap-6 mt-5 text-xs text-white/75">
               <div className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[18px]">timer</span>
                 <span>90s Duration</span>
@@ -110,7 +110,7 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
               onClick={() => { playClick(); onLaunchBlitz(); }}
-              className="btn px-7 py-3.5 bg-secondary-fixed text-primary font-bold text-sm rounded-2xl shadow-lg hover:bg-white hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+              className="btn px-7 py-3.5 bg-secondary-fixed text-primary dark:bg-[#d4ad70] dark:text-[#211707] font-bold text-sm rounded-2xl shadow-lg hover:bg-white dark:hover:bg-[#e5bf81] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">play_circle</span>
               <span>Start Daily Blitz</span>

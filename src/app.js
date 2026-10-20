@@ -229,6 +229,7 @@ class App {
       ambientBtn.classList.remove('bg-surface-container-lowest', 'text-on-surface');
       this.sound.playSingingBowl();
     } else {
+      this.sound.stopSingingBowl();
       ambientBtn.classList.remove('bg-secondary', 'text-on-secondary');
       ambientBtn.classList.add('bg-surface-container-lowest', 'text-on-surface');
     }

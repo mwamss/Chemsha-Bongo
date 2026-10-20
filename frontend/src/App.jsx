@@ -64,6 +64,10 @@ export function App() {
     setGamePlayState('playing');
   };
 
+  const restartCurrentRound = () => {
+    setGamePlayState('countdown');
+  };
+
   const handleRoundComplete = (stats) => {
     setRoundStats(stats);
 
@@ -176,6 +180,7 @@ export function App() {
             durationSec={30}
             onRoundComplete={handleRoundComplete}
             onExit={() => exitGameToScreen('home')}
+            onRestart={restartCurrentRound}
           />
         )}
 
@@ -195,7 +200,7 @@ export function App() {
         )}
 
         {gamePlayState === 'blitz-final' && blitzFinalData && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm select-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 dark:bg-black/70 backdrop-blur-sm select-none">
             <div className="w-full max-w-md bg-surface rounded-3xl p-6 sm:p-8 shadow-2xl border border-border-subtle flex flex-col items-center text-center">
               <span className="text-4xl mb-2">🏆</span>
               <h3 className="font-headline-xl text-2xl font-bold text-on-surface">

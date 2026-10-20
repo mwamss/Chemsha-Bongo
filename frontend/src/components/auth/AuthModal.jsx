@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
+import { GoogleSignInButton } from './GoogleSignInButton.jsx';
 
 export function AuthModal() {
-  const { showAuthModal, setShowAuthModal, login, register, migrationPrompt, handleMigrate, dismissMigration } = useAuth();
+  const { showAuthModal, setShowAuthModal, login, loginWithGoogle, register, migrationPrompt, handleMigrate, dismissMigration } = useAuth();
   const { playClick } = useAudio();
 
   const [tab, setTab] = useState('login'); // 'login' or 'register'
@@ -36,8 +37,21 @@ export function AuthModal() {
     }
   };
 
+  const handleGoogleCredential = async (credential) => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginWithGoogle(credential);
+      playClick();
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-primary/30 backdrop-blur-sm select-none">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-primary/30 dark:bg-black/70 backdrop-blur-sm select-none">
       <div className="w-full max-w-md bg-surface rounded-3xl p-6 sm:p-8 shadow-2xl border border-border-subtle relative flex flex-col gap-5">
         {/* Close Button */}
         <button
@@ -179,6 +193,16 @@ export function AuthModal() {
             {loading ? 'Authenticating...' : tab === 'login' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
+
+        <div className="flex items-center gap-3 text-[10px] text-outline" aria-hidden="true">
+          <span className="h-px flex-1 bg-border-subtle" />
+          <span>OR CONTINUE WITH</span>
+          <span className="h-px flex-1 bg-border-subtle" />
+        </div>
+        <GoogleSignInButton
+          onCredential={handleGoogleCredential}
+          onLoadError={setError}
+        />
 
         {/* Security / Privacy notice */}
         <p className="text-[10px] text-center text-outline">

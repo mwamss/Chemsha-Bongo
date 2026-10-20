@@ -30,6 +30,7 @@ export class ColorClashGame extends BaseGame {
     this.promptEl = null;
     this.buttonsContainer = null;
     this.questionStartTime = 0;
+    this.answerLocked = false;
   }
 
   init(context) {
@@ -74,6 +75,7 @@ export class ColorClashGame extends BaseGame {
 
   nextQuestion() {
     if (!this.isActive) return;
+    this.answerLocked = false;
 
     // Pick two different colors: one for text, one for ink
     const wordColorObj = COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)];
@@ -133,7 +135,7 @@ export class ColorClashGame extends BaseGame {
   }
 
   handleAnswer(chosenName, event) {
-    if (!this.isActive || this.isPaused) return;
+    if (!this.isActive || this.isPaused || this.answerLocked) return;
 
     const correct = chosenName === this.currentQuestion.correctColor.name;
     const clickCoords = event ? { x: event.clientX, y: event.clientY } : null;
@@ -145,6 +147,7 @@ export class ColorClashGame extends BaseGame {
       this.awardScore(100 + speedBonus, clickCoords);
       this.nextQuestion();
     } else {
+      this.answerLocked = true;
       this.penalizeError();
       // Highlight wrong button
       const clickedBtn = event ? event.currentTarget : null;

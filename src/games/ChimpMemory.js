@@ -25,6 +25,7 @@ export class ChimpMemoryGame extends BaseGame {
     this.gridEl = null;
     this.infoEl = null;
     this.previewTimeout = null;
+    this.trialLocked = false;
   }
 
   init(context) {
@@ -41,10 +42,10 @@ export class ChimpMemoryGame extends BaseGame {
             <span class="material-symbols-outlined text-[15px]">psychology</span>
             <span>SEQUENCE: <strong id="sequence-len">${this.currentNumCount}</strong></span>
           </div>
-          <span id="memory-instruction-hint" class="memory-status-hint">Memorize the positions...</span>
+          <span id="memory-instruction-hint" class="memory-status-hint" aria-live="polite">Memorize the positions...</span>
         </div>
         <div class="chimp-board-frame">
-          <div id="chimp-grid" class="chimp-grid-board"></div>
+          <div id="chimp-grid" class="chimp-grid-board" role="group" aria-label="Memory number tiles"></div>
         </div>
       </div>
     `;
@@ -67,6 +68,7 @@ export class ChimpMemoryGame extends BaseGame {
     }
 
     this.nextExpectedNumber = 1;
+    this.trialLocked = false;
     this.isMasked = false;
     this.tileMap.clear();
 
@@ -109,12 +111,13 @@ export class ChimpMemoryGame extends BaseGame {
     const totalCells = this.gridSize * this.gridSize;
 
     for (let i = 0; i < totalCells; i++) {
-      const tile = document.createElement('div');
+      const tile = document.createElement(this.tileMap.has(i) ? 'button' : 'div');
       tile.className = 'chimp-tile';
       tile.dataset.index = i;
 
       if (this.tileMap.has(i)) {
         const val = this.tileMap.get(i);
+        tile.type = 'button';
         tile.classList.add('has-number');
 
         if (masked) {
@@ -123,6 +126,7 @@ export class ChimpMemoryGame extends BaseGame {
         } else {
           tile.textContent = val;
         }
+        tile.setAttribute('aria-label', masked ? `Tile ${i + 1}, hidden number` : `Tile ${i + 1}, number ${val}`);
 
         tile.addEventListener('click', (e) => this.handleTileClick(i, val, tile, e));
       } else {
@@ -142,11 +146,12 @@ export class ChimpMemoryGame extends BaseGame {
     tiles.forEach(tile => {
       tile.classList.add('masked');
       tile.textContent = '';
+      tile.setAttribute('aria-label', `Tile ${Number(tile.dataset.index) + 1}, hidden number`);
     });
   }
 
   handleTileClick(index, value, tileEl, event) {
-    if (!this.isActive || this.isPaused) return;
+    if (!this.isActive || this.isPaused || this.trialLocked) return;
 
     // If still showing numbers, clicking instantly masks and starts the test
     if (!this.isMasked) {
@@ -166,7 +171,9 @@ export class ChimpMemoryGame extends BaseGame {
       // Correct tile clicked!
       tileEl.classList.remove('masked');
       tileEl.classList.add('solved');
+      tileEl.disabled = true;
       tileEl.textContent = value;
+      tileEl.setAttribute('aria-label', `Tile ${index + 1}, number ${value}, found`);
 
       if (this.ctx && this.ctx.sound) {
         this.ctx.sound.playCorrect(this.nextExpectedNumber);
@@ -177,6 +184,7 @@ export class ChimpMemoryGame extends BaseGame {
 
       // Check if trial complete
       if (this.nextExpectedNumber > this.currentNumCount) {
+        this.trialLocked = true;
         // Full sequence solved!
         const points = this.currentNumCount * 40;
         this.awardScore(points, coords);
@@ -188,6 +196,7 @@ export class ChimpMemoryGame extends BaseGame {
         setTimeout(() => this.newTrial(), 300);
       }
     } else {
+      this.trialLocked = true;
       // Mistake!
       tileEl.classList.add('failed');
       tileEl.textContent = value;
@@ -199,6 +208,7 @@ export class ChimpMemoryGame extends BaseGame {
         const idx = parseInt(t.dataset.index, 10);
         t.classList.remove('masked');
         t.textContent = this.tileMap.get(idx);
+        t.setAttribute('aria-label', `Tile ${idx + 1}, number ${this.tileMap.get(idx)}`);
       });
 
       // Decrease difficulty slightly if above 3

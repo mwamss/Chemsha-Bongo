@@ -4,7 +4,7 @@ import { useAudio } from '../../context/AudioContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
 
 export function Header({ onOpenSidebar, onNavigate }) {
-  const { displayName, avatarInitial, avatarColor, isAuthenticated, setShowAuthModal } = useAuth();
+  const { displayName, avatarInitial, avatarColor, avatarImage, isAuthenticated, setShowAuthModal } = useAuth();
   const { muted, toggleMute, playClick } = useAudio();
   const { isDark, toggleTheme } = useTheme();
 
@@ -67,10 +67,10 @@ export function Header({ onOpenSidebar, onNavigate }) {
               title={`Account & Settings (${displayName})`}
             >
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-sm"
+                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-sm overflow-hidden"
                 style={{ backgroundColor: avatarColor }}
               >
-                {avatarInitial}
+                {avatarImage ? <img src={avatarImage} alt="" className="w-full h-full object-cover" /> : avatarInitial}
               </div>
             </button>
           ) : (

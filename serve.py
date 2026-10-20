@@ -92,10 +92,9 @@ def main():
     print(f"Press Ctrl+C to stop the server.")
     print(f"==================================================")
     
-    webbrowser.open(f"http://{HOST}:{PORT}")
-    
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer((HOST, PORT), Handler) as httpd:
+        webbrowser.open(f"http://{HOST}:{PORT}")
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

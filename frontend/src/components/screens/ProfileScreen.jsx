@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
+import { GoogleSignInButton } from '../auth/GoogleSignInButton.jsx';
 
 const AVATAR_PALETTE = [
   { name: 'Forest Teal', hex: '#1e3a34' },
@@ -12,6 +13,29 @@ const AVATAR_PALETTE = [
   { name: 'Terracotta', hex: '#c86a58' },
 ];
 
+const MAX_AVATAR_BYTES = 512 * 1024;
+
+async function prepareAvatarImage(file) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    throw new Error('Choose a JPEG, PNG, or WebP image.');
+  }
+
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 512 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close?.();
+
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.82));
+  if (!blob) throw new Error('This image could not be prepared. Try another file.');
+  if (blob.size > MAX_AVATAR_BYTES) {
+    throw new Error('This image is still too large after resizing. Choose a smaller image.');
+  }
+  return new File([blob], 'profile-avatar.webp', { type: 'image/webp' });
+}
+
 export function ProfileScreen() {
   const {
     user,
@@ -21,8 +45,12 @@ export function ProfileScreen() {
     email,
     avatarInitial,
     avatarColor,
+    avatarImage,
     settings,
     updateProfile,
+    uploadAvatar,
+    removeAvatar,
+    linkGoogleAccount,
     updateSettings,
     syncLocalData,
     syncStatus,
@@ -37,6 +65,18 @@ export function ProfileScreen() {
   const [inputSurname, setInputSurname] = useState(displayName);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
   const [saving, setSaving] = useState(false);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [avatarMessage, setAvatarMessage] = useState('');
+  const [avatarError, setAvatarError] = useState('');
+  const [pendingAvatarPreview, setPendingAvatarPreview] = useState(null);
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const [googleMessage, setGoogleMessage] = useState('');
+  const [googleError, setGoogleError] = useState('');
+  const avatarInputRef = useRef(null);
+
+  useEffect(() => () => {
+    if (pendingAvatarPreview) URL.revokeObjectURL(pendingAvatarPreview);
+  }, [pendingAvatarPreview]);
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
@@ -55,6 +95,56 @@ export function ProfileScreen() {
   const handleSelectColor = async (hex) => {
     playClick();
     await updateProfile({ avatar_color: hex });
+  };
+
+  const handleAvatarFile = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    const preview = URL.createObjectURL(file);
+    setPendingAvatarPreview(preview);
+    setAvatarMessage('');
+    setAvatarError('');
+    setAvatarBusy(true);
+    try {
+      const optimizedImage = await prepareAvatarImage(file);
+      await uploadAvatar(optimizedImage);
+      setAvatarMessage('Profile photo synced to your account.');
+    } catch (error) {
+      setAvatarError(error.message || 'Could not save this profile photo.');
+    } finally {
+      setPendingAvatarPreview(null);
+      setAvatarBusy(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    setAvatarBusy(true);
+    setAvatarMessage('');
+    setAvatarError('');
+    try {
+      await removeAvatar();
+      setAvatarMessage('Profile photo removed from your account.');
+    } catch (error) {
+      setAvatarError(error.message || 'Could not remove this profile photo.');
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
+
+  const handleLinkGoogle = async (credential) => {
+    setGoogleBusy(true);
+    setGoogleMessage('');
+    setGoogleError('');
+    try {
+      await linkGoogleAccount(credential);
+      setGoogleMessage('Google sign-in connected to this account.');
+    } catch (error) {
+      setGoogleError(error.message || 'Could not connect this Google account.');
+    } finally {
+      setGoogleBusy(false);
+    }
   };
 
   const exportBackup = () => {
@@ -116,10 +206,16 @@ export function ProfileScreen() {
         <div className="flex items-center gap-5">
           {/* Avatar with selected color */}
           <div
-            className="w-20 h-20 rounded-3xl flex items-center justify-center text-3xl font-extrabold text-white shadow-md transition-colors"
+            className="w-20 h-20 rounded-3xl flex items-center justify-center text-3xl font-extrabold text-white shadow-md transition-colors overflow-hidden"
             style={{ backgroundColor: avatarColor }}
           >
-            {avatarInitial}
+            {(pendingAvatarPreview || avatarImage) ? (
+              <img
+                src={pendingAvatarPreview || avatarImage}
+                alt={`${displayName}'s profile`}
+                className="w-full h-full object-cover"
+              />
+            ) : avatarInitial}
           </div>
 
           <div className="flex flex-col">
@@ -193,6 +289,87 @@ export function ProfileScreen() {
           <span className="material-symbols-outlined text-secondary">badge</span>
           <span>Profile Details</span>
         </h3>
+
+        {isAuthenticated && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl bg-surface-container/50 border border-border-subtle/40 p-4">
+            <div>
+              <p className="text-sm font-semibold text-on-surface">Google account</p>
+              <p className="text-xs text-on-surface-variant mt-0.5">
+                {user?.google_connected ? 'Google sign-in is connected to this account.' : 'Connect Google to sign in with your Google account.'}
+              </p>
+            </div>
+            {user?.google_connected ? (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-secondary">
+                <span className="material-symbols-outlined text-base">check_circle</span>
+                Connected
+              </span>
+            ) : googleBusy ? (
+              <span className="text-xs text-secondary" role="status">Connecting Google…</span>
+            ) : (
+              <GoogleSignInButton
+                onCredential={handleLinkGoogle}
+                onLoadError={setGoogleError}
+                buttonText="continue_with"
+              />
+            )}
+            {(googleMessage || googleError) && (
+              <p className={`text-xs basis-full ${googleError ? 'text-red-600 dark:text-red-400' : 'text-secondary'}`} role="status">
+                {googleError || googleMessage}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Account synced profile image */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 border-b border-border-subtle/30 pb-5">
+          {isAuthenticated ? (
+            <>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleAvatarFile}
+                className="sr-only"
+                aria-label="Choose a profile photo"
+              />
+              <button
+                type="button"
+                onClick={() => { playClick(); avatarInputRef.current?.click(); }}
+                disabled={avatarBusy}
+                className="btn btn-secondary px-5 py-2.5 text-xs font-semibold rounded-xl cursor-pointer disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined text-[16px]">add_a_photo</span>
+                {avatarBusy ? 'Saving photo…' : avatarImage ? 'Change profile photo' : 'Add profile photo'}
+              </button>
+              {avatarImage && (
+                <button
+                  type="button"
+                  onClick={() => { playClick(); handleRemoveAvatar(); }}
+                  disabled={avatarBusy}
+                  className="text-xs font-semibold text-on-surface-variant hover:text-primary cursor-pointer disabled:opacity-50"
+                >
+                  Remove photo
+                </button>
+              )}
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => { playClick(); setShowAuthModal(true); }}
+              className="btn btn-secondary px-5 py-2.5 text-xs font-semibold rounded-xl cursor-pointer"
+            >
+              Sign in to sync a profile photo
+            </button>
+          )}
+          <span className="text-[11px] text-on-surface-variant sm:ml-auto">
+            JPEG, PNG, or WebP · resized to 512 × 512 max
+          </span>
+        </div>
+        {(avatarMessage || avatarError) && (
+          <p className={`text-xs ${avatarError ? 'text-red-600 dark:text-red-400' : 'text-secondary'}`} role="status">
+            {avatarError || avatarMessage}
+          </p>
+        )}
 
         <form onSubmit={handleSaveProfile} className="flex flex-col sm:flex-row gap-3 items-end">
           <div className="flex flex-col gap-1.5 flex-1 w-full">

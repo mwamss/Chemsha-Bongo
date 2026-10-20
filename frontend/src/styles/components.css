@@ -27,7 +27,7 @@
 
 .btn-primary {
   background: var(--primary);
-  color: #f8f9f5;
+  color: var(--text-inverse);
   box-shadow: 0 4px 14px rgba(30, 58, 52, 0.2);
 }
 
@@ -35,6 +35,84 @@
   background: var(--primary-hover);
   box-shadow: 0 6px 20px rgba(30, 58, 52, 0.3);
   transform: translateY(-1px);
+}
+
+html.dark .hero-ritual-card {
+  background: linear-gradient(135deg, #17372f 0%, #10211b 100%);
+  box-shadow: 0 16px 44px -16px rgba(0, 0, 0, 0.82), 0 0 0 1px rgba(149, 211, 192, 0.12);
+}
+
+html.dark .ritual-cta-btn {
+  color: #211707;
+}
+
+html.dark .pebble-dot.today {
+  background: #3b3020;
+}
+
+html.dark .btn-outline:hover,
+html.dark .btn-ghost:hover {
+  background: rgba(149, 211, 192, 0.1);
+}
+
+/* Branded utility colors that otherwise stay pale when the global theme is dark. */
+html.dark .bg-red-50 {
+  background-color: #2b1c1a;
+}
+
+html.dark .border-red-200 {
+  border-color: #63342e;
+}
+
+html.dark .text-red-700,
+html.dark .text-red-600 {
+  color: #ff9b8d;
+}
+
+html.dark .bg-amber-100 {
+  background-color: #3a2d1b;
+}
+
+html.dark .text-amber-800,
+html.dark .text-amber-900 {
+  color: #f0d39d;
+}
+
+html.dark .bg-slate-200 {
+  background-color: #303a35;
+}
+
+html.dark .text-slate-700 {
+  color: #d4ddd8;
+}
+
+html.dark .border-border-subtle {
+  border-color: var(--border-subtle);
+}
+
+html.dark [class~="border-border-subtle/30"],
+html.dark [class~="border-border-subtle/40"],
+html.dark [class~="border-border-subtle/50"],
+html.dark [class~="border-border-subtle/60"] {
+  border-color: var(--border-subtle);
+}
+
+html.dark .bg-emerald-50,
+html.dark [class~="bg-emerald-100/70"] {
+  background-color: #14221d;
+}
+
+html.dark .border-emerald-200,
+html.dark .border-emerald-300 {
+  border-color: #315b4c;
+}
+
+html.dark .text-emerald-800 {
+  color: #b7e5d3;
+}
+
+html.dark [class~="bg-primary"][class~="text-white"] {
+  color: var(--text-inverse);
 }
 
 .btn-secondary {

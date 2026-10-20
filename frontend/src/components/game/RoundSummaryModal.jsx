@@ -17,7 +17,7 @@ export function RoundSummaryModal({
   const isLastBlitzRound = isBlitz && blitzCurrentRound >= blitzTotalRounds;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 dark:bg-black/70 backdrop-blur-sm select-none">
       <div className="w-full max-w-md bg-surface rounded-3xl p-6 sm:p-8 shadow-2xl border border-border-subtle flex flex-col items-center text-center animate-countPulse">
         {/* Blitz Badge or Celebration Icon */}
         {isBlitz ? (

@@ -1,6 +1,6 @@
 import uuid
 from typing import TYPE_CHECKING, Optional, List
-from sqlalchemy import String, Boolean, ForeignKey, Uuid
+from sqlalchemy import String, Boolean, ForeignKey, Uuid, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.db.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
 
@@ -17,6 +17,7 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    google_sub: Mapped[Optional[str]] = mapped_column(String(255), unique=True, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
@@ -52,6 +53,8 @@ class UserProfile(Base, TimestampMixin):
     surname: Mapped[str] = mapped_column(String(100), default="", nullable=False)
     display_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     avatar_color: Mapped[str] = mapped_column(String(7), default="#1e3a34", nullable=False)
+    avatar_image: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
+    avatar_mime_type: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="profile")
 

@@ -50,9 +50,11 @@ class ApiClient {
 
   async request(endpoint, options = {}) {
     const url = `${API_BASE}${endpoint}`;
+    const { responseType, ...requestOptions } = options;
+    const isFormData = typeof FormData !== 'undefined' && requestOptions.body instanceof FormData;
     const headers = {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
+      ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
+      ...(requestOptions.headers || {}),
     };
 
     // Attach Bearer token for cross-origin and mobile resilience
@@ -68,16 +70,15 @@ class ApiClient {
     }
 
     const config = {
-      ...options,
+      ...requestOptions,
       headers,
       credentials: 'include', // Essential for sending/receiving HttpOnly cookies
     };
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json().catch(() => ({}));
-
       if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
         let errorMsg = `Request failed with status ${response.status}`;
         if (typeof data.detail === 'string') {
           errorMsg = data.detail;
@@ -87,6 +88,9 @@ class ApiClient {
         throw new Error(errorMsg);
       }
 
+      if (responseType === 'blob') return response.blob();
+      if (response.status === 204) return null;
+      const data = await response.json().catch(() => ({}));
       return data;
     } catch (err) {
       console.warn(`API Error [${options.method || 'GET'} ${endpoint}]:`, err.message);
@@ -116,6 +120,24 @@ class ApiClient {
     if (data.csrf_token) this.setCsrfToken(data.csrf_token);
     this.currentUser = data;
     return data;
+  }
+
+  async loginWithGoogle(credential) {
+    const data = await this.request('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ credential }),
+    });
+    if (data.access_token) this.setAuthToken(data.access_token);
+    if (data.csrf_token) this.setCsrfToken(data.csrf_token);
+    this.currentUser = data;
+    return data;
+  }
+
+  async linkGoogleAccount(credential) {
+    return this.request('/auth/google/link', {
+      method: 'POST',
+      body: JSON.stringify({ credential }),
+    });
   }
 
   async logout() {
@@ -151,10 +173,24 @@ class ApiClient {
     });
   }
 
-  async updateSettings({ sound_muted, haptics_enabled, ambient_enabled }) {
+  async uploadAvatar(file) {
+    const body = new FormData();
+    body.append('file', file);
+    return this.request('/users/profile/avatar', { method: 'PUT', body });
+  }
+
+  async getAvatar() {
+    return this.request('/users/profile/avatar', { responseType: 'blob' });
+  }
+
+  async deleteAvatar() {
+    return this.request('/users/profile/avatar', { method: 'DELETE' });
+  }
+
+  async updateSettings({ sound_muted, haptics_enabled, ambient_enabled, spotify_uri }) {
     return this.request('/users/settings', {
       method: 'PATCH',
-      body: JSON.stringify({ sound_muted, haptics_enabled, ambient_enabled }),
+      body: JSON.stringify({ sound_muted, haptics_enabled, ambient_enabled, spotify_uri }),
     });
   }
 

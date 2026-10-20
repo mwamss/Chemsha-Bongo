@@ -12,6 +12,11 @@
   --surface-container: #e1f2ea;
   --surface-sunken: #e3e7de;
   --surface-highlight: #fdfdfb;
+  --surface-rgb: 255 255 255;
+  --surface-container-rgb: 225 242 234;
+  --primary-rgb: 30 58 52;
+  --secondary-rgb: 74 124 109;
+  --border-subtle-rgb: 221 226 216;
 
   /* Borders & Dividers */
   --border-subtle: #dde2d8;
@@ -69,6 +74,11 @@ html.dark {
   --surface-container: #1f2724;
   --surface-sunken: #111614;
   --surface-highlight: #262b29;
+  --surface-rgb: 24 29 27;
+  --surface-container-rgb: 31 39 36;
+  --primary-rgb: 149 211 192;
+  --secondary-rgb: 82 142 125;
+  --border-subtle-rgb: 45 58 53;
 
   /* Borders & Dividers */
   --border-subtle: #2d3a35;
@@ -81,14 +91,14 @@ html.dark {
   --primary-light: #204f43;
   --secondary: #528e7d;            /* Soothing Eucalyptus */
   --secondary-light: #1f2824;
-  --tertiary: #53e076;             /* Emerald Flow */
-  --tertiary-light: #72fe8f;
+  --tertiary: #d4ad70;             /* Warm, low-glare ochre */
+  --tertiary-light: #f0d39d;
 
   /* Typography Colors */
   --text-primary: #f0f4f2;         /* Warm Alabaster */
   --text-secondary: #dfe4e0;
   --text-muted: #8e9e97;           /* Muted Eucalyptus Gray */
-  --text-inverse: #0f1412;
+  --text-inverse: #10211b;
 
   /* Non-Punitive Feedback Colors */
   --feedback-correct: #528e7d;

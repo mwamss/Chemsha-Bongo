@@ -4,7 +4,7 @@ import { useAudio } from '../../context/AudioContext.jsx';
 import { GentleRhythmSidebarWidget } from '../rhythm/GentleRhythmTracker.jsx';
 
 export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
-  const { displayName, avatarInitial, avatarColor, isAuthenticated, logout, setShowAuthModal } = useAuth();
+  const { displayName, avatarInitial, avatarColor, avatarImage, isAuthenticated, logout, setShowAuthModal } = useAuth();
   const { playClick, ambientPlaying, toggleAmbient } = useAudio();
 
   if (!isOpen) return null;
@@ -20,7 +20,7 @@ export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 z-[60] bg-primary/20 backdrop-blur-[2px] transition-opacity"
+        className="fixed inset-0 z-[60] bg-primary/20 dark:bg-black/65 backdrop-blur-[2px] transition-opacity"
         aria-hidden="true"
       />
 
@@ -51,10 +51,10 @@ export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
               title="Open Account & Settings"
             >
               <div
-                className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-base text-white shadow-sm shrink-0 group-hover:scale-105 transition-transform"
+                className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-base text-white shadow-sm shrink-0 group-hover:scale-105 transition-transform overflow-hidden"
                 style={{ backgroundColor: avatarColor }}
               >
-                {avatarInitial}
+                {avatarImage ? <img src={avatarImage} alt="" className="w-full h-full object-cover" /> : avatarInitial}
               </div>
               <div className="flex flex-col min-w-0 flex-1">
                 <span className="font-headline-md text-sm text-on-surface font-semibold truncate group-hover:text-primary">

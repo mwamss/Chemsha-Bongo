@@ -21,6 +21,7 @@ export class NumberSequenceGame extends BaseGame {
     this.sequenceDisplayEl = null;
     this.optionsGridEl = null;
     this.questionStartTime = 0;
+    this.answerLocked = false;
   }
 
   init(context) {
@@ -63,6 +64,7 @@ export class NumberSequenceGame extends BaseGame {
 
   nextSequence() {
     if (!this.isActive) return;
+    this.answerLocked = false;
 
     this.currentSequence = this.generatePattern();
     this.displaySequence();
@@ -168,7 +170,7 @@ export class NumberSequenceGame extends BaseGame {
   }
 
   handleAnswer(chosenVal, event) {
-    if (!this.isActive || this.isPaused) return;
+    if (!this.isActive || this.isPaused || this.answerLocked) return;
 
     const correct = chosenVal === this.currentSequence.correctVal;
     const coords = event ? { x: event.clientX, y: event.clientY } : null;
@@ -179,6 +181,7 @@ export class NumberSequenceGame extends BaseGame {
       this.awardScore(100 + speedBonus, coords);
       this.nextSequence();
     } else {
+      this.answerLocked = true;
       this.penalizeError();
       const clickedBtn = event ? event.currentTarget : null;
       if (clickedBtn) clickedBtn.classList.add('btn-wrong');

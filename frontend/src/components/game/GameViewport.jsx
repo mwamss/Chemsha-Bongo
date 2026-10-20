@@ -5,12 +5,15 @@ import { api } from '../../services/apiClient.js';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 
+const RESULT_BUFFER_MS = 1750;
+
 export function GameViewport({
   gameId,
   mode = 'free-play',
   durationSec = 30,
   onRoundComplete,
   onExit,
+  onRestart,
 }) {
   const { sound, fx } = useAudio();
   const { storage, isAuthenticated } = useAuth();
@@ -18,6 +21,7 @@ export function GameViewport({
   const containerRef = useRef(null);
   const timerRef = useRef(new PrecisionTimer());
   const gameInstanceRef = useRef(null);
+  const roundGenerationRef = useRef(0);
 
   // In-game HUD state (updated on game ticks / events)
   const [score, setScore] = useState(0);
@@ -26,6 +30,7 @@ export function GameViewport({
   const [secondsRemaining, setSecondsRemaining] = useState(durationSec);
   const [timerPercent, setTimerPercent] = useState(100);
   const [isPaused, setIsPaused] = useState(false);
+  const [isRoundEnding, setIsRoundEnding] = useState(false);
 
   // Internal metrics
   const metricsRef = useRef({
@@ -99,7 +104,10 @@ export function GameViewport({
   const completeRound = async () => {
     const m = metricsRef.current;
     if (!m.isRoundActive) return;
+    const completionStartedAt = Date.now();
+    const completionGeneration = roundGenerationRef.current;
     m.isRoundActive = false;
+    setIsRoundEnding(true);
 
     timerRef.current.stop();
 
@@ -145,6 +153,14 @@ export function GameViewport({
       }
     }
 
+    const remainingBufferMs = RESULT_BUFFER_MS - (Date.now() - completionStartedAt);
+    if (remainingBufferMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, remainingBufferMs));
+    }
+
+    // Ignore a pending result if this game viewport was exited or restarted.
+    if (roundGenerationRef.current !== completionGeneration) return;
+
     if (isNewHigh && fx) {
       fx.confetti(2500);
     }
@@ -176,6 +192,8 @@ export function GameViewport({
   useEffect(() => {
     const meta = getGameById(gameId);
     if (!meta || !containerRef.current) return;
+    const roundGeneration = roundGenerationRef.current + 1;
+    roundGenerationRef.current = roundGeneration;
 
     // Reset metrics
     metricsRef.current = {
@@ -194,6 +212,7 @@ export function GameViewport({
     setSecondsRemaining(durationSec);
     setTimerPercent(100);
     setIsPaused(false);
+    setIsRoundEnding(false);
 
     // Mount game instance directly to DOM
     const GameClass = meta.GameClass;
@@ -228,6 +247,9 @@ export function GameViewport({
     });
 
     return () => {
+      if (roundGenerationRef.current === roundGeneration) {
+        roundGenerationRef.current += 1;
+      }
       timerRef.current.stop();
       if (gameInstanceRef.current) {
         gameInstanceRef.current.cleanup();
@@ -315,10 +337,27 @@ export function GameViewport({
               <button onClick={togglePause} className="btn btn-primary px-6">
                 Resume
               </button>
+              <button onClick={onRestart} className="btn btn-secondary px-6">
+                <span className="material-symbols-outlined text-[18px] mr-1">restart_alt</span>
+                Restart
+              </button>
               <button onClick={onExit} className="btn btn-secondary px-6">
                 Exit
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Give players a short pause before revealing the score summary. */}
+        {isRoundEnding && (
+          <div
+            className="absolute inset-0 bg-surface/95 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center gap-3 z-50"
+            role="status"
+            aria-live="polite"
+          >
+            <span className="material-symbols-outlined text-4xl text-secondary animate-pulse">self_improvement</span>
+            <h3 className="font-headline-md text-xl font-bold text-on-surface">Round complete</h3>
+            <p className="text-sm text-on-surface-variant">Take a breath. Your results are on their way.</p>
           </div>
         )}
       </div>

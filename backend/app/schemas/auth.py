@@ -15,6 +15,10 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class GoogleLoginRequest(BaseModel):
+    credential: str = Field(..., min_length=20, max_length=8192)
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -31,8 +35,11 @@ class AuthMeResponse(BaseModel):
     username: str
     surname: str
     avatar_color: str
+    has_avatar: bool
+    google_connected: bool
     sound_muted: bool
     haptics_enabled: bool
     ambient_enabled: bool
+    spotify_uri: Optional[str] = None
     csrf_token: str
 

@@ -31,6 +31,7 @@ export class ConfusingArrowsGame extends BaseGame {
     this.arrowDisplayEl = null;
     this.ruleReminderEl = null;
     this.questionStartTime = 0;
+    this.answerLocked = false;
   }
 
   init(context) {
@@ -108,6 +109,7 @@ export class ConfusingArrowsGame extends BaseGame {
 
   nextArrow() {
     if (!this.isActive) return;
+    this.answerLocked = false;
 
     // Pick random direction
     const dirObj = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
@@ -126,7 +128,7 @@ export class ConfusingArrowsGame extends BaseGame {
   }
 
   handleDirectionInput(chosenDir, event) {
-    if (!this.isActive || this.isPaused) return;
+    if (!this.isActive || this.isPaused || this.answerLocked) return;
 
     const correct = chosenDir === this.correctTargetDirection;
     const coords = event ? { x: event.clientX, y: event.clientY } : null;
@@ -137,6 +139,7 @@ export class ConfusingArrowsGame extends BaseGame {
       this.awardScore(100 + speedBonus, coords);
       this.nextArrow();
     } else {
+      this.answerLocked = true;
       this.penalizeError();
       if (this.arrowDisplayEl) {
         this.arrowDisplayEl.classList.add('arrow-mistake');

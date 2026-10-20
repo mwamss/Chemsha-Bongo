@@ -48,6 +48,8 @@ export function AudioProvider({ children }) {
 
   const toggleAmbient = () => {
     const nextAmbient = !ambientPlaying;
+    // Start/resume the AudioContext in this user gesture so the first toggle is audible.
+    sound.ensureContext();
     if (nextAmbient) {
       sound.playAmbientMeditation();
     } else {

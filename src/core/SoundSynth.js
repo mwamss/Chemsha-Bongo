@@ -9,6 +9,8 @@ export class SoundSynth {
     this.ctx = null;
     this.muted = false;
     this.initialized = false;
+    this.ambientNodes = [];
+    this.ambientMasterGain = null;
   }
 
   init() {
@@ -35,10 +37,15 @@ export class SoundSynth {
 
   setMuted(isMuted) {
     this.muted = !!isMuted;
+    if (this.ambientMasterGain && this.ctx) {
+      const now = this.ctx.currentTime;
+      this.ambientMasterGain.gain.cancelScheduledValues(now);
+      this.ambientMasterGain.gain.setTargetAtTime(this.muted ? 0.0001 : 0.04, now, 0.15);
+    }
   }
 
   toggleMute() {
-    this.muted = !this.muted;
+    this.setMuted(!this.muted);
     return this.muted;
   }
 
@@ -181,21 +188,45 @@ export class SoundSynth {
   }
 
   playSingingBowl() {
-    if (this.muted || !this.ctx) return;
     this.ensureContext();
-    const freqs = [216, 432, 648, 864];
-    freqs.forEach((freq, idx) => {
-      const osc = this.ctx.createOscillator();
+    if (!this.ctx || this.ambientMasterGain) return;
+
+    const now = this.ctx.currentTime;
+    const master = this.ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(this.muted ? 0.0001 : 0.04, now + 0.8);
+    master.connect(this.ctx.destination);
+    this.ambientMasterGain = master;
+
+    this.ambientNodes = [216, 432, 648, 864].map((frequency, index) => {
+      const oscillator = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      const amp = 0.09 / (idx + 1);
-      gain.gain.setValueAtTime(amp, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 4.5);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 4.5);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, now);
+      gain.gain.setValueAtTime(0.2 / (index + 1), now);
+      oscillator.connect(gain);
+      gain.connect(master);
+      oscillator.start(now);
+      return oscillator;
     });
+  }
+
+  stopSingingBowl() {
+    if (!this.ambientMasterGain || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    const master = this.ambientMasterGain;
+    const nodes = this.ambientNodes;
+    master.gain.cancelScheduledValues(now);
+    master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), now);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+    this.ambientMasterGain = null;
+    this.ambientNodes = [];
+    setTimeout(() => {
+      nodes.forEach(node => {
+        try { node.stop(); } catch (_) {}
+        try { node.disconnect(); } catch (_) {}
+      });
+      try { master.disconnect(); } catch (_) {}
+    }, 500);
   }
 }

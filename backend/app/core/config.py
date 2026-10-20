@@ -37,6 +37,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "chemsha_bongo_insecure_dev_secret_key_change_in_production_32chars"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
     ALGORITHM: str = "HS256"
+    GOOGLE_CLIENT_ID: str = ""
     
     # CSRF Protection
     CSRF_SECRET: str = "chemsha_bongo_csrf_insecure_dev_secret_change_me"

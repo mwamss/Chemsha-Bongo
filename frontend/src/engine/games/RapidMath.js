@@ -21,6 +21,7 @@ export class RapidMathGame extends BaseGame {
     this.problemEl = null;
     this.optionsContainer = null;
     this.problemStartTime = 0;
+    this.answerLocked = false;
   }
 
   init(context) {
@@ -75,6 +76,7 @@ export class RapidMathGame extends BaseGame {
 
   nextProblem() {
     if (!this.isActive) return;
+    this.answerLocked = false;
 
     // 40% chance of True/False, 60% chance of Multiple Choice
     const isTrueFalse = Math.random() < 0.4;
@@ -204,7 +206,7 @@ export class RapidMathGame extends BaseGame {
   }
 
   handleAnswer(chosenVal, event) {
-    if (!this.isActive || this.isPaused) return;
+    if (!this.isActive || this.isPaused || this.answerLocked) return;
 
     const isMatch = chosenVal === this.currentProblem.correctValue;
     const coords = event ? { x: event.clientX, y: event.clientY } : null;
@@ -215,6 +217,7 @@ export class RapidMathGame extends BaseGame {
       this.awardScore(100 + speedBonus, coords);
       this.nextProblem();
     } else {
+      this.answerLocked = true;
       this.penalizeError();
       const clickedBtn = event ? event.currentTarget : null;
       if (clickedBtn) {

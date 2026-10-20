@@ -12,16 +12,23 @@ class UserProfileRead(BaseModel):
     surname: str
     display_name: Optional[str] = None
     avatar_color: str
+    has_avatar: bool = False
 
 
 class UserSettingsUpdate(BaseModel):
     sound_muted: Optional[bool] = None
     haptics_enabled: Optional[bool] = None
     ambient_enabled: Optional[bool] = None
+    spotify_uri: Optional[str] = Field(
+        None,
+        max_length=255,
+        pattern=r"^(|spotify:(playlist|album|track|artist|show|episode):[A-Za-z0-9]+)$",
+    )
 
 
 class UserSettingsRead(BaseModel):
     sound_muted: bool
     haptics_enabled: bool
     ambient_enabled: bool
+    spotify_uri: Optional[str] = None
 

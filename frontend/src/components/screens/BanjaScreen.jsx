@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
 import { api } from '../../services/apiClient.js';
+import { SpotifyPlayer } from './SpotifyPlayer.jsx';
 import {
   getAllCategories,
   getAllQuestions,
@@ -21,39 +22,9 @@ const getTimeOfDaySession = () => {
   return 'Night Sanctuary';
 };
 
-const SOUNDSCAPE_PRESETS = [
-  {
-    id: 'rain-piano',
-    title: 'Says (Solo Piano & Rain)',
-    artist: 'Nils Frahm • Ambient Sanctuary Edition',
-    badge: '432Hz',
-    duration: '05:22',
-    durationSec: 322,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDlXx8GJKjgtp27yDAZZ5Ar44L5VVqUMU57tQFiq_7tWUx7eMqGm4ZhhsPgWasJJa2fg0RPIBRJLvMPB0bsCxph_iiJc4LiEp3n28HztxgnJgLj1PvICgPd6CHZmCY1gpS-weLmVunV9SCDzoD0Rh0hLd9JBTl77z53zWNLr5QxruFD6ZwukUzT7YKuKDxnTEfqzoiIXwqhxGfa6tysdCid7vPrHFtJ39PoLu4avxekqkbRF3AIBytD6g'
-  },
-  {
-    id: 'kyoto-rain',
-    title: 'Kyoto Monastic Rain',
-    artist: 'Ambient Binaural 432Hz • Deep Focus',
-    badge: 'Alpha 9.4Hz',
-    duration: '06:40',
-    durationSec: 400,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB15IT4iFQzPsPPPX-XP7QjhRZU7r1xrjodOPmRfSSKiuanRLYsdVvZ7o3mgMNwS02ivLTedNA-kx_XGGHl4nnsuHV21b32q6_AH74nwj5TBMtVVYD2Rx7epit8-w5iYVYdLELpQf9Cm--XJyMpHQb050osVBgz8lanDGoTUyZ1pC2WHkYBgqCpENYPznhCtPoFkegt2tictXlsnWu3_Foblq4e5_puErT9W5UVZbjzHAOj5k8eRri3Ew'
-  },
-  {
-    id: 'singing-bowl',
-    title: 'Acacia Dusk & Tibetan Bell',
-    artist: 'Solitary Hearth • 528Hz Resonance',
-    badge: '528Hz',
-    duration: '04:15',
-    durationSec: 255,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA617R-GYPMubuiNReJmPPRJJUOSqZhocq2BLjelR3IjpHGJ9xSasI_c74xLjVSNobvgarFB37KC5liPl2pAwFhp1Y5Lyx308U5djfRHiugRvS4Ivjo7561y1PoV-nW3FGm8aTOEPA3K3lIPHvfZJuNgwBoZgabj9ZG16Jw6ObEfGkG5xixIOn9xFo1fVhpVhEvsZ8WIcpQmbmKS7mMEZaabVrJ9J87EnsxS_j4fWEMsc86BjyAqlOxKQ'
-  }
-];
-
 export function BanjaScreen({ onNavigate }) {
-  const { storage } = useAuth();
-  const { ambientPlaying, toggleAmbient, playClick, sound } = useAudio();
+  const { storage, settings, isAuthenticated, updateSettings } = useAuth();
+  const { playClick } = useAudio();
   const { theme, setTheme, isDark, toggleTheme } = useTheme();
 
   // Mode & Arrival Prompt State
@@ -83,14 +54,11 @@ export function BanjaScreen({ onNavigate }) {
   const [zenMode, setZenMode] = useState(false);
   const [copyStatus, setCopyStatus] = useState('Share Prompt ↗');
   const [savedStatus, setSavedStatus] = useState('Saved to personal sanctuary');
-  const [presetIndex, setPresetIndex] = useState(0);
-  const [elapsedSec, setElapsedSec] = useState(134);
   const [isVoiceNoteActive, setIsVoiceNoteActive] = useState(false);
 
   // Free Expression UI
   const [showAtmosphere, setShowAtmosphere] = useState(true);
   const [showPromptBanner, setShowPromptBanner] = useState(false);
-  const [wavePhase, setWavePhase] = useState(0);
 
   const textareaRef = useRef(null);
 
@@ -135,19 +103,6 @@ export function BanjaScreen({ onNavigate }) {
       setCompanionPrompts(getCompanionPrompts(enriched.id, 3));
     }
   }, [selectedCategory]);
-
-  // Audio Playback Timer
-  useEffect(() => {
-    if (!ambientPlaying) return;
-    const interval = setInterval(() => {
-      setWavePhase((p) => (p + 1) % 100);
-      setElapsedSec((s) => {
-        const curPreset = SOUNDSCAPE_PRESETS[presetIndex];
-        return s >= curPreset.durationSec ? 0 : s + 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [ambientPlaying, presetIndex]);
 
   // Load Entries from Storage
   useEffect(() => {
@@ -336,25 +291,6 @@ export function BanjaScreen({ onNavigate }) {
     }
   };
 
-  // Soundscape Navigation
-  const curPreset = SOUNDSCAPE_PRESETS[presetIndex];
-  const handleNextPreset = () => {
-    playClick();
-    setPresetIndex((presetIndex + 1) % SOUNDSCAPE_PRESETS.length);
-    setElapsedSec(0);
-  };
-  const handlePrevPreset = () => {
-    playClick();
-    setPresetIndex((presetIndex - 1 + SOUNDSCAPE_PRESETS.length) % SOUNDSCAPE_PRESETS.length);
-    setElapsedSec(0);
-  };
-
-  const formatSecs = (secs) => {
-    const mins = Math.floor(secs / 60);
-    const rem = secs % 60;
-    return `${mins.toString().padStart(2, '0')}:${rem.toString().padStart(2, '0')}`;
-  };
-
   // Word metrics
   const wordCount = body.trim() ? body.trim().split(/\s+/).length : 0;
   const readTime = Math.max(1, Math.round(wordCount / 180));
@@ -366,7 +302,6 @@ export function BanjaScreen({ onNavigate }) {
     day: 'numeric'
   }).format(new Date());
 
-  const curPresetProgress = Math.min(100, (elapsedSec / curPreset.durationSec) * 100);
 
   return (
     <div className={`relative min-h-screen font-body-md antialiased transition-colors duration-300 ${
@@ -665,7 +600,7 @@ export function BanjaScreen({ onNavigate }) {
               <span className="hidden sm:inline">Pathways</span>
             </button>
 
-            {/* Atmosphere Side Panel Toggle (in Free Mode) */}
+            {/* Spotify Player Panel Toggle (in Free Mode) */}
             {banjaMode === 'free' && (
               <button
                 onClick={() => {
@@ -677,10 +612,10 @@ export function BanjaScreen({ onNavigate }) {
                     ? (isDark ? 'bg-[#204f43] text-[#bbeddc] border-[#2d3a35]' : 'bg-secondary-container text-primary border-secondary/30')
                     : (isDark ? 'bg-[#181d1b] text-[#8e9e97] border-[#2d3a35] hover:bg-[#1f2724]' : 'bg-surface-container-low text-on-surface-variant border-outline-variant/30 hover:bg-surface-container')
                 }`}
-                title={showAtmosphere ? 'Hide Side Atmosphere' : 'Show Side Atmosphere'}
+                title={showAtmosphere ? 'Hide Spotify player' : 'Show Spotify player'}
               >
                 <span className={`material-symbols-outlined text-[16px] ${isDark ? 'text-[#95d3c0]' : 'text-secondary'}`}>psychology_alt</span>
-                <span>Atmosphere</span>
+                <span>Spotify</span>
               </button>
             )}
 
@@ -743,22 +678,7 @@ export function BanjaScreen({ onNavigate }) {
               </span>
             </button>
 
-            {/* Soundscape Quick Toggle */}
-            <button
-              onClick={() => {
-                toggleAmbient();
-              }}
-              className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl transition-all cursor-pointer ${
-                ambientPlaying
-                  ? 'bg-[#1db954]/15 text-[#1db954] ring-1 ring-[#1db954]/40'
-                  : (isDark ? 'text-[#8e9e97] hover:bg-[#181d1b]' : 'text-on-surface-variant hover:bg-surface-container-low')
-              }`}
-              title={ambientPlaying ? 'Pause Ambient Soundscape' : 'Play Ambient Soundscape'}
-            >
-              <span className="material-symbols-outlined text-[18px]">
-                {ambientPlaying ? 'waves' : 'graphic_eq'}
-              </span>
-            </button>
+
           </div>
         </div>
       </header>
@@ -1130,31 +1050,7 @@ export function BanjaScreen({ onNavigate }) {
                           />
                         </div>
 
-                        {/* Floating Mini Soundscape Pill */}
-                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border self-start sm:self-end text-xs max-w-full ${
-                          isDark
-                            ? 'bg-[#141a17] border-[#2d3a35] text-[#e1e8e4]'
-                            : 'bg-surface-container-low/70 border-outline-variant/30 text-primary'
-                        }`}>
-                          <span className={`material-symbols-outlined text-[16px] ${isDark ? 'text-[#95d3c0]' : 'text-secondary'}`}>graphic_eq</span>
-                          <span className={`font-medium truncate max-w-[140px] xs:max-w-[180px] sm:max-w-[150px] ${
-                            isDark ? 'text-[#f0f4f2]' : 'text-primary'
-                          }`}>{curPreset.title}</span>
-                          <button
-                            type="button"
-                            onClick={toggleAmbient}
-                            className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-colors shrink-0 ${
-                              ambientPlaying
-                                ? (isDark ? 'bg-[#95d3c0] text-[#00382d]' : 'bg-secondary text-white')
-                                : (isDark ? 'bg-[#1f2724] text-[#8e9e97]' : 'bg-surface-container text-on-surface')
-                            }`}
-                            title={ambientPlaying ? 'Pause soundscape' : 'Play soundscape'}
-                          >
-                            <span className="material-symbols-outlined text-xs">
-                              {ambientPlaying ? 'pause' : 'play_arrow'}
-                            </span>
-                          </button>
-                        </div>
+
                       </div>
 
                       {/* Contemplative Response Textarea */}
@@ -1382,129 +1278,7 @@ export function BanjaScreen({ onNavigate }) {
                 </div>
               </section>
 
-              {/* Sanctuary Audio & Soundscape Continuity Dock (Mobile Responsive & Dark Mode Harmonized) */}
-              <section className="w-full max-w-5xl mx-auto pb-4 sm:pb-6">
-                <div className={`p-3.5 sm:p-5 rounded-2xl backdrop-blur-md shadow-lg border transition-colors ${
-                  isDark
-                    ? 'bg-[#181d1b]/90 border-[#2d3a35]'
-                    : 'bg-surface-container-lowest/90 border-outline-variant/30'
-                }`}>
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-center">
-                    {/* Active Track Info */}
-                    <div className="lg:col-span-7 flex items-center gap-3 sm:gap-4 min-w-0">
-                      <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden shadow-2xs border ${
-                        isDark ? 'bg-[#141a17] border-[#2d3a35]' : 'bg-surface-container border-outline-variant/30'
-                      }`}>
-                        <img
-                          src={curPreset.image}
-                          alt={curPreset.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
-                          <span className={`material-symbols-outlined text-lg sm:text-xl ${isDark ? 'text-[#95d3c0]' : 'text-white'}`}>piano</span>
-                        </div>
-                      </div>
-
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          <span className={`w-2 h-2 rounded-full ${ambientPlaying ? 'bg-[#1db954] animate-pulse' : 'bg-outline'}`}></span>
-                          <p className={`text-xs sm:text-sm font-semibold truncate ${
-                            isDark ? 'text-[#f0f4f2]' : 'text-primary'
-                          }`}>
-                            {curPreset.title}
-                          </p>
-                        </div>
-                        {/* Progress Track */}
-                        <div className={`flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono ${
-                          isDark ? 'text-[#72847d]' : 'text-on-surface-variant'
-                        }`}>
-                          <span>{formatSecs(elapsedSec)}</span>
-                          <div className={`flex-1 h-1.5 rounded-full overflow-hidden ${
-                            isDark ? 'bg-[#111614]' : 'bg-surface-container-high'
-                          }`}>
-                            <div
-                              className={`h-full rounded-full transition-all duration-300 ${
-                                isDark ? 'bg-[#95d3c0]' : 'bg-secondary'
-                              }`}
-                              style={{ width: `${curPresetProgress}%` }}
-                            ></div>
-                          </div>
-                          <span>{curPreset.duration}</span>
-                        </div>
-                      </div>
-
-                      {/* Micro Controls */}
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          type="button"
-                          onClick={handlePrevPreset}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
-                            isDark
-                              ? 'text-[#8e9e97] hover:text-[#f0f4f2]'
-                              : 'text-on-surface-variant hover:text-primary'
-                          }`}
-                          title="Previous Track"
-                        >
-                          <span className="material-symbols-outlined text-base">skip_previous</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={toggleAmbient}
-                          className={`w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-2xs cursor-pointer ${
-                            isDark
-                              ? 'bg-[#95d3c0] text-[#00382d] hover:bg-[#b1efdb]'
-                              : 'bg-secondary text-white hover:bg-primary'
-                          }`}
-                          title={ambientPlaying ? 'Pause' : 'Play'}
-                        >
-                          <span className="material-symbols-outlined text-lg">
-                            {ambientPlaying ? 'pause' : 'play_arrow'}
-                          </span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={handleNextPreset}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
-                            isDark
-                              ? 'text-[#8e9e97] hover:text-[#f0f4f2]'
-                              : 'text-on-surface-variant hover:text-primary'
-                          }`}
-                          title="Next Track"
-                        >
-                          <span className="material-symbols-outlined text-base">skip_next</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Soundscape Preset Selector & Frequency Right */}
-                    <div className={`lg:col-span-5 flex items-center justify-between lg:justify-end gap-2 pt-2.5 lg:pt-0 border-t lg:border-t-0 ${
-                      isDark ? 'border-[#2d3a35]' : 'border-outline-variant/20'
-                    }`}>
-                      <div className="flex items-center gap-2">
-                        <span className={`material-symbols-outlined text-base sm:text-lg ${isDark ? 'text-[#95d3c0]' : 'text-secondary'}`}>graphic_eq</span>
-                        <div className="text-left">
-                          <p className={`text-xs font-semibold ${isDark ? 'text-[#f0f4f2]' : 'text-primary'}`}>{curPreset.badge} Frequency</p>
-                          <p className={`text-[10px] sm:text-[11px] ${isDark ? 'text-[#72847d]' : 'text-on-surface-variant'}`}>432Hz Mindful Tuning</p>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={handleNextPreset}
-                        className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors shadow-2xs cursor-pointer ${
-                          isDark
-                            ? 'bg-[#141a17] border-[#2d3a35] hover:bg-[#1f2724] text-[#95d3c0]'
-                            : 'bg-surface-container-low hover:bg-surface-container text-secondary border-outline-variant/30'
-                        }`}
-                      >
-                        Change Soundscape
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </section>
+              <SpotifyPlayer spotifyUri={settings.spotifyUri} isAuthenticated={isAuthenticated} onSave={(spotify_uri) => updateSettings({ spotify_uri })} />
             </div>
           </div>
         )}
@@ -1523,7 +1297,7 @@ export function BanjaScreen({ onNavigate }) {
                     <div className={`inline-flex items-center gap-1.5 text-xs uppercase tracking-widest font-semibold mb-1 ${
                       isDark ? 'text-[#8E9E97]' : 'text-secondary'
                     }`}>
-                      <span className={`w-2 h-2 rounded-full ${ambientPlaying ? 'bg-[#1db954] animate-pulse' : (isDark ? 'bg-[#404945]' : 'bg-outline')}`}></span>
+                      <span className={`w-2 h-2 rounded-full ${isDark ? 'bg-[#404945]' : 'bg-outline'}`}></span>
                       <span>Sanctuary Chamber</span>
                     </div>
                     <h1 className={`font-serif text-xl sm:text-3xl font-semibold tracking-tight ${
@@ -1852,164 +1626,9 @@ export function BanjaScreen({ onNavigate }) {
               </div>
             </div>
 
-            {/* Atmosphere Side Panel in Free Mode */}
             {showAtmosphere && !zenMode && (
-              <aside className="w-full max-w-[760px] lg:w-72 xl:w-80 flex flex-col sm:flex-row lg:flex-col gap-3 sm:gap-4 shrink-0 lg:sticky lg:top-20">
-                {/* Ambient Image Card */}
-                <div className={`flex-1 lg:flex-none rounded-2xl border p-4 flex flex-col justify-between shadow-2xs group ${
-                  isDark
-                    ? 'bg-[#181D1B] border-[#2D3A35]'
-                    : 'bg-surface-container-lowest border-outline-variant/40'
-                }`}>
-                  <div className={`w-full h-32 rounded-xl overflow-hidden relative mb-2.5 ${
-                    isDark ? 'bg-[#141A17]' : 'bg-surface-container-low'
-                  }`}>
-                    <img
-                      src={curPreset.image}
-                      alt={curPreset.title}
-                      className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <span className={`absolute bottom-2 left-2 px-2 py-0.5 rounded text-[11px] backdrop-blur-sm border font-medium ${
-                      isDark
-                        ? 'bg-[#141A17]/90 text-[#95D3C0] border-[#2D3A35]'
-                        : 'bg-surface-container-lowest/90 text-secondary border-outline-variant/30'
-                    }`}>
-                      {curPreset.badge} Sanctuary
-                    </span>
-                  </div>
-                  {dailyQuote ? (
-                    <p className={`text-xs italic font-serif leading-relaxed ${
-                      isDark ? 'text-[#8E9E97]' : 'text-on-surface-variant'
-                    }`}>
-                      "{dailyQuote.quote}"
-                      {dailyQuote.author && (
-                        <span className={`block not-italic text-[10px] font-sans mt-0.5 font-normal ${
-                          isDark ? 'text-[#72847D]' : 'text-outline'
-                        }`}>
-                          — {dailyQuote.author}
-                        </span>
-                      )}
-                    </p>
-                  ) : (
-                    <p className={`text-xs italic font-serif leading-relaxed ${
-                      isDark ? 'text-[#8E9E97]' : 'text-on-surface-variant'
-                    }`}>
-                      A peaceful sanctuary for quiet thoughts and deliberate reflection.
-                    </p>
-                  )}
-                </div>
-
-                {/* Binaural Flow Waveform Card */}
-                <div className={`flex-1 lg:flex-none rounded-2xl border p-4 sm:p-5 flex flex-col justify-between shadow-2xs ${
-                  isDark
-                    ? 'bg-[#181D1B] border-[#2D3A35]'
-                    : 'bg-surface-container-lowest border-outline-variant/40'
-                }`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <span className={`material-symbols-outlined text-[18px] ${isDark ? 'text-[#95D3C0]' : 'text-secondary'}`}>psychology_alt</span>
-                      <span className={`text-xs font-semibold ${isDark ? 'text-[#F0F4F2]' : 'text-on-surface'}`}>Binaural Flow</span>
-                    </div>
-                    <span className={`font-mono text-[11px] font-medium ${isDark ? 'text-[#95D3C0]' : 'text-secondary'}`}>Alpha (9.4 Hz)</span>
-                  </div>
-
-                  <div className="w-full h-11 flex items-center justify-center my-1">
-                    <svg className={`w-full h-9 ${isDark ? 'text-[#95D3C0]' : 'text-secondary'}`} fill="none" preserveAspectRatio="none" viewBox="0 0 400 40">
-                      <path
-                        d={`M0,20 Q${10 + Math.sin(wavePhase) * 2},${12 + Math.cos(wavePhase) * 4} 20,20 T40,20 T60,8 T80,26 T100,20 T120,32 T140,14 T160,20 T180,6 T200,28 T220,20 T240,16 T260,24 T280,10 T300,25 T320,18 T340,30 T360,15 T380,22 T400,20`}
-                        fill="none"
-                        opacity={ambientPlaying ? 0.85 : 0.45}
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="1.8"
-                      />
-                    </svg>
-                  </div>
-
-                  <div className={`flex items-center justify-between text-[11px] mt-1 ${isDark ? 'text-[#8E9E97]' : 'text-on-surface-variant'}`}>
-                    <span>Focus: 92% tranquility</span>
-                    <span className={`flex items-center gap-1 font-medium ${isDark ? 'text-[#95D3C0]' : 'text-secondary'}`}>
-                      <span className="material-symbols-outlined text-[13px]">headphones</span>
-                      Shielding
-                    </span>
-                  </div>
-                </div>
-
-                {/* Soundscape Cube Player */}
-                <div className={`flex-1 lg:flex-none rounded-2xl border p-4 sm:p-5 flex flex-col justify-between shadow-2xs group relative overflow-hidden ${
-                  isDark
-                    ? 'bg-[#181D1B] border-[#2D3A35]'
-                    : 'bg-surface-container-lowest border-outline-variant/40'
-                }`}>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className={`material-symbols-outlined text-[18px] ${isDark ? 'text-[#95D3C0]' : 'text-secondary'}`}>graphic_eq</span>
-                      <span className={`text-xs font-semibold ${isDark ? 'text-[#F0F4F2]' : 'text-on-surface'}`}>Ambient Audio</span>
-                    </div>
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
-                      isDark
-                        ? 'bg-[#1F2724] text-[#95D3C0] border border-[#2D3A35]'
-                        : 'bg-secondary-container/60 text-secondary'
-                    }`}>
-                      {curPreset.badge}
-                    </span>
-                  </div>
-
-                  <div className={`w-full aspect-square max-h-48 rounded-xl overflow-hidden relative mb-3 shadow-inner ${
-                    isDark ? 'bg-[#141A17]' : 'bg-surface-container-low'
-                  }`}>
-                    <img
-                      src={curPreset.image}
-                      alt={curPreset.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-3 text-white">
-                      <p className="text-xs font-semibold truncate">{curPreset.title}</p>
-                      <p className="text-[10px] text-white/80 truncate">{curPreset.artist}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={handlePrevPreset}
-                      className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                        isDark
-                          ? 'text-[#8E9E97] hover:text-[#95D3C0]'
-                          : 'text-on-surface-variant hover:text-primary'
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-base">skip_previous</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={toggleAmbient}
-                      className={`flex-1 py-1.5 rounded-xl text-xs font-medium flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer transition-colors ${
-                        isDark
-                          ? ambientPlaying
-                            ? 'bg-[#1F2724] text-[#95D3C0] border border-[#2D3A35] hover:bg-[#263A32]'
-                            : 'bg-[#95D3C0] text-[#00382D] hover:bg-[#BBEDDC] font-semibold'
-                          : 'bg-secondary text-white hover:bg-primary'
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-base">
-                        {ambientPlaying ? 'pause' : 'play_arrow'}
-                      </span>
-                      <span>{ambientPlaying ? 'Pause Ambient' : 'Play Soundscape'}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNextPreset}
-                      className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                        isDark
-                          ? 'text-[#8E9E97] hover:text-[#95D3C0]'
-                          : 'text-on-surface-variant hover:text-primary'
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-base">skip_next</span>
-                    </button>
-                  </div>
-                </div>
+              <aside className="w-full max-w-[760px] lg:w-96 shrink-0 lg:sticky lg:top-20">
+                <SpotifyPlayer spotifyUri={settings.spotifyUri} isAuthenticated={isAuthenticated} onSave={(spotify_uri) => updateSettings({ spotify_uri })} />
               </aside>
             )}
           </div>

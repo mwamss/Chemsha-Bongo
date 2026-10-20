@@ -26,7 +26,8 @@ const DEFAULT_DATA = {
   settings: {
     soundMuted: false,
     hapticsEnabled: true,
-    theme: 'dark'
+    theme: 'dark',
+    spotifyUri: ''
   },
   isMigrated: false,
   banjaEntries: []
