@@ -9,8 +9,8 @@ def test_record_game_session(client):
             "surname": "Speedy",
         },
     )
-    token = reg.json()["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    assert reg.status_code == 201, reg.text
+    headers = {"X-CSRF-Token": reg.json()["csrf_token"]}
 
     # 1. Record first game round
     payload = {
@@ -63,8 +63,8 @@ def test_record_daily_blitz(client):
             "surname": "Champ",
         },
     )
-    token = reg.json()["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    assert reg.status_code == 201, reg.text
+    headers = {"X-CSRF-Token": reg.json()["csrf_token"]}
 
     blitz_payload = {
         "total_score": 3600,
@@ -82,5 +82,5 @@ def test_record_daily_blitz(client):
     data = res.json()
     assert data["is_new_blitz_high"] is True
     assert data["best_blitz_score"] == 3600
-    assert data["rating"] == "Master"
+    assert data["rating"] == "Genius"
 

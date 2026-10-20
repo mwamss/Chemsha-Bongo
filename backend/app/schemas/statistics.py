@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class PersonalBestRead(BaseModel):
     high_score: int
     best_streak: int
+    is_verified: bool = True
 
 
 class StatsSummaryResponse(BaseModel):

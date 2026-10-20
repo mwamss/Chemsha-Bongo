@@ -7,9 +7,9 @@ def test_local_storage_migration(client):
             "password": "Password123!",
             "surname": "",
         },
-    ).json()
-    token = reg["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    )
+    assert reg.status_code == 201, reg.text
+    headers = {"X-CSRF-Token": reg.json()["csrf_token"]}
 
     # Simulate existing localStorage payload
     local_data = {

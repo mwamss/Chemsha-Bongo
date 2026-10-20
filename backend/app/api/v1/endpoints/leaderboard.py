@@ -33,7 +33,7 @@ def get_game_leaderboard(
         select(PersonalBest, User, UserProfile)
         .join(User, PersonalBest.user_id == User.id)
         .outerjoin(UserProfile, User.id == UserProfile.user_id)
-        .where(PersonalBest.game_id == game_id)
+        .where(PersonalBest.game_id == game_id, PersonalBest.is_verified.is_(True))
         .order_by(desc(PersonalBest.high_score), PersonalBest.achieved_at.asc())
         .limit(limit)
     )

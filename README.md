@@ -1,108 +1,57 @@
-# 🧠 Chemsha Bongo
+# Chemsha Bongo
 
-> *A simple game that challenges the brain and increases dopamine. (in theory)*
+Chemsha Bongo is a cognitive exercise suite with five mini-games, Daily Blitz, account profiles, statistics, leaderboards, reflection prompts, a private local journal, and optional Spotify playback.
 
-**Chemsha Bongo** is a sleek, fast-paced cognitive reflex and mental workout suite built with modern web technologies. Designed for quick 30–60 second mental resets, it features a custom zero-framework vanilla JavaScript game engine, real-time procedural Web Audio synthesis, precision timers, combo multipliers, and five focused brain drills.
+## Architecture
 
----
+- **Frontend:** React 18 and Vite (`frontend/`). The production build is served by FastAPI from `frontend/dist`.
+- **Backend:** FastAPI, SQLAlchemy, and Alembic (`backend/`).
+- **Database:** SQLite for local development; PostgreSQL for production.
+- **Authentication:** Google Identity Services or password sign-in, with an HttpOnly session cookie and CSRF protection.
 
-## 🎮 Mini-Games
+## Local development
 
-| Game | Category | Instructions | Controls |
-| :--- | :--- | :--- | :--- |
-| **🎨 Color Clash** | **Attention & Inhibition** | Classic Stroop Effect: Click the **ink color** of the letters — do *not* read the text! | `1, 2, 3, 4` or Click/Tap |
-| **🐵 Chimp Memory** | **Working Memory** | Kyoto Primate Memory Test: Numbers flash briefly then turn blank. Click the tiles in ascending order (`1, 2, 3...`). | Click/Tap tiles |
-| **⚡ Rapid Math** | **Calculation** | Fast mental arithmetic: Solve equations and True/False questions before the clock expires. | `1, 2, 3, 4` or `T`/`F` / Click |
-| **🧭 Confusing Arrows** | **Spatial Reflex** | If the arrow is **Green**, press where it points. If **Red**, press the **opposite direction**! | Arrow Keys, `WASD`, or D-Pad |
-| **🧩 Pattern Sequence** | **Logic & Deduction** | Uncover the mathematical pattern in 4 numbers and deduce the missing fifth element (`?`). | `1, 2, 3, 4` or Click/Tap |
+1. Install Python dependencies: `python -m pip install -r backend/requirements.txt`.
+2. Install frontend dependencies: `cd frontend; npm ci`.
+3. From the repository root, apply the database schema: `python -m alembic -c backend/alembic.ini upgrade head`.
+4. Start the API from the repository root: `python -m uvicorn backend.app.main:app --reload --port 8000`.
+5. In another terminal, run `npm run dev` from `frontend/`. Vite proxies `/api` to port 8000.
+6. Open `http://127.0.0.1:5173/`.
 
----
+For local Google sign-in, set `GOOGLE_CLIENT_ID` in a root `.env` and `VITE_GOOGLE_CLIENT_ID` in `frontend/.env` to the same web client ID. Allow the frontend's exact origin (for example, `http://127.0.0.1:5173`) in Google Cloud. For Spotify, register the exact frontend origin with a trailing `/` as a redirect URI and set `VITE_SPOTIFY_CLIENT_ID` in `frontend/.env`. The redirect URI defaults to the current origin.
 
-## ⚡ Game Modes
+For an older development database created by the previous app version, back it up and inspect its tables and columns before using Alembic. Only if it contains the complete schema through revision `20261020_004` should you mark it at that revision and apply the newer migrations:
 
-1. **Daily Blitz**:
-   - 3 rapid mini-games chosen randomly, back-to-back (30s each).
-   - Dynamic scoring with combo multipliers (`x1` up to `x4` hot streak).
-   - Generates your overall **Brain Quotient (BQ)** rating:
-     - 🧠 *Grandmaster*
-     - ⚡ *Genius*
-     - 🔥 *Sharpshooter*
-     - 🎯 *Quick Thinker*
-     - 🎓 *Novice*
-
-2. **Free Play**:
-   - Pick any mini-game individually to practice and beat your personal records.
-
-3. **Stats & Records**:
-   - Tracks games played, career accuracy %, highest streaks, and personal best scores locally via `localStorage`.
-
----
-
-## 🏗️ Architecture & Dependencies
-
-- **Zero Game Frameworks**: The core simulation, game logic, state machines, and timer loops are implemented in 100% pure vanilla JavaScript (ES6 modules). There are no third-party game engine dependencies (no Phaser, Pixi, or canvas engines).
-- **Procedural Audio (Web Audio API)**: All sound effects, clicks, feedback chimes, and singing bowl ambient drones are procedurally synthesized in real time. No `.mp3` or `.wav` sound files are downloaded.
-- **Particle & Confetti FX**: Built-in HTML5 Canvas particle system for combo streaks and record-breaking confetti.
-- **Calm Design System & Presentation**: Built with a Japandi minimalist aesthetic (deep forest teal, eucalyptus, soft celadon, and tactile ceramic surfaces).
-  - *Styling*: Tailwind CSS loaded via CDN for rapid utility classes, combined with custom CSS tokens in `styles/`.
-  - *Typography & Icons*: Google Fonts (`Inter`, `Plus Jakarta Sans`, `JetBrains Mono`) and Google Material Symbols loaded via Google CDN.
-  - *Offline Note*: For fully air-gapped / offline deployments, fonts and the Tailwind runtime can be bundled locally.
-
----
-
-## 🚀 How to Run Locally
-
-### Option 1: One-Click Windows Launch
-Double-click `start.bat` in the project folder. It will start the local server and open your default browser automatically.
-
-### Option 2: Python Command Line
-Run the included python server:
-```bash
-python serve.py
-```
-Or run the standard HTTP server:
-```bash
-python -m http.server 8000
-```
-Then open `http://localhost:8000` in your web browser.
-
-## Connect Google Stitch MCP in VS Code
-
-This repository includes a workspace MCP configuration at `.vscode/mcp.json`
-for the official Google Stitch HTTP server. VS Code prompts for your API key
-when the server starts; the key is not stored in this repository.
-
-1. Revoke the API key shared in chat and create a replacement in Google Cloud
-   Console.
-2. Open this repository as a VS Code workspace.
-3. Open Chat, select **Agent** mode, and open the tools/MCP menu.
-4. Start or enable the `stitch` server.
-5. Enter the replacement Stitch API key when VS Code prompts for it.
-6. Confirm that Stitch tools appear in the available tools list.
-
-For guided setup instead, run this from the project folder:
-
-```bash
-npx @_davideast/stitch-mcp init
+```powershell
+python -m alembic -c backend/alembic.ini stamp 20261020_004
+python -m alembic -c backend/alembic.ini upgrade head
 ```
 
-Never commit an API key to `mcp.json`, `.env`, or source files.
+Do not run the `stamp` command against a database whose schema has not been verified. A fresh database should use `upgrade head` directly. The existing local `chemsha_dev.db` is not migrated automatically by the app.
 
----
+## Docker deployment
 
-## 🌐 Deploy to GitHub Pages
+1. Copy `.env.example` to `.env` and replace every placeholder. Use two independent random secrets for `SECRET_KEY` and `CSRF_SECRET`. URL-encode any special characters in the PostgreSQL password inside `DATABASE_URL`.
+2. Set the Google web client ID and Spotify client ID. Add `https://your-domain/` as the Spotify redirect URI and as the Google authorized JavaScript origin. The redirect must exactly match the configured callback URI.
+3. For a fresh database, run `docker compose up --build -d` behind an HTTPS reverse proxy. The app service applies Alembic migrations before starting and serves the built frontend and API from the same origin. For an existing unversioned database, first verify its schema and stamp it at `20261020_004` only if it exactly matches that revision; do this before starting the app container.
+4. Check `https://your-domain/health` and confirm sign-in, sync, and Spotify playback from the deployed origin.
 
-1. Commit and push the code to your GitHub repository:
-   ```bash
-   git add .
-   git commit -m "Build Chemsha Bongo cognitive suite"
-   git push origin main
-   ```
-2. In your GitHub repository, go to **Settings** > **Pages**.
-3. Under **Build and deployment** > **Source**, choose **Deploy from a branch** and select `main` branch / `root`.
-4. Click **Save** — your game is live online!
+Production configuration rejects development secrets, debug mode, insecure cookies, localhost CORS origins, and SQLite. Same-origin hosting does not require CORS; if the frontend is hosted separately, set `CORS_ORIGINS` to its exact HTTPS origin(s).
 
----
+The built-in sign-in throttle is per application process. If you run multiple workers or replicas, add a shared rate limiter at your HTTPS proxy or use a shared store such as Redis.
 
-## 📄 License
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+The Spotify Web Playback SDK requires Spotify Premium. Spotify tokens stay in browser session storage and are not used as Chemsha Bongo account credentials.
+
+## Data notes
+
+- Game progress is stored locally for guests and can be imported into an account once. Authenticated game sessions and profile settings are stored by the backend.
+- Reflection journal entries and weekly rhythm history stay local unless **Settings → Account data → Sync private reflections and rhythm** is enabled. Turning that option off removes the server copy and keeps the local copy. Use the Profile screen's backup export before clearing browser data.
+- Public leaderboards display account names and scores. Do not put private information in a public display name.
+
+## Maintenance
+
+Apply schema changes with Alembic migrations. Do not use `Base.metadata.create_all()` as a production schema update mechanism. Keep database backups and test restores as part of deployment operations.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

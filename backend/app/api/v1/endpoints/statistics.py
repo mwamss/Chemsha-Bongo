@@ -27,7 +27,11 @@ def get_user_statistics_summary(
 
     pbs = db.scalars(select(PersonalBest).where(PersonalBest.user_id == current_user.id)).all()
     pb_dict: Dict[str, PersonalBestRead] = {
-        pb.game_id: PersonalBestRead(high_score=pb.high_score, best_streak=pb.best_streak)
+        pb.game_id: PersonalBestRead(
+            high_score=pb.high_score,
+            best_streak=pb.best_streak,
+            is_verified=pb.is_verified,
+        )
         for pb in pbs
     }
 

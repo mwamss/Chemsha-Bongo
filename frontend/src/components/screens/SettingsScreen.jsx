@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
@@ -26,7 +26,8 @@ function PreferenceRow({ title, description, value, onChange, activeLabel = 'Ena
 }
 
 export function SettingsScreen() {
-  const { settings, updateSettings } = useAuth();
+  const { settings, updateSettings, isAuthenticated, setShowAuthModal } = useAuth();
+  const [privateSyncError, setPrivateSyncError] = useState('');
   const { muted, toggleMute, ambientPlaying, toggleAmbient, playTestChime, playClick } = useAudio();
   const { isDark, setTheme, toggleTheme } = useTheme();
 
@@ -116,6 +117,40 @@ export function SettingsScreen() {
           value={Boolean(settings?.hapticsEnabled)}
           onChange={() => { playClick(); updateSettings({ haptics_enabled: !settings?.hapticsEnabled }); }}
         />
+      </section>
+
+      <section className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50">
+        <div className="border-b border-border-subtle/30 pb-3">
+          <h2 className="text-lg font-bold text-on-surface flex items-center gap-2">
+            <span className="material-symbols-outlined text-secondary">sync</span> Account data
+          </h2>
+          <p className="text-xs text-on-surface-variant mt-1">Private reflections and rhythm history stay on this device unless you enable account sync.</p>
+        </div>
+        {isAuthenticated ? (
+          <>
+            <PreferenceRow
+              title="Sync private reflections and rhythm"
+              description="When enabled, your journal and progress are stored in your account and merged across devices. Turning it off deletes the account copy but keeps this device's copy."
+              value={Boolean(settings?.privateSyncEnabled)}
+              onChange={async () => {
+                setPrivateSyncError('');
+                try {
+                  await updateSettings({ private_sync_enabled: !settings?.privateSyncEnabled });
+                } catch (error) {
+                  setPrivateSyncError(error.message || 'Private data sync could not be updated.');
+                }
+              }}
+              activeLabel="Syncing"
+              inactiveLabel="Off"
+            />
+            {privateSyncError && <p role="alert" className="text-xs text-red-500 mt-2">{privateSyncError}</p>}
+          </>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
+            <p className="text-xs text-on-surface-variant">Sign in to sync private reflections and rhythm history between devices.</p>
+            <button type="button" onClick={() => setShowAuthModal(true)} className="btn btn-secondary px-4 py-2 rounded-xl text-xs font-semibold">Sign in</button>
+          </div>
+        )}
       </section>
     </div>
   );

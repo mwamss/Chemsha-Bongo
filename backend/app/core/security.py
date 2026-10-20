@@ -1,6 +1,7 @@
 import hmac
 import hashlib
 import secrets
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Union, Tuple
 from jose import JWTError, jwt
@@ -10,11 +11,21 @@ from backend.app.core.config import settings
 
 # --- Password Hashing (Bcrypt) ---
 
+_PASSWORD_HASH_PREFIX = "bcrypt-sha256$"
+
+
+def _password_digest(password: str) -> bytes:
+    return hashlib.sha256(password.encode("utf-8")).hexdigest().encode("ascii")
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plain-text password against a bcrypt hash."""
     try:
+        if hashed_password.startswith(_PASSWORD_HASH_PREFIX):
+            bcrypt_hash = hashed_password[len(_PASSWORD_HASH_PREFIX):]
+            return bcrypt.checkpw(_password_digest(plain_password), bcrypt_hash.encode("utf-8"))
+        # Backward compatibility with existing direct-bcrypt hashes.
         return bcrypt.checkpw(
-            plain_password.encode("utf-8"),
+            plain_password.encode("utf-8")[:72],
             hashed_password.encode("utf-8")
         )
     except Exception:
@@ -22,9 +33,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def get_password_hash(password: str) -> str:
-    """Hash a password securely using bcrypt with automatic salting."""
+    """Hash arbitrary-length UTF-8 passwords with SHA-256 prehashing and bcrypt."""
     salt = bcrypt.gensalt(rounds=12)
-    return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
+    return _PASSWORD_HASH_PREFIX + bcrypt.hashpw(_password_digest(password), salt).decode("utf-8")
 
 
 # --- JWT Session Token ---

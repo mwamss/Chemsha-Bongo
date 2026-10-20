@@ -12,14 +12,7 @@ from backend.app.api.v1.endpoints.games import ensure_canonical_games
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: ensure all database tables exist before accessing them
-    import backend.app.models  # noqa: F401
-    from backend.app.db.base import Base
-    from backend.app.db.session import engine
-
-    Base.metadata.create_all(bind=engine)
-
-    # Ensure canonical games exist in DB using the configured get_db dependency
+    # Database schema is advanced by Alembic before the app is started.
     db_gen = get_db()
     db = next(db_gen)
     try:
@@ -35,9 +28,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    docs_url=f"{settings.API_V1_STR}/docs",
-    redoc_url=f"{settings.API_V1_STR}/redoc",
+    debug=settings.DEBUG,
+    openapi_url=None if settings.ENVIRONMENT.lower() in {"prod", "production"} else f"{settings.API_V1_STR}/openapi.json",
+    docs_url=None if settings.ENVIRONMENT.lower() in {"prod", "production"} else f"{settings.API_V1_STR}/docs",
+    redoc_url=None if settings.ENVIRONMENT.lower() in {"prod", "production"} else f"{settings.API_V1_STR}/redoc",
     lifespan=lifespan,
 )
 
@@ -45,11 +39,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
-    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
 )
 
 # Mount API v1

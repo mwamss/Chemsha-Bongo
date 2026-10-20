@@ -112,6 +112,16 @@ export function BanjaScreen({ onNavigate }) {
     }
   }, [storage]);
 
+  useEffect(() => {
+    const refreshEntries = () => setEntries(storage.getBanjaEntries());
+    window.addEventListener('chemsha-storage-update', refreshEntries);
+    window.addEventListener('chemsha-private-data-merged', refreshEntries);
+    return () => {
+      window.removeEventListener('chemsha-storage-update', refreshEntries);
+      window.removeEventListener('chemsha-private-data-merged', refreshEntries);
+    };
+  }, [storage]);
+
   // Auto-grow textarea
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
@@ -1556,7 +1566,7 @@ export function BanjaScreen({ onNavigate }) {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`font-mono text-[11px] ${isDark ? 'text-[#72847D]' : 'text-outline'}`}>
-                      Auto-saved locally
+                      {settings?.privateSyncEnabled ? 'Auto-saved locally · account sync enabled' : 'Auto-saved locally'}
                     </span>
                   </div>
                 </div>

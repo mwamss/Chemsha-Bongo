@@ -46,11 +46,13 @@ const DEFAULT_DATA = {
     highestOverallStreak: 0
   },
   dailyRhythm: {},
+  banjaTombstones: {},
   settings: {
     soundMuted: false,
     hapticsEnabled: true,
     theme: 'dark',
-    spotifyUri: ''
+    spotifyUri: '',
+    privateSyncEnabled: false
   },
   isMigrated: false,
   banjaEntries: []
@@ -79,7 +81,7 @@ export class StorageManager {
         const raw = window.localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          return {
+          const data = {
             ...DEFAULT_DATA,
             ...parsed,
             profile: { ...DEFAULT_DATA.profile, ...(parsed.profile || {}) },
@@ -89,24 +91,32 @@ export class StorageManager {
             highScores: { ...DEFAULT_DATA.highScores, ...(parsed.highScores || {}) },
             bestStreaks: { ...DEFAULT_DATA.bestStreaks, ...(parsed.bestStreaks || {}) },
             dailyRhythm: { ...(parsed.dailyRhythm || {}) },
+            banjaTombstones: { ...(parsed.banjaTombstones || {}) },
             isMigrated: !!parsed.isMigrated,
             banjaEntries: Array.isArray(parsed.banjaEntries) ? parsed.banjaEntries : []
           };
+          this.memoryStore = JSON.parse(JSON.stringify(data));
+          return data;
         }
       } catch (err) {
         console.warn('Failed to parse localStorage data:', err);
       }
     }
-    return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    return JSON.parse(JSON.stringify(this.memoryStore || DEFAULT_DATA));
   }
 
-  save() {
+  save(notifySync = true) {
+    // Keep the in-memory copy current even when browser storage is blocked or full.
+    this.memoryStore = JSON.parse(JSON.stringify(this.data));
     if (this.isAvailable()) {
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
       } catch (err) {
         console.warn('Failed to write to localStorage:', err);
       }
+    }
+    if (notifySync && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('chemsha-storage-update'));
     }
   }
 
@@ -334,6 +344,7 @@ export class StorageManager {
       this.getBanjaEntries();
     }
     const index = this.data.banjaEntries.findIndex(e => e.id === entry.id);
+    if (this.data.banjaTombstones) delete this.data.banjaTombstones[entry.id];
     if (index >= 0) {
       this.data.banjaEntries[index] = { ...this.data.banjaEntries[index], ...entry, updatedAt: Date.now() };
     } else {
@@ -345,9 +356,52 @@ export class StorageManager {
 
   deleteBanjaEntry(id) {
     if (!this.data.banjaEntries) return [];
+    this.data.banjaTombstones = this.data.banjaTombstones || {};
+    this.data.banjaTombstones[id] = Date.now();
     this.data.banjaEntries = this.data.banjaEntries.filter(e => e.id !== id);
     this.save();
     return this.data.banjaEntries;
+  }
+
+  exportPrivateData() {
+    return {
+      banjaEntries: this.getBanjaEntries(),
+      banjaTombstones: { ...(this.data.banjaTombstones || {}) },
+      dailyRhythm: { ...this.data.dailyRhythm },
+    };
+  }
+
+  mergePrivateData(remote = {}) {
+    this.data.banjaTombstones = this.data.banjaTombstones || {};
+    for (const [id, timestamp] of Object.entries(remote.banjaTombstones || {})) {
+      this.data.banjaTombstones[id] = Math.max(this.data.banjaTombstones[id] || 0, Number(timestamp) || 0);
+    }
+
+    const entries = new Map(this.getBanjaEntries().map((entry) => [entry.id, entry]));
+    for (const entry of remote.banjaEntries || []) {
+      const deletedAt = this.data.banjaTombstones[entry.id] || 0;
+      if (deletedAt >= (Number(entry.updatedAt) || 0)) {
+        entries.delete(entry.id);
+        continue;
+      }
+      const local = entries.get(entry.id);
+      if (!local || (Number(entry.updatedAt) || 0) >= (Number(local.updatedAt) || 0)) entries.set(entry.id, entry);
+    }
+    this.data.banjaEntries = [...entries.values()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+    for (const [dateKey, remoteDay] of Object.entries(remote.dailyRhythm || {})) {
+      const localDay = this.data.dailyRhythm[dateKey] || {};
+      const focusSessions = Math.max(Number(localDay.focusSessions) || 0, Number(remoteDay.focusSessions) || 0);
+      this.data.dailyRhythm[dateKey] = {
+        focusSessions,
+        focusSeconds: Math.max(Number(localDay.focusSeconds) || 0, Number(remoteDay.focusSeconds) || 0),
+        restHonored: !focusSessions && Boolean(localDay.restHonored || remoteDay.restHonored),
+        updatedAt: Math.max(Number(localDay.updatedAt) || 0, Number(remoteDay.updatedAt) || 0),
+      };
+    }
+    this.save(false);
+    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('chemsha-private-data-merged'));
+    this.notifyRhythmUpdate();
   }
 
   resetAll() {

@@ -2,18 +2,18 @@ import time
 
 def test_daily_blitz_leaderboard_rules(client):
     # Register Player 1
-    p1 = client.post(
+    p1_response = client.post(
         "/api/v1/auth/register",
         json={"email": "p1@example.com", "username": "player_one", "password": "Password123!", "surname": "One"}
-    ).json()
-    t1 = p1["access_token"]
+    )
+    t1 = p1_response.cookies.get("chemsha_session")
 
     # Register Player 2
-    p2 = client.post(
+    p2_response = client.post(
         "/api/v1/auth/register",
         json={"email": "p2@example.com", "username": "player_two", "password": "Password123!", "surname": "Two"}
-    ).json()
-    t2 = p2["access_token"]
+    )
+    t2 = p2_response.cookies.get("chemsha_session")
 
     # Player 1 submits first Blitz attempt (score: 2500)
     client.post(
@@ -36,7 +36,7 @@ def test_daily_blitz_leaderboard_rules(client):
         "/api/v1/sessions/blitz",
         json={
             "total_score": 3800,
-            "rating": "Master",
+            "rating": "Genius",
             "client_session_id": "p1-attempt-2",
             "rounds": [
                 {"game_id": "color-clash", "round_order": 1, "score": 1200, "accuracy_pct": 95, "max_streak": 8},

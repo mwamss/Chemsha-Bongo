@@ -9,8 +9,8 @@ def test_user_profile_and_settings_persistence(client):
             "surname": "OriginalSurname",
         },
     )
-    token = reg.json()["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    assert reg.status_code == 201, reg.text
+    headers = {"X-CSRF-Token": reg.json()["csrf_token"]}
 
     # 2. Verify initial settings
     settings_res = client.get("/api/v1/users/settings", headers=headers)
@@ -71,8 +71,8 @@ def test_user_stats_accumulate_in_account(client):
             "surname": "Champ",
         },
     )
-    token = reg.json()["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    assert reg.status_code == 201, reg.text
+    headers = {"X-CSRF-Token": reg.json()["csrf_token"]}
 
     # Play round 1 of Color Clash
     client.post(

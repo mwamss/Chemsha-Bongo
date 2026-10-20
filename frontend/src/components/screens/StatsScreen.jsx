@@ -115,6 +115,7 @@ export function StatsScreen() {
               {games.map((g) => {
                 const pbScore = serverStats?.personal_bests?.[g.id]?.high_score ?? storage.getHighScore(g.id);
                 const pbStreak = serverStats?.personal_bests?.[g.id]?.best_streak ?? storage.getBestStreak(g.id);
+                const scoreVerified = serverStats?.personal_bests?.[g.id]?.is_verified;
 
                 return (
                   <tr key={g.id} className="hover:bg-surface-container/30 transition-colors">
@@ -126,7 +127,10 @@ export function StatsScreen() {
                       {g.categoryLabel}
                     </td>
                     <td className="py-4 px-6 font-bold text-primary tabular-nums">
-                      {pbScore}
+                      <div>{pbScore}</div>
+                      {serverStats?.personal_bests?.[g.id] && scoreVerified === false && (
+                        <span className="text-[10px] font-medium text-outline">Imported · not ranked</span>
+                      )}
                     </td>
                     <td className="py-4 px-6 font-medium text-on-surface tabular-nums">
                       {pbStreak}

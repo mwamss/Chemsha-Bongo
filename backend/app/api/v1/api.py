@@ -9,6 +9,7 @@ from backend.app.api.v1.endpoints import (
     migration,
     quotes,
     reflections,
+    private_data,
 )
 
 api_router = APIRouter()
@@ -20,6 +21,7 @@ api_router.include_router(sessions.router, prefix="/sessions", tags=["Game Sessi
 api_router.include_router(statistics.router, prefix="/statistics", tags=["Player Statistics"])
 api_router.include_router(leaderboard.router, prefix="/leaderboard", tags=["Leaderboards"])
 api_router.include_router(migration.router, prefix="/sync", tags=["Data Migration"])
+api_router.include_router(private_data.router, prefix="/sync", tags=["Private Account Data"])
 api_router.include_router(quotes.router, prefix="/quotes", tags=["Inspirational Quotes"])
 api_router.include_router(reflections.router, prefix="/reflections", tags=["Reflection & Mental Check-In"])
 

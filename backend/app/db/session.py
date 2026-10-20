@@ -8,8 +8,15 @@ connect_args = {}
 if settings.DATABASE_URL.startswith("sqlite"):
     connect_args["check_same_thread"] = False
 
+def sqlalchemy_database_url(value: str) -> str:
+    # requirements install Psycopg 3; make SQLAlchemy select its matching dialect.
+    return value.replace("postgresql://", "postgresql+psycopg://", 1) if value.startswith("postgresql://") else value
+
+
+database_url = sqlalchemy_database_url(settings.DATABASE_URL)
+
 engine = create_engine(
-    settings.DATABASE_URL,
+    database_url,
     connect_args=connect_args,
     pool_pre_ping=True,
     echo=False
@@ -30,19 +37,4 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-
-
-def init_db():
-    """Ensure database tables exist."""
-    try:
-        import backend.app.models  # noqa: F401
-        from backend.app.db.base import Base
-
-        Base.metadata.create_all(bind=engine)
-    except Exception as e:
-        print(f"Warning: Database table creation encountered an issue: {e}")
-
-
-# Initialize database tables on load so missing tables can never cause 500 errors
-init_db()
 

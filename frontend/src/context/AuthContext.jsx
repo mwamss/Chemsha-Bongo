@@ -38,9 +38,51 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const applyAccount = async (userData) => {
+    setUser(userData);
+    await loadAvatarImage(userData);
+    const accountSettings = {
+      soundMuted: userData.sound_muted,
+      hapticsEnabled: userData.haptics_enabled,
+      ambientEnabled: userData.ambient_enabled,
+      spotifyUri: userData.spotify_uri || '',
+      privateSyncEnabled: Boolean(userData.private_sync_enabled),
+    };
+    setSettings(accountSettings);
+    storage.updateSettings(accountSettings);
+    if (accountSettings.privateSyncEnabled) {
+      try {
+        const privateData = await api.getPrivateData();
+        storage.mergePrivateData(privateData);
+        const merged = await api.syncPrivateData(storage.exportPrivateData());
+        storage.mergePrivateData(merged);
+      } catch (error) {
+        console.warn('Could not sync private account data:', error.message);
+      }
+    }
+  };
+
   useEffect(() => () => {
     if (avatarImageUrlRef.current) URL.revokeObjectURL(avatarImageUrlRef.current);
   }, []);
+
+  useEffect(() => {
+    if (!user || !settings.privateSyncEnabled) return undefined;
+    let timer;
+    const sync = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        api.syncPrivateData(storage.exportPrivateData())
+          .then((remote) => storage.mergePrivateData(remote))
+          .catch((error) => console.warn('Private account sync failed:', error.message));
+      }, 700);
+    };
+    window.addEventListener('chemsha-storage-update', sync);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('chemsha-storage-update', sync);
+    };
+  }, [user, settings.privateSyncEnabled, storage]);
 
   useEffect(() => {
     // 1. Load local guest surname & settings
@@ -52,20 +94,7 @@ export function AuthProvider({ children }) {
     api.getMe()
       .then(async (userData) => {
         if (userData) {
-          setUser(userData);
-          await loadAvatarImage(userData);
-          // Apply account settings
-          setSettings({
-            soundMuted: userData.sound_muted,
-            hapticsEnabled: userData.haptics_enabled,
-            ambientEnabled: userData.ambient_enabled,
-            spotifyUri: userData.spotify_uri || '',
-          });
-          storage.updateSettings({
-            soundMuted: userData.sound_muted,
-            hapticsEnabled: userData.haptics_enabled,
-            spotifyUri: userData.spotify_uri || '',
-          });
+          await applyAccount(userData);
 
           // Check if local guest data exists that can be merged
           const localTotals = storage.getTotals();
@@ -81,21 +110,7 @@ export function AuthProvider({ children }) {
   const login = async (usernameOrEmail, password) => {
     const res = await api.login(usernameOrEmail, password);
     const userData = await api.getMe();
-    if (userData) {
-      setUser(userData);
-      await loadAvatarImage(userData);
-      setSettings({
-        soundMuted: userData.sound_muted,
-        hapticsEnabled: userData.haptics_enabled,
-        ambientEnabled: userData.ambient_enabled,
-        spotifyUri: userData.spotify_uri || '',
-      });
-      storage.updateSettings({
-        soundMuted: userData.sound_muted,
-        hapticsEnabled: userData.haptics_enabled,
-        spotifyUri: userData.spotify_uri || '',
-      });
-    }
+    if (userData) await applyAccount(userData);
     setShowAuthModal(false);
 
     // Prompt for migration if local data exists and hasn't been merged
@@ -109,21 +124,7 @@ export function AuthProvider({ children }) {
   const loginWithGoogle = async (credential) => {
     const res = await api.loginWithGoogle(credential);
     const userData = await api.getMe();
-    if (userData) {
-      setUser(userData);
-      await loadAvatarImage(userData);
-      setSettings({
-        soundMuted: userData.sound_muted,
-        hapticsEnabled: userData.haptics_enabled,
-        ambientEnabled: userData.ambient_enabled,
-        spotifyUri: userData.spotify_uri || '',
-      });
-      storage.updateSettings({
-        soundMuted: userData.sound_muted,
-        hapticsEnabled: userData.haptics_enabled,
-        spotifyUri: userData.spotify_uri || '',
-      });
-    }
+    if (userData) await applyAccount(userData);
     setShowAuthModal(false);
 
     const localTotals = storage.getTotals();
@@ -142,17 +143,7 @@ export function AuthProvider({ children }) {
     const effectiveSurname = surname || guestSurname || '';
     const res = await api.register({ email, username, password, surname: effectiveSurname });
     const userData = await api.getMe();
-    if (userData) {
-      setUser(userData);
-      await loadAvatarImage(userData);
-      setSettings({
-        soundMuted: userData.sound_muted,
-        hapticsEnabled: userData.haptics_enabled,
-        ambientEnabled: userData.ambient_enabled,
-        spotifyUri: userData.spotify_uri || '',
-      });
-      storage.updateSettings({ spotifyUri: userData.spotify_uri || '' });
-    }
+    if (userData) await applyAccount(userData);
     setShowAuthModal(false);
 
     // Automatically trigger migration of guest data for new account
@@ -160,6 +151,7 @@ export function AuthProvider({ children }) {
     if (localData && localData.totals && localData.totals.gamesPlayed > 0) {
       try {
         await api.migrateLocalStorage(localData);
+        storage.markMigrated();
       } catch (e) {
         console.warn('Auto migration error:', e);
       }
@@ -217,30 +209,55 @@ export function AuthProvider({ children }) {
       if (partial.haptics_enabled !== undefined) updated.hapticsEnabled = partial.haptics_enabled;
       if (partial.ambient_enabled !== undefined) updated.ambientEnabled = partial.ambient_enabled;
       if (partial.spotify_uri !== undefined) updated.spotifyUri = partial.spotify_uri || '';
+      if (partial.private_sync_enabled !== undefined) updated.privateSyncEnabled = partial.private_sync_enabled;
       return updated;
     });
+
+    if (partial.private_sync_enabled !== undefined && !user) {
+      setSettings((prev) => ({ ...prev, privateSyncEnabled: false }));
+      throw new Error('Sign in to enable private account sync.');
+    }
 
     // 2. Update local storage fallback
     const localPartial = {};
     if (partial.sound_muted !== undefined) localPartial.soundMuted = partial.sound_muted;
     if (partial.haptics_enabled !== undefined) localPartial.hapticsEnabled = partial.haptics_enabled;
     if (partial.spotify_uri !== undefined) localPartial.spotifyUri = partial.spotify_uri || '';
+    if (partial.private_sync_enabled !== undefined) localPartial.privateSyncEnabled = partial.private_sync_enabled;
     storage.updateSettings(localPartial);
 
     // 3. Persist to backend if authenticated
     if (user) {
+      let serverPreferenceSaved = false;
       try {
         await api.updateSettings(partial);
+        serverPreferenceSaved = true;
         setUser((prev) => ({
           ...prev,
           ...(partial.sound_muted !== undefined ? { sound_muted: partial.sound_muted } : {}),
           ...(partial.haptics_enabled !== undefined ? { haptics_enabled: partial.haptics_enabled } : {}),
           ...(partial.ambient_enabled !== undefined ? { ambient_enabled: partial.ambient_enabled } : {}),
           ...(partial.spotify_uri !== undefined ? { spotify_uri: partial.spotify_uri || null } : {}),
+          ...(partial.private_sync_enabled !== undefined ? { private_sync_enabled: partial.private_sync_enabled } : {}),
         }));
+        if (partial.private_sync_enabled === true) {
+          const remote = await api.getPrivateData();
+          storage.mergePrivateData(remote);
+          const merged = await api.syncPrivateData(storage.exportPrivateData());
+          storage.mergePrivateData(merged);
+        } else if (partial.private_sync_enabled === false) {
+          await api.deletePrivateData();
+        }
       } catch (e) {
         console.warn('Failed to update account settings on server:', e);
-        if (partial.spotify_uri !== undefined) throw e;
+        if (partial.private_sync_enabled !== undefined) {
+          const persistedValue = serverPreferenceSaved
+            ? partial.private_sync_enabled
+            : Boolean(user.private_sync_enabled);
+          setSettings((prev) => ({ ...prev, privateSyncEnabled: persistedValue }));
+          storage.updateSettings({ privateSyncEnabled: persistedValue });
+        }
+        if (partial.spotify_uri !== undefined || partial.private_sync_enabled !== undefined) throw e;
       }
     }
   };

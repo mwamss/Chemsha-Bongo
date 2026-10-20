@@ -1,4 +1,5 @@
 import pytest
+from contextlib import asynccontextmanager
 from typing import Generator
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -10,6 +11,7 @@ from backend.app.main import app
 from backend.app.db.base import Base
 from backend.app.db.session import get_db
 from backend.app.api.v1.endpoints.games import ensure_canonical_games
+from backend.app.api.v1.endpoints import auth as auth_endpoint
 
 # Create in-memory SQLite engine
 TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -49,6 +51,11 @@ def db_session() -> Generator[Session, None, None]:
 
 @pytest.fixture()
 def client(db_session: Session) -> Generator[TestClient, None, None]:
+    # Signup throttling is intentionally process-local in the app; isolate its
+    # counters between tests so one test's requests do not affect another.
+    with auth_endpoint._LOGIN_FAILURES_LOCK:
+        auth_endpoint._LOGIN_FAILURES.clear()
+
     def override_get_db():
         try:
             yield db_session
@@ -56,7 +63,19 @@ def client(db_session: Session) -> Generator[TestClient, None, None]:
             pass
 
     app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as test_client:
-        yield test_client
-    app.dependency_overrides.clear()
+    original_lifespan = app.router.lifespan_context
+
+    @asynccontextmanager
+    async def test_lifespan(_app):
+        # setup_test_db already seeds the isolated in-memory database. Avoid
+        # opening the developer's real database during test app startup.
+        yield
+
+    app.router.lifespan_context = test_lifespan
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.router.lifespan_context = original_lifespan
+        app.dependency_overrides.clear()
 

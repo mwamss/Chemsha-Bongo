@@ -11,7 +11,7 @@ class GameSessionCreate(BaseModel):
     max_streak: int = Field(..., ge=0, le=100)
     correct_count: int = Field(default=0, ge=0, le=200)
     wrong_count: int = Field(default=0, ge=0, le=200)
-    duration_sec: int = Field(default=30, ge=5, le=300)
+    duration_sec: int = Field(default=30, ge=30, le=30)
     client_session_id: str = Field(..., min_length=10, max_length=64)
 
 
@@ -35,7 +35,7 @@ class BlitzRoundCreate(BaseModel):
 class DailyBlitzSessionCreate(BaseModel):
     total_score: int = Field(..., ge=0, le=30000)
     rating: str = Field(..., min_length=2, max_length=50)
-    duration_sec: int = Field(default=90, ge=15, le=600)
+    duration_sec: int = Field(default=90, ge=90, le=90)
     client_session_id: str = Field(..., min_length=10, max_length=64)
     rounds: List[BlitzRoundCreate] = Field(..., min_length=1, max_length=5)
 

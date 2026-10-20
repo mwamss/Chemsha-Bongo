@@ -11,7 +11,7 @@ def test_register_and_login(client):
     data = res.json()
     assert data["username"] == "mindful_gamer"
     assert data["surname"] == "Mwamburi"
-    assert "access_token" in data
+    assert "access_token" not in data
     assert "csrf_token" in data
 
     # Verify HttpOnly cookie was set
@@ -30,7 +30,7 @@ def test_register_and_login(client):
     assert login_res.status_code == 200
     login_data = login_res.json()
     assert login_data["username"] == "mindful_gamer"
-    assert "access_token" in login_data
+    assert "access_token" not in login_data
 
 
 def test_auth_me_and_csrf_protection(client):
@@ -44,16 +44,14 @@ def test_auth_me_and_csrf_protection(client):
             "surname": "Tester",
         },
     )
-    token = reg.json()["access_token"]
     csrf_token = reg.json()["csrf_token"]
 
-    # Access /auth/me with Bearer token
-    me_res = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+    # Authentication is carried by the HttpOnly session cookie.
+    me_res = client.get("/api/v1/auth/me")
     assert me_res.status_code == 200
     assert me_res.json()["surname"] == "Tester"
 
     # State-changing request via cookie WITHOUT CSRF token fails with 403
-    client.cookies.set("chemsha_session", token)
     fail_res = client.patch(
         "/api/v1/users/profile",
         json={"surname": "UpdatedSurname"},

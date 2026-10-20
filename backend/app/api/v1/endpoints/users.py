@@ -124,12 +124,13 @@ def delete_profile_avatar(
 def get_settings(current_user: User = Depends(get_current_user)):
     settings = current_user.settings
     if not settings:
-        return UserSettingsRead(sound_muted=False, haptics_enabled=True, ambient_enabled=False, spotify_uri=None)
+        return UserSettingsRead(sound_muted=False, haptics_enabled=True, ambient_enabled=False, spotify_uri=None, private_sync_enabled=False)
     return UserSettingsRead(
         sound_muted=settings.sound_muted,
         haptics_enabled=settings.haptics_enabled,
         ambient_enabled=settings.ambient_enabled,
         spotify_uri=settings.spotify_uri,
+        private_sync_enabled=settings.private_sync_enabled,
     )
 
 
@@ -152,6 +153,8 @@ def update_settings(
         settings.ambient_enabled = payload.ambient_enabled
     if payload.spotify_uri is not None:
         settings.spotify_uri = payload.spotify_uri or None
+    if payload.private_sync_enabled is not None:
+        settings.private_sync_enabled = payload.private_sync_enabled
 
     db.commit()
     db.refresh(settings)
@@ -161,5 +164,6 @@ def update_settings(
         haptics_enabled=settings.haptics_enabled,
         ambient_enabled=settings.ambient_enabled,
         spotify_uri=settings.spotify_uri,
+        private_sync_enabled=settings.private_sync_enabled,
     )
 

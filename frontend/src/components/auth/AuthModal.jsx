@@ -172,11 +172,11 @@ export function AuthModal() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-semibold text-outline">Password (min 6 chars)</label>
+                <label className="text-[11px] font-semibold text-outline">Password (min 10 characters)</label>
                 <input
                   type="password"
                   required
-                  minLength={6}
+                  minLength={10}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="px-3.5 py-2.5 rounded-xl bg-surface-container/60 border border-border-subtle focus:bg-surface focus:outline-none focus:border-secondary text-sm"
@@ -207,7 +207,7 @@ export function AuthModal() {
 
         {/* Security / Privacy notice */}
         <p className="text-[10px] text-center text-outline">
-          Protected with HttpOnly session cookies &amp; CSRF cryptography. Your tokens are never exposed to browser localStorage.
+          Protected with an HttpOnly session cookie and CSRF checks. Your sign-in token is not stored in browser JavaScript storage.
         </p>
       </div>
     </div>

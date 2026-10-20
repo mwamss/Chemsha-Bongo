@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Header } from './components/layout/Header.jsx';
 import { Sidebar } from './components/layout/Sidebar.jsx';
 import { BottomNav } from './components/layout/BottomNav.jsx';
@@ -22,13 +22,29 @@ import { useAudio } from './context/AudioContext.jsx';
 import { api } from './services/apiClient.js';
 
 export function App() {
-  // Spotify returns to the app root after OAuth. Restore Banja before its
-  // player mounts so it can exchange the authorization code and start the SDK.
-  const [currentScreen, setCurrentScreen] = useState(() => {
+  const validScreens = ['home', 'select', 'stats', 'leaderboard', 'profile', 'settings', 'quotes', 'banja'];
+  const resolveScreen = () => {
+    const fromHash = window.location.hash.replace(/^#\/?/, '');
+    if (validScreens.includes(fromHash)) return fromHash;
     const spotifyCallback = new URLSearchParams(window.location.search);
     return spotifyCallback.has('code') || spotifyCallback.has('error') ? 'banja' : 'home';
-  });
+  };
+  // Spotify returns to the app root after OAuth. Restore Banja before its
+  // player mounts so it can exchange the authorization code and start the SDK.
+  const [currentScreen, setCurrentScreen] = useState(resolveScreen);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const navigateToScreen = (screen) => {
+    if (!validScreens.includes(screen)) return;
+    setCurrentScreen(screen);
+    if (window.location.hash !== `#/${screen}`) window.history.pushState({}, '', `/#/${screen}`);
+  };
+
+  useEffect(() => {
+    const onPopState = () => setCurrentScreen(resolveScreen());
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   // Active game orchestration state
   const [gamePlayState, setGamePlayState] = useState(null); // null | 'countdown' | 'playing' | 'summary' | 'blitz-final'
@@ -148,7 +164,7 @@ export function App() {
   const exitGameToScreen = (screen = 'home') => {
     setGamePlayState(null);
     setBlitzMode(false);
-    setCurrentScreen(screen);
+    navigateToScreen(screen);
   };
 
   const activeMeta = activeGameId ? getGameById(activeGameId) : null;
@@ -254,7 +270,7 @@ export function App() {
               <HomeScreen
                 onLaunchGame={launchFreePlay}
                 onLaunchBlitz={launchBlitzWorkout}
-                onNavigate={setCurrentScreen}
+                onNavigate={navigateToScreen}
               />
             )}
 
@@ -273,7 +289,7 @@ export function App() {
             )}
 
             {currentScreen === 'profile' && (
-              <ProfileScreen onNavigate={setCurrentScreen} />
+              <ProfileScreen onNavigate={navigateToScreen} />
             )}
 
             {currentScreen === 'settings' && (
@@ -281,11 +297,11 @@ export function App() {
             )}
 
             {currentScreen === 'quotes' && (
-              <QuotesScreen onNavigate={setCurrentScreen} />
+              <QuotesScreen onNavigate={navigateToScreen} />
             )}
 
             {currentScreen === 'banja' && (
-              <BanjaScreen onNavigate={setCurrentScreen} />
+              <BanjaScreen onNavigate={navigateToScreen} />
             )}
           </>
         )}

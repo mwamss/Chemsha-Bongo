@@ -8,6 +8,7 @@ from alembic import context
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from backend.app.core.config import settings
+from backend.app.db.session import sqlalchemy_database_url
 from backend.app.db.base import Base
 import backend.app.models  # Ensure all models are registered on Base.metadata
 
@@ -20,7 +21,10 @@ target_metadata = Base.metadata
 
 # Override sqlalchemy.url with environment configuration
 if settings.DATABASE_URL:
-    config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+    config.set_main_option(
+        "sqlalchemy.url",
+        sqlalchemy_database_url(settings.DATABASE_URL).replace("%", "%%"),
+    )
 
 
 def run_migrations_offline() -> None:

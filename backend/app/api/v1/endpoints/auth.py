@@ -1,8 +1,10 @@
 import logging
 import re
 import secrets
-from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+import threading
+import time
+from collections import defaultdict, deque
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 from sqlalchemy import select, or_
 
@@ -21,6 +23,33 @@ from backend.app.schemas.auth import RegisterRequest, LoginRequest, GoogleLoginR
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+_LOGIN_FAILURES = defaultdict(deque)
+_LOGIN_FAILURES_LOCK = threading.Lock()
+_LOGIN_WINDOW_SECONDS = 15 * 60
+_LOGIN_FAILURE_LIMIT = 10
+
+
+def _check_login_limit(key: str, limit: int = _LOGIN_FAILURE_LIMIT) -> bool:
+    now = time.monotonic()
+    with _LOGIN_FAILURES_LOCK:
+        attempts = _LOGIN_FAILURES[key]
+        while attempts and now - attempts[0] > _LOGIN_WINDOW_SECONDS:
+            attempts.popleft()
+        if len(_LOGIN_FAILURES) > 10000:
+            expired = [entry for entry, values in _LOGIN_FAILURES.items()
+                       if not values or now - values[-1] > _LOGIN_WINDOW_SECONDS]
+            for entry in expired:
+                _LOGIN_FAILURES.pop(entry, None)
+        return len(attempts) >= limit
+
+
+def _record_login_failure(key: str) -> None:
+    now = time.monotonic()
+    with _LOGIN_FAILURES_LOCK:
+        attempts = _LOGIN_FAILURES[key]
+        while attempts and now - attempts[0] > _LOGIN_WINDOW_SECONDS:
+            attempts.popleft()
+        attempts.append(now)
 
 
 def verify_google_credential(credential: str):
@@ -62,10 +91,16 @@ def set_auth_cookie(response: Response, token: str) -> None:
 def register(
     payload: RegisterRequest,
     response: Response,
+    request: Request,
     db: Session = Depends(get_db)
 ):
     """Register a new player account and establish authenticated session."""
     try:
+        remote_addr = request.client.host if request.client else "unknown"
+        signup_key = f"signup:{remote_addr}"
+        if _check_login_limit(signup_key, 5):
+            raise HTTPException(status_code=429, detail="Too many account creation attempts. Try again in 15 minutes.")
+        _record_login_failure(signup_key)
         # Check if username or email exists
         existing = db.scalar(
             select(User).where(
@@ -106,8 +141,6 @@ def register(
         set_auth_cookie(response, access_token)
 
         return TokenResponse(
-            access_token=access_token,
-            token_type="bearer",
             expires_in_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
             csrf_token=csrf_token,
             user_id=new_user.id,
@@ -116,11 +149,11 @@ def register(
         )
     except HTTPException:
         raise
-    except Exception as exc:
+    except Exception:
         logger.exception("Unexpected error during registration:")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Registration error: {str(exc)}"
+            detail="Registration could not be completed. Please try again."
         )
 
 
@@ -128,17 +161,25 @@ def register(
 def login(
     payload: LoginRequest,
     response: Response,
+    request: Request,
     db: Session = Depends(get_db)
 ):
     """Authenticate via username/email and password."""
     try:
         ident = payload.username_or_email.lower().strip()
+        remote_addr = request.client.host if request.client else "unknown"
+        ip_key = f"login-ip:{remote_addr}"
+        identity_key = f"login:{remote_addr}:{ident}"
+        if _check_login_limit(ip_key, 30) or _check_login_limit(identity_key):
+            raise HTTPException(status_code=429, detail="Too many sign-in attempts. Try again in 15 minutes.")
         user = db.scalar(
             select(User).where(
                 or_(User.email == ident, User.username == ident)
             )
         )
         if not user or not verify_password(payload.password, user.hashed_password):
+            _record_login_failure(ip_key)
+            _record_login_failure(identity_key)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username/email or password.",
@@ -150,6 +191,13 @@ def login(
                 detail="User account is deactivated.",
             )
 
+        if not user.hashed_password.startswith("bcrypt-sha256$"):
+            user.hashed_password = get_password_hash(payload.password)
+            db.commit()
+
+        with _LOGIN_FAILURES_LOCK:
+            _LOGIN_FAILURES.pop(identity_key, None)
+
         access_token = create_access_token(str(user.id))
         csrf_token = generate_csrf_token(str(user.id))
         set_auth_cookie(response, access_token)
@@ -157,8 +205,6 @@ def login(
         surname = user.profile.surname if user.profile else ""
 
         return TokenResponse(
-            access_token=access_token,
-            token_type="bearer",
             expires_in_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
             csrf_token=csrf_token,
             user_id=user.id,
@@ -167,11 +213,11 @@ def login(
         )
     except HTTPException:
         raise
-    except Exception as exc:
+    except Exception:
         logger.exception("Unexpected error during login:")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Login service error: {str(exc)}",
+            detail="Sign-in could not be completed. Please try again.",
         )
 
 
@@ -239,8 +285,6 @@ def google_login(
     csrf_token = generate_csrf_token(str(user.id))
     set_auth_cookie(response, access_token)
     return TokenResponse(
-        access_token=access_token,
-        token_type="bearer",
         expires_in_minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
         csrf_token=csrf_token,
         user_id=user.id,
@@ -295,6 +339,7 @@ def get_current_user_profile(
     haptics_enabled = current_user.settings.haptics_enabled if current_user.settings else True
     ambient_enabled = current_user.settings.ambient_enabled if current_user.settings else False
     spotify_uri = current_user.settings.spotify_uri if current_user.settings else None
+    private_sync_enabled = current_user.settings.private_sync_enabled if current_user.settings else False
 
     csrf_token = generate_csrf_token(str(current_user.id))
 
@@ -310,6 +355,7 @@ def get_current_user_profile(
         haptics_enabled=haptics_enabled,
         ambient_enabled=ambient_enabled,
         spotify_uri=spotify_uri,
+        private_sync_enabled=private_sync_enabled,
         csrf_token=csrf_token,
     )
 

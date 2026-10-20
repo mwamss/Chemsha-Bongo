@@ -1,6 +1,7 @@
 import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional, List
-from sqlalchemy import String, Boolean, ForeignKey, Uuid, LargeBinary
+from sqlalchemy import String, Boolean, ForeignKey, Uuid, LargeBinary, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.db.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
 
@@ -55,6 +56,7 @@ class UserProfile(Base, TimestampMixin):
     avatar_color: Mapped[str] = mapped_column(String(7), default="#1e3a34", nullable=False)
     avatar_image: Mapped[Optional[bytes]] = mapped_column(LargeBinary, nullable=True)
     avatar_mime_type: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    legacy_imported_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="profile")
 

@@ -1,50 +1,40 @@
 /**
  * apiClient.js
  * Centralized HTTP client communicating with the Chemsha Bongo FastAPI backend.
- * Uses both Bearer tokens (via localStorage for resilient cross-device / mobile session persistence)
- * and HttpOnly cookies with CSRF header injection as a dual-layer strategy.
+ * Uses the server's HttpOnly session cookie; only the CSRF token is kept in
+ * sessionStorage for same-tab mutation requests.
  */
 
 const API_BASE = '/api/v1';
-const TOKEN_KEY = 'chemsha_auth_token';
 const CSRF_KEY = 'chemsha_csrf_token';
 
 class ApiClient {
   constructor() {
-    this.authToken = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
-    this.csrfToken = typeof window !== 'undefined' ? localStorage.getItem(CSRF_KEY) : null;
-    this.currentUser = null;
-  }
-
-  setAuthToken(token) {
-    this.authToken = token;
+    this.csrfToken = null;
     if (typeof window !== 'undefined') {
-      if (token) {
-        localStorage.setItem(TOKEN_KEY, token);
-      } else {
-        localStorage.removeItem(TOKEN_KEY);
-      }
+      try {
+        localStorage.removeItem('chemsha_auth_token');
+        this.csrfToken = sessionStorage.getItem(CSRF_KEY);
+      } catch { /* Cookie auth still works if browser storage is unavailable. */ }
     }
+    this.currentUser = null;
   }
 
   setCsrfToken(token) {
     this.csrfToken = token;
     if (typeof window !== 'undefined') {
-      if (token) {
-        localStorage.setItem(CSRF_KEY, token);
-      } else {
-        localStorage.removeItem(CSRF_KEY);
-      }
+      try {
+        if (token) sessionStorage.setItem(CSRF_KEY, token);
+        else sessionStorage.removeItem(CSRF_KEY);
+      } catch { /* Keep the token in memory for this page session. */ }
     }
   }
 
   clearTokens() {
-    this.authToken = null;
     this.csrfToken = null;
     this.currentUser = null;
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(CSRF_KEY);
+      try { sessionStorage.removeItem(CSRF_KEY); } catch { /* Ignore unavailable browser storage. */ }
     }
   }
 
@@ -56,11 +46,6 @@ class ApiClient {
       ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
       ...(requestOptions.headers || {}),
     };
-
-    // Attach Bearer token for cross-origin and mobile resilience
-    if (this.authToken) {
-      headers['Authorization'] = `Bearer ${this.authToken}`;
-    }
 
     // Attach CSRF token on state-changing requests if present
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase())) {
@@ -105,7 +90,6 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ email, username, password, surname }),
     });
-    if (data.access_token) this.setAuthToken(data.access_token);
     if (data.csrf_token) this.setCsrfToken(data.csrf_token);
     this.currentUser = data;
     return data;
@@ -116,7 +100,6 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ username_or_email, password }),
     });
-    if (data.access_token) this.setAuthToken(data.access_token);
     if (data.csrf_token) this.setCsrfToken(data.csrf_token);
     this.currentUser = data;
     return data;
@@ -127,7 +110,6 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ credential }),
     });
-    if (data.access_token) this.setAuthToken(data.access_token);
     if (data.csrf_token) this.setCsrfToken(data.csrf_token);
     this.currentUser = data;
     return data;
@@ -187,11 +169,23 @@ class ApiClient {
     return this.request('/users/profile/avatar', { method: 'DELETE' });
   }
 
-  async updateSettings({ sound_muted, haptics_enabled, ambient_enabled, spotify_uri }) {
+  async updateSettings({ sound_muted, haptics_enabled, ambient_enabled, spotify_uri, private_sync_enabled }) {
     return this.request('/users/settings', {
       method: 'PATCH',
-      body: JSON.stringify({ sound_muted, haptics_enabled, ambient_enabled, spotify_uri }),
+      body: JSON.stringify({ sound_muted, haptics_enabled, ambient_enabled, spotify_uri, private_sync_enabled }),
     });
+  }
+
+  async getPrivateData() {
+    return this.request('/sync/private-data');
+  }
+
+  async syncPrivateData(data) {
+    return this.request('/sync/private-data', { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  async deletePrivateData() {
+    return this.request('/sync/private-data', { method: 'DELETE' });
   }
 
   // --- Game Engine Data ---

@@ -1,6 +1,5 @@
-import os
 from typing import List, Union
-from pydantic import AnyHttpUrl, field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -17,7 +16,7 @@ class Settings(BaseSettings):
     
     # Environment
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    DEBUG: bool = False
     PORT: int = 8000
 
     @field_validator("DEBUG", mode="before")
@@ -31,7 +30,7 @@ class Settings(BaseSettings):
                 return True
             if v_lower in ("false", "0", "f", "no", "n", "prod", "production", "release"):
                 return False
-        return True
+        raise ValueError("DEBUG must be an explicit boolean value.")
 
     # Security
     SECRET_KEY: str = "chemsha_bongo_insecure_dev_secret_key_change_in_production_32chars"
@@ -83,6 +82,41 @@ class Settings(BaseSettings):
         case_sensitive=True,
         extra="ignore"
     )
+
+    @model_validator(mode="after")
+    def validate_production_settings(self):
+        production = self.ENVIRONMENT.strip().lower() in {"production", "prod"}
+        known_dev_secrets = {
+            "chemsha_bongo_insecure_dev_secret_key_change_in_production_32chars",
+            "chemsha_bongo_csrf_insecure_dev_secret_change_me",
+        }
+        if production:
+            if self.DEBUG:
+                raise ValueError("DEBUG must be false in production.")
+            if not self.COOKIE_SECURE:
+                raise ValueError("COOKIE_SECURE must be true in production HTTPS deployments.")
+            secret_key = self.SECRET_KEY.strip().lower()
+            csrf_secret = self.CSRF_SECRET.strip().lower()
+            placeholder_markers = ("replace", "change-me", "your-", "example", "placeholder")
+            if (
+                self.SECRET_KEY in known_dev_secrets
+                or len(self.SECRET_KEY) < 32
+                or any(marker in secret_key for marker in placeholder_markers)
+            ):
+                raise ValueError("Production requires a unique SECRET_KEY of at least 32 characters.")
+            if (
+                self.CSRF_SECRET in known_dev_secrets
+                or len(self.CSRF_SECRET) < 32
+                or any(marker in csrf_secret for marker in placeholder_markers)
+            ):
+                raise ValueError("Production requires a unique CSRF_SECRET of at least 32 characters.")
+            if self.SECRET_KEY == self.CSRF_SECRET:
+                raise ValueError("SECRET_KEY and CSRF_SECRET must be different values.")
+            if not self.DATABASE_URL.startswith(("postgresql://", "postgresql+psycopg://")):
+                raise ValueError("Production must use a persistent PostgreSQL DATABASE_URL.")
+            if any("localhost" in origin or "127.0.0.1" in origin for origin in self.CORS_ORIGINS):
+                raise ValueError("Production CORS_ORIGINS must contain only the deployed application origins.")
+        return self
 
 
 settings = Settings()

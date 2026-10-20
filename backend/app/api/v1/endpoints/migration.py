@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -27,6 +28,22 @@ def migrate_local_storage_data(
     streaks_merged = 0
     workouts_merged = 0
 
+    profile = db.scalar(
+        select(UserProfile).where(UserProfile.user_id == current_user.id).with_for_update()
+    )
+    if not profile:
+        profile = UserProfile(user_id=current_user.id)
+        db.add(profile)
+        db.flush()
+    if profile.legacy_imported_at:
+        return MigrationResultResponse(
+            success=True,
+            message="This browser's legacy data has already been imported.",
+            high_scores_merged=0,
+            streaks_merged=0,
+            workouts_merged=0,
+        )
+
     # 1. Merge High Scores & Best Streaks
     for game_id, score in payload.highScores.items():
         streak = payload.bestStreaks.get(game_id, 0)
@@ -48,12 +65,13 @@ def migrate_local_storage_data(
                 game_id=game_id,
                 high_score=score,
                 best_streak=streak,
+                is_verified=False,
             )
             db.add(pb)
             high_scores_merged += 1
             if streak > 0:
                 streaks_merged += 1
-        else:
+        elif not pb.is_verified:
             if score > pb.high_score:
                 pb.high_score = score
                 high_scores_merged += 1
@@ -70,7 +88,11 @@ def migrate_local_storage_data(
     if payload.blitzStats:
         if payload.blitzStats.bestScore > stats.best_blitz_score:
             stats.best_blitz_score = payload.blitzStats.bestScore
-            stats.best_blitz_rating = payload.blitzStats.bestRating
+            score = payload.blitzStats.bestScore
+            stats.best_blitz_rating = (
+                "Grandmaster" if score >= 4500 else "Genius" if score >= 3500 else
+                "Sharpshooter" if score >= 2500 else "Quick Thinker" if score >= 1500 else "Novice"
+            )
         stats.blitz_workouts_completed += payload.blitzStats.workoutsCompleted
         workouts_merged += payload.blitzStats.workoutsCompleted
 
@@ -83,11 +105,7 @@ def migrate_local_storage_data(
 
     # 3. Adopt Surname if server is blank
     if payload.profile and payload.profile.surname:
-        profile = current_user.profile
-        if not profile:
-            profile = UserProfile(user_id=current_user.id, surname=payload.profile.surname.strip())
-            db.add(profile)
-        elif not profile.surname.strip():
+        if not profile.surname.strip():
             profile.surname = payload.profile.surname.strip()
 
     # 4. Merge Settings
@@ -99,6 +117,7 @@ def migrate_local_storage_data(
         user_settings.sound_muted = payload.settings.soundMuted
         user_settings.haptics_enabled = payload.settings.hapticsEnabled
 
+    profile.legacy_imported_at = datetime.now(timezone.utc)
     db.commit()
 
     return MigrationResultResponse(

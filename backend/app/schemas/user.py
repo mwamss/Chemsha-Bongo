@@ -24,6 +24,7 @@ class UserSettingsUpdate(BaseModel):
         max_length=255,
         pattern=r"^(|spotify:(playlist|album|track|artist|show|episode):[A-Za-z0-9]+)$",
     )
+    private_sync_enabled: Optional[bool] = None
 
 
 class UserSettingsRead(BaseModel):
@@ -31,4 +32,5 @@ class UserSettingsRead(BaseModel):
     haptics_enabled: bool
     ambient_enabled: bool
     spotify_uri: Optional[str] = None
+    private_sync_enabled: bool = False
 

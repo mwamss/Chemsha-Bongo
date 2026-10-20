@@ -21,6 +21,7 @@ class UserSettings(Base):
     haptics_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     ambient_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     spotify_uri: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    private_sync_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

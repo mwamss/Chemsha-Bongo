@@ -35,6 +35,8 @@ def record_game_session(
         select(GameSession).where(GameSession.client_session_id == payload.client_session_id)
     )
     if existing:
+        if existing.user_id != current_user.id:
+            raise HTTPException(status_code=409, detail="This session identifier has already been used.")
         pb = db.scalar(
             select(PersonalBest).where(
                 PersonalBest.user_id == current_user.id,
@@ -60,7 +62,9 @@ def record_game_session(
     rate = payload.score / max(1, payload.duration_sec)
     if rate > 200 or payload.score > settings.MAX_THEORETICAL_SCORE_PER_ROUND:
         is_flagged = True
-    if payload.max_streak > (payload.correct_count + 1):
+    if payload.max_streak > (payload.correct_count + 1) or payload.max_streak > settings.MAX_THEORETICAL_STREAK_PER_ROUND:
+        is_flagged = True
+    if payload.correct_count + payload.wrong_count > payload.duration_sec * 10:
         is_flagged = True
 
     total_ans = payload.correct_count + payload.wrong_count
@@ -82,7 +86,7 @@ def record_game_session(
     )
     db.add(session)
 
-    # 5. Update or Create Personal Best
+    # Flagged sessions are retained for review but never affect public or account records.
     pb = db.scalar(
         select(PersonalBest).where(
             PersonalBest.user_id == current_user.id,
@@ -92,17 +96,20 @@ def record_game_session(
     is_new_high = False
     is_new_streak = False
 
-    if not pb:
+    if not pb and not is_flagged:
         pb = PersonalBest(
             user_id=current_user.id,
             game_id=payload.game_id,
             high_score=payload.score,
             best_streak=payload.max_streak,
+            is_verified=True,
         )
         db.add(pb)
         is_new_high = True
         is_new_streak = True
-    else:
+    elif pb and not is_flagged:
+        if payload.score >= pb.high_score:
+            pb.is_verified = True
         if payload.score > pb.high_score:
             pb.high_score = payload.score
             is_new_high = True
@@ -116,23 +123,25 @@ def record_game_session(
         stats = UserAggregatedStats(user_id=current_user.id)
         db.add(stats)
 
-    stats.total_games_played += 1
-    stats.total_correct += payload.correct_count
-    stats.total_wrong += payload.wrong_count
-    if payload.max_streak > stats.highest_overall_streak:
-        stats.highest_overall_streak = payload.max_streak
-    stats.last_played_at = datetime.now(timezone.utc)
+    if not is_flagged:
+        stats.total_games_played += 1
+        stats.total_correct += payload.correct_count
+        stats.total_wrong += payload.wrong_count
+        if payload.max_streak > stats.highest_overall_streak:
+            stats.highest_overall_streak = payload.max_streak
+        stats.last_played_at = datetime.now(timezone.utc)
 
     db.commit()
     db.refresh(session)
-    db.refresh(pb)
+    if pb:
+        db.refresh(pb)
 
     return GameSessionResponse(
         session_id=session.id,
         is_new_high_score=is_new_high,
         is_new_best_streak=is_new_streak,
-        high_score=pb.high_score,
-        best_streak=pb.best_streak,
+        high_score=pb.high_score if pb else 0,
+        best_streak=pb.best_streak if pb else 0,
         accuracy_pct=accuracy,
     )
 
@@ -152,6 +161,8 @@ def record_daily_blitz(
         select(DailyBlitzSession).where(DailyBlitzSession.client_session_id == payload.client_session_id)
     )
     if existing:
+        if existing.user_id != current_user.id:
+            raise HTTPException(status_code=409, detail="This session identifier has already been used.")
         stats = current_user.aggregated_stats
         return DailyBlitzSessionResponse(
             blitz_session_id=existing.id,
@@ -163,13 +174,38 @@ def record_daily_blitz(
             blitz_date=existing.blitz_date,
         )
 
-    # 2. Validation
+    # Only completed three-game workouts can be ranked.
+    if len(payload.rounds) != settings.DAILY_BLITZ_ROUNDS_REQUIRED:
+        raise HTTPException(status_code=400, detail="A Daily Blitz must contain exactly three completed rounds.")
+    if [r.round_order for r in payload.rounds] != list(range(1, settings.DAILY_BLITZ_ROUNDS_REQUIRED + 1)):
+        raise HTTPException(status_code=400, detail="Blitz rounds must be ordered from 1 to 3.")
+    if len({r.game_id for r in payload.rounds}) != settings.DAILY_BLITZ_ROUNDS_REQUIRED:
+        raise HTTPException(status_code=400, detail="A Daily Blitz must contain three different games.")
+    for round_item in payload.rounds:
+        if not db.scalar(select(Game).where(Game.id == round_item.game_id)):
+            raise HTTPException(status_code=400, detail=f"Invalid game ID: {round_item.game_id}")
+        if round_item.score > settings.MAX_THEORETICAL_SCORE_PER_ROUND:
+            raise HTTPException(status_code=400, detail="A blitz round score exceeds the allowed maximum.")
+        if round_item.max_streak > settings.MAX_THEORETICAL_STREAK_PER_ROUND:
+            raise HTTPException(status_code=400, detail="A blitz round streak exceeds the allowed maximum.")
+
+    # Derive the rating server-side; never trust a client-supplied label.
     sum_round_scores = sum(r.score for r in payload.rounds)
-    if abs(sum_round_scores - payload.total_score) > 10:  # Allow minor rounding tolerance
+    if sum_round_scores != payload.total_score:
         raise HTTPException(
             status_code=400,
             detail=f"Blitz total score ({payload.total_score}) must equal sum of round scores ({sum_round_scores})."
         )
+
+    rating = "Novice"
+    if payload.total_score >= 4500:
+        rating = "Grandmaster"
+    elif payload.total_score >= 3500:
+        rating = "Genius"
+    elif payload.total_score >= 2500:
+        rating = "Sharpshooter"
+    elif payload.total_score >= 1500:
+        rating = "Quick Thinker"
 
     today_date = datetime.now(timezone.utc).date()
 
@@ -177,7 +213,7 @@ def record_daily_blitz(
         user_id=current_user.id,
         blitz_date=today_date,
         total_score=payload.total_score,
-        rating=payload.rating,
+        rating=rating,
         games_completed=len(payload.rounds),
         duration_sec=payload.duration_sec,
         client_session_id=payload.client_session_id,
@@ -207,7 +243,7 @@ def record_daily_blitz(
     is_new_blitz_high = False
     if payload.total_score > stats.best_blitz_score:
         stats.best_blitz_score = payload.total_score
-        stats.best_blitz_rating = payload.rating
+        stats.best_blitz_rating = rating
         is_new_blitz_high = True
 
     stats.last_played_at = datetime.now(timezone.utc)

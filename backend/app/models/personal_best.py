@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
-from sqlalchemy import Integer, String, DateTime, ForeignKey, Index, Uuid, func
+from sqlalchemy import Integer, String, DateTime, ForeignKey, Index, Uuid, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.db.base import Base
 
@@ -25,6 +25,7 @@ class PersonalBest(Base):
     )
     high_score: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     best_streak: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     achieved_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
