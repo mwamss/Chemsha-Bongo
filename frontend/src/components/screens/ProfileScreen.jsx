@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
-import { useTheme } from '../../context/ThemeContext.jsx';
 import { GoogleSignInButton } from '../auth/GoogleSignInButton.jsx';
 
 const AVATAR_PALETTE = [
@@ -36,7 +35,7 @@ async function prepareAvatarImage(file) {
   return new File([blob], 'profile-avatar.webp', { type: 'image/webp' });
 }
 
-export function ProfileScreen() {
+export function ProfileScreen({ onNavigate }) {
   const {
     user,
     isAuthenticated,
@@ -46,12 +45,10 @@ export function ProfileScreen() {
     avatarInitial,
     avatarColor,
     avatarImage,
-    settings,
     updateProfile,
     uploadAvatar,
     removeAvatar,
     linkGoogleAccount,
-    updateSettings,
     syncLocalData,
     syncStatus,
     logout,
@@ -59,8 +56,7 @@ export function ProfileScreen() {
     storage,
   } = useAuth();
 
-  const { muted, toggleMute, ambientPlaying, toggleAmbient, playTestChime, playClick } = useAudio();
-  const { theme, setTheme, isDark, toggleTheme } = useTheme();
+  const { playClick } = useAudio();
 
   const [inputSurname, setInputSurname] = useState(displayName);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
@@ -170,15 +166,15 @@ export function ProfileScreen() {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-20 select-none">
+    <div className="profile-screen screen-layout flex flex-col gap-8 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 pt-6 pb-20 select-none">
       {/* ── HEADER ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle/40 pb-5">
+      <div className="profile-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle/40 pb-5">
         <div>
           <span className="text-xs uppercase tracking-widest text-secondary font-semibold">
-            Account Management &amp; Settings
+            Account Profile
           </span>
           <h1 className="font-headline-xl text-2xl sm:text-3xl font-extrabold text-on-surface mt-1">
-            Personal Sanctuary
+            Profile
           </h1>
         </div>
 
@@ -191,18 +187,26 @@ export function ProfileScreen() {
           <span className={`w-2.5 h-2.5 rounded-full ${isAuthenticated ? 'bg-emerald-500 animate-pulse' : 'bg-outline'}`} />
           <span>{isAuthenticated ? 'Cloud Synced Account' : 'Guest Account (Local Only)'}</span>
         </div>
+        <button
+          type="button"
+          onClick={() => { playClick(); onNavigate?.('settings'); }}
+          className="btn btn-secondary px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-[16px]">settings</span>
+          <span>Settings</span>
+        </button>
       </div>
 
       {/* ── SUCCESS TOAST BANNER ─────────────────────────────────────────── */}
       {saveSuccessMsg && (
-        <div className="p-4 rounded-2xl bg-emerald-100/70 border border-emerald-300 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-bounce-once">
+        <div className="profile-toast p-4 rounded-2xl bg-emerald-100/70 border border-emerald-300 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-bounce-once">
           <span className="material-symbols-outlined text-[18px]">check_circle</span>
           <span>{saveSuccessMsg}</span>
         </div>
       )}
 
       {/* ── ACCOUNT IDENTITY CARD ────────────────────────────────────────── */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="profile-identity-card p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           {/* Avatar with selected color */}
           <div
@@ -262,7 +266,7 @@ export function ProfileScreen() {
 
       {/* ── GUEST BENEFIT PROMPT (IF NOT LOGGED IN) ───────────────────────── */}
       {!isAuthenticated && (
-        <div className="p-6 rounded-3xl bg-gradient-to-br from-surface-container/80 to-surface-container-high/60 border border-secondary/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="profile-guest-card p-6 rounded-3xl bg-gradient-to-br from-surface-container/80 to-surface-container-high/60 border border-secondary/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <span className="text-4xl">☁️</span>
             <div>
@@ -284,7 +288,7 @@ export function ProfileScreen() {
       )}
 
       {/* ── PROFILE CUSTOMIZATION ────────────────────────────────────────── */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col gap-6">
+      <div className="profile-customization-card p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col gap-6">
         <h3 className="font-headline-md text-lg font-bold text-on-surface flex items-center gap-2">
           <span className="material-symbols-outlined text-secondary">badge</span>
           <span>Profile Details</span>
@@ -420,199 +424,8 @@ export function ProfileScreen() {
         </div>
       </div>
 
-      {/* ── VISUAL THEME & SANCTUARY ATMOSPHERE ──────────────────────────── */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col gap-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex flex-col">
-            <h3 className="font-headline-md text-lg font-bold text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary">palette</span>
-              <span>Visual Theme &amp; Sanctuary Atmosphere</span>
-            </h3>
-            <span className="text-xs text-on-surface-variant mt-0.5">
-              Toggle between the bright Mint Alabaster palette and the contemplative Obsidian Sanctuary dark suite.
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => { playClick(); toggleTheme(); }}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 self-start sm:self-auto shadow-xs ${
-              isDark ? 'bg-[#181d1b] text-[#95d3c0] border border-[#2d3a35]' : 'bg-secondary text-white'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[16px]">
-              {isDark ? 'light_mode' : 'dark_mode'}
-            </span>
-            <span>{isDark ? 'Switch to Light' : 'Switch to Dark'}</span>
-          </button>
-        </div>
-
-        {/* Theme Cards Selection */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-          {/* Card 1: Light Theme (Mint Alabaster) */}
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => { playClick(); setTheme('light'); }}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { playClick(); setTheme('light'); } }}
-            className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 ${
-              !isDark
-                ? 'border-secondary bg-surface-container/60 shadow-sm ring-2 ring-secondary/20'
-                : 'border-border-subtle bg-surface hover:border-secondary/50'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-secondary border border-border-subtle shadow-xs">
-                  <span className="material-symbols-outlined text-[18px]">light_mode</span>
-                </span>
-                <span className="font-bold text-sm text-on-surface">Mint Alabaster</span>
-              </div>
-              {!isDark && (
-                <span className="px-2 py-0.5 rounded-full bg-secondary text-white text-[10px] font-bold uppercase tracking-wider">
-                  Active
-                </span>
-              )}
-            </div>
-
-            {/* Visual Swatch Preview */}
-            <div className="rounded-xl p-3 bg-[#f8f9f5] border border-[#dde2d8] flex items-center justify-between text-xs">
-              <div className="space-y-1">
-                <span className="block text-[10px] uppercase font-bold text-[#356759]">Light Sanctuary</span>
-                <span className="font-serif text-[#101e1a] font-medium text-xs">“Let the answer unfold”</span>
-              </div>
-              <div className="flex gap-1.5">
-                <span className="w-4 h-4 rounded-full bg-[#1e3a34] border border-[#dde2d8]"></span>
-                <span className="w-4 h-4 rounded-full bg-[#356759]"></span>
-                <span className="w-4 h-4 rounded-full bg-[#edfdf5] border border-[#dde2d8]"></span>
-              </div>
-            </div>
-
-            <p className="text-xs text-on-surface-variant leading-relaxed">
-              Airy, crisp daylight atmosphere with high legibility and calming mint hues.
-            </p>
-          </div>
-
-          {/* Card 2: Dark Theme (Obsidian Sanctuary) */}
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => { playClick(); setTheme('dark'); }}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { playClick(); setTheme('dark'); } }}
-            className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 ${
-              isDark
-                ? 'border-[#528e7d] bg-[#181d1b] shadow-md ring-2 ring-[#528e7d]/30'
-                : 'border-border-subtle bg-surface hover:border-secondary/50'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-[#0a0f0d] flex items-center justify-center text-[#95d3c0] border border-[#2d3a35] shadow-xs">
-                  <span className="material-symbols-outlined text-[18px]">dark_mode</span>
-                </span>
-                <span className="font-bold text-sm text-[#f0f4f2]">Obsidian Sanctuary</span>
-              </div>
-              {isDark && (
-                <span className="px-2 py-0.5 rounded-full bg-[#528e7d] text-[#0a0f0d] text-[10px] font-bold uppercase tracking-wider">
-                  Active
-                </span>
-              )}
-            </div>
-
-            {/* Visual Swatch Preview */}
-            <div className="rounded-xl p-3 bg-[#0a0f0d] border border-[#2d3a35] flex items-center justify-between text-xs">
-              <div className="space-y-1">
-                <span className="block text-[10px] uppercase font-bold text-[#95d3c0]">Deep Reflection</span>
-                <span className="font-serif text-[#f0f4f2] font-medium text-xs">“Holding onto what serves”</span>
-              </div>
-              <div className="flex gap-1.5">
-                <span className="w-4 h-4 rounded-full bg-[#0a0f0d] border border-[#2d3a35]"></span>
-                <span className="w-4 h-4 rounded-full bg-[#181d1b] border border-[#2d3a35]"></span>
-                <span className="w-4 h-4 rounded-full bg-[#95d3c0]"></span>
-              </div>
-            </div>
-
-            <p className="text-xs text-[#8e9e97] leading-relaxed">
-              Quiet slate-forest cards on deep obsidian (#0A0F0D) with eucalyptus accents and alabaster serif text.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── AUDIO & SENSORY PREFERENCES ──────────────────────────────────── */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col gap-5">
-        <div className="flex items-center justify-between">
-          <h3 className="font-headline-md text-lg font-bold text-on-surface flex items-center gap-2">
-            <span className="material-symbols-outlined text-secondary">tune</span>
-            <span>Sensory &amp; Audio Settings</span>
-          </h3>
-          <button
-            type="button"
-            onClick={playTestChime}
-            className="btn btn-secondary px-3.5 py-1.5 text-xs font-semibold rounded-xl cursor-pointer flex items-center gap-1.5"
-            title="Preview Sound Chime"
-          >
-            <span className="material-symbols-outlined text-[16px] text-secondary">music_note</span>
-            <span>Test Chime</span>
-          </button>
-        </div>
-
-        <div className="divide-y divide-border-subtle/30">
-          {/* Sound Mute Toggle */}
-          <div className="py-4 flex items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-on-surface">Game Sound Effects</span>
-              <span className="text-xs text-on-surface-variant">Procedural audio chimes for correct answers, combos, and timer ticks.</span>
-            </div>
-            <button
-              onClick={toggleMute}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                !muted ? 'bg-secondary text-white shadow-xs' : 'bg-surface-container text-outline'
-              }`}
-            >
-              {!muted ? 'Enabled' : 'Muted'}
-            </button>
-          </div>
-
-          {/* Ambient Drone Toggle */}
-          <div className="py-4 flex items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-on-surface">Meditative Ambient Sound</span>
-              <span className="text-xs text-on-surface-variant">Generative alpha-wave drone for relaxed mental focus.</span>
-            </div>
-            <button
-              onClick={toggleAmbient}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                ambientPlaying ? 'bg-secondary text-white shadow-xs' : 'bg-surface-container text-outline'
-              }`}
-            >
-              {ambientPlaying ? 'Playing' : 'Off'}
-            </button>
-          </div>
-
-          {/* Haptics Toggle */}
-          <div className="py-4 flex items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-on-surface">Haptic Vibration Feedback</span>
-              <span className="text-xs text-on-surface-variant">Gentle device pulse on answers and error notifications (mobile supported).</span>
-            </div>
-            <button
-              onClick={() => {
-                const nextHaptics = !settings.hapticsEnabled;
-                updateSettings({ haptics_enabled: nextHaptics });
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                settings.hapticsEnabled ? 'bg-secondary text-white shadow-xs' : 'bg-surface-container text-outline'
-              }`}
-            >
-              {settings.hapticsEnabled ? 'Enabled' : 'Disabled'}
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* ── DATA STORAGE & CLOUD BACKUP ──────────────────────────────────── */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col gap-4">
+      <div className="profile-data-card p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm flex flex-col gap-4">
         <h3 className="font-headline-md text-lg font-bold text-on-surface flex items-center gap-2">
           <span className="material-symbols-outlined text-secondary">cloud_sync</span>
           <span>Data Storage &amp; Backups</span>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllGames } from '../../engine/games/registry.js';
 import { api } from '../../services/apiClient.js';
 import { useAudio } from '../../context/AudioContext.jsx';
+import { ExerciseIcon } from '../icons/ExerciseIcon.jsx';
 
 export function LeaderboardScreen() {
   const [activeTab, setActiveTab] = useState('blitz'); // 'blitz' or gameId
@@ -26,7 +27,7 @@ export function LeaderboardScreen() {
   }, [activeTab]);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-20 select-none">
+    <div className="screen-layout flex flex-col gap-6 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 pt-6 pb-20 select-none">
       <div className="flex flex-col gap-1 border-b border-border-subtle/40 pb-4">
         <h1 className="font-headline-xl text-2xl sm:text-3xl font-extrabold text-on-surface">
           Global Leaderboards
@@ -60,7 +61,7 @@ export function LeaderboardScreen() {
                 : 'bg-surface border border-border-subtle text-on-surface-variant hover:bg-surface-container'
             }`}
           >
-            <span>{g.icon}</span>
+            <ExerciseIcon name={g.icon} size={16} />
             <span>{g.title}</span>
           </button>
         ))}

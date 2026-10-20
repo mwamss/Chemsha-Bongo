@@ -192,7 +192,7 @@ export class GameManager {
     // Audio & Visual feedback
     if (this.roundStreak === 5 || this.roundStreak === 10) {
       this.sound.playComboStreak();
-      this.fx.showFloatingText(`COMBO ${multiplier}x! 🔥`, coords ? coords.x : undefined, coords ? coords.y : undefined, 'streak');
+      this.fx.showFloatingText(`COMBO ${multiplier}x`, coords ? coords.x : undefined, coords ? coords.y : undefined, 'streak');
       this.fx.burst(coords ? coords.x : undefined, coords ? coords.y : undefined, 30);
     } else {
       this.sound.playCorrect(this.roundStreak);
@@ -279,7 +279,7 @@ export class GameManager {
     if (nextBtn) {
       if (isPartOfBlitz) {
         const remaining = this.blitzPlaylist.length - this.blitzCurrentIndex;
-        nextBtn.textContent = remaining > 0 ? `Next Game (${remaining} left) →` : 'See Final Blitz Rating 🏆';
+        nextBtn.textContent = remaining > 0 ? `Next Game (${remaining} left) →` : 'See Final Blitz Rating';
         nextBtn.onclick = () => this.advanceBlitz();
       } else {
         nextBtn.textContent = 'Play Again ↻';
@@ -298,16 +298,16 @@ export class GameManager {
     let rating = 'Novice';
     let badgeColor = '#94a3b8';
     if (this.blitzTotalScore >= 4500) {
-      rating = '🧠 Grandmaster';
+      rating = 'Grandmaster';
       badgeColor = '#eab308';
     } else if (this.blitzTotalScore >= 3500) {
-      rating = '⚡ Genius';
+      rating = 'Genius';
       badgeColor = '#8b5cf6';
     } else if (this.blitzTotalScore >= 2500) {
-      rating = '🔥 Sharpshooter';
+      rating = 'Sharpshooter';
       badgeColor = '#06b6d4';
     } else if (this.blitzTotalScore >= 1500) {
-      rating = '🎯 Quick Thinker';
+      rating = 'Quick Thinker';
       badgeColor = '#10b981';
     }
 
@@ -332,7 +332,7 @@ export class GameManager {
         const row = document.createElement('div');
         row.className = 'blitz-breakdown-row';
         row.innerHTML = `
-          <span class="breakdown-game-name">${r.meta.icon} Round ${idx + 1}: ${r.meta.title}</span>
+          <span class="breakdown-game-name">Round ${idx + 1}: ${r.meta.title}</span>
           <span class="breakdown-stats">
             <span class="breakdown-acc">${r.accuracy}% acc</span>
             <span class="breakdown-score">+${r.score.toLocaleString()}</span>

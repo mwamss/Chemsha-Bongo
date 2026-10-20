@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrandIcon } from '../BrandIcon.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { GoogleSignInButton } from './GoogleSignInButton.jsx';
@@ -63,7 +64,7 @@ export function AuthModal() {
 
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center">
-          <img src="/assets/chemsha-bongo-logo.png" alt="Logo" className="w-10 h-10 object-contain mb-2" />
+          <BrandIcon className="w-12 h-12 mb-2" />
           <h3 className="font-headline-xl text-xl font-bold text-on-surface">
             {tab === 'login' ? 'Welcome Back' : 'Create Your Mindful Account'}
           </h3>

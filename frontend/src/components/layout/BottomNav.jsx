@@ -35,9 +35,9 @@ export function BottomNav({ currentScreen, onNavigate }) {
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="fixed bottom-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-xl border-t border-border-subtle/50 pb-safe md:hidden shadow-[0_-4px_20px_rgba(6,36,31,0.06)] select-none transition-all"
+      className="suite-bottom-nav fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-xl border-t border-border-subtle pb-safe md:hidden select-none"
     >
-      <div className="flex items-center justify-around h-16 max-w-md mx-auto px-2">
+      <div className="flex items-center justify-around h-[4.25rem] max-w-xl mx-auto px-2">
         {navItems.map((item) => {
           const isActive = currentScreen === item.id;
 
@@ -57,9 +57,9 @@ export function BottomNav({ currentScreen, onNavigate }) {
               }`}
             >
               <div
-                className={`w-12 h-7 rounded-full flex items-center justify-center transition-all ${
+                className={`w-12 h-8 rounded-full flex items-center justify-center transition-colors ${
                   isActive
-                    ? 'bg-secondary-container text-on-secondary-container shadow-2xs scale-105'
+                    ? 'bg-[#1e3a34] text-[#e8f2ed]'
                     : 'bg-transparent text-inherit'
                 }`}
               >
@@ -70,7 +70,7 @@ export function BottomNav({ currentScreen, onNavigate }) {
                   {item.icon}
                 </span>
               </div>
-              <span className="text-[10px] tracking-tight mt-0.5 leading-none">
+              <span className="text-[10px] tracking-tight mt-1 leading-none">
                 {item.label}
               </span>
             </button>

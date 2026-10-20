@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PrecisionTimer } from '../../engine/core/Timer.js';
 import { getGameById } from '../../engine/games/registry.js';
+import { ExerciseIcon } from '../icons/ExerciseIcon.jsx';
 import { api } from '../../services/apiClient.js';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -72,7 +73,7 @@ export function GameViewport({
     if (m.streak === 5 || m.streak === 10) {
       sound.playComboStreak();
       if (fx) {
-        fx.showFloatingText(`COMBO ${mult}x! 🔥`, coords ? coords.x : undefined, coords ? coords.y : undefined, 'streak');
+        fx.showFloatingText(`COMBO ${mult}x`, coords ? coords.x : undefined, coords ? coords.y : undefined, 'streak');
         fx.burst(coords ? coords.x : undefined, coords ? coords.y : undefined, 30);
       }
     } else {
@@ -127,7 +128,8 @@ export function GameViewport({
       m.score,
       m.maxStreak,
       m.correctCount,
-      m.wrongCount
+      m.wrongCount,
+      durationSec
     );
 
     let isNewHigh = localResult.isNewHigh;
@@ -267,7 +269,7 @@ export function GameViewport({
       <div className="w-full flex flex-col gap-3 mb-6 bg-surface-container/60 backdrop-blur-md rounded-2xl p-4 border border-border-subtle/40 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{meta?.icon || '🎮'}</span>
+            <ExerciseIcon name={meta?.icon || 'sports_esports'} size={24} className="text-secondary" />
             <div>
               <h2 className="font-headline-md text-base text-on-surface font-semibold leading-tight">{meta?.title}</h2>
               <span className="font-label-sm text-xs text-secondary">{meta?.categoryLabel}</span>

@@ -5,6 +5,7 @@ import { useAudio } from '../../context/AudioContext.jsx';
 import { api } from '../../services/apiClient.js';
 import { GentleRhythmTracker } from '../rhythm/GentleRhythmTracker.jsx';
 import { DailyMethaliCard } from '../quotes/DailyMethaliCard.jsx';
+import { ExerciseIcon } from '../icons/ExerciseIcon.jsx';
 
 export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
   const { displayName, storage, isAuthenticated } = useAuth();
@@ -60,38 +61,38 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
   });
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-20 select-none">
+    <div className="home-screen flex flex-col gap-7 mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 pt-6 pb-20 select-none">
       {/* ── GREETING & DATE BANNER ────────────────────────────────────────── */}
-      <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border-subtle/40 pb-5">
+      <section className="home-greeting flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-subtle pb-5">
         <div>
-          <span className="text-xs uppercase tracking-widest text-secondary font-semibold">
+          <span className="text-xs uppercase tracking-[0.14em] text-secondary font-semibold">
             {formattedDate} • Serene Sanctuary
           </span>
-          <h1 className="font-headline-xl text-2xl sm:text-3xl font-extrabold text-on-surface mt-1">
-            {getGreeting()}, <span className="text-primary">{displayName}</span>.
+          <h1 className="font-headline-xl text-[2rem] sm:text-4xl font-bold text-on-surface mt-2 leading-tight tracking-tight">
+            {getGreeting()}, <span className="home-player-name">{displayName}</span>.
           </h1>
         </div>
-        <div className="flex items-center gap-2 self-start sm:self-auto px-3.5 py-1.5 rounded-full bg-surface-container border border-border-subtle/50 text-xs font-medium text-secondary">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+        <div className="home-ready-pill flex items-center gap-2 self-start sm:self-auto px-3.5 py-2 rounded-full bg-surface-container border border-border-subtle text-xs font-medium text-secondary">
+          <span className="w-2 h-2 rounded-full bg-secondary" />
           <span>{isAuthenticated ? 'Cloud Synced Session Active' : 'Daily Mindful Session Ready'}</span>
         </div>
       </section>
 
       {/* ── HERO: DAILY BLITZ CHALLENGE CARD ─────────────────────────────── */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1e3a34] via-[#244740] to-[#162e29] p-6 sm:p-8 text-white shadow-xl">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex flex-col max-w-lg">
-            <div className="flex items-center gap-2 text-secondary-fixed dark:text-[#bce8d7] text-xs font-bold uppercase tracking-wider mb-2">
+      <section className="daily-blitz-card relative overflow-hidden rounded-[1.65rem] p-6 sm:p-8 text-white">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 lg:gap-10">
+          <div className="flex flex-col md:flex-1 md:min-w-0">
+            <div className="flex items-center gap-2 text-[#b8d8ce] text-xs font-bold uppercase tracking-wider mb-3">
               <span className="material-symbols-outlined text-sm">bolt</span>
               <span>Official Daily Workout</span>
             </div>
-            <h2 className="font-headline-xl text-2xl sm:text-3xl font-bold leading-tight tracking-tight">
+            <h2 className="font-headline-xl text-[1.8rem] sm:text-3xl font-bold leading-tight tracking-tight">
               3-Round Daily Blitz
             </h2>
-            <p className="text-sm text-white/85 mt-2 leading-relaxed font-light">
+            <p className="text-sm sm:text-base text-white/80 mt-3 leading-relaxed max-w-2xl">
               Sharpen cognitive inhibition, spatial reflex, and arithmetic memory in an unhurried 90-second circuit. Compete on the daily leaderboard!
             </p>
-            <div className="flex items-center gap-6 mt-5 text-xs text-white/75">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-5 text-xs text-white/75">
               <div className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[18px]">timer</span>
                 <span>90s Duration</span>
@@ -107,26 +108,23 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch gap-3 md:shrink-0">
             <button
               onClick={() => { playClick(); onLaunchBlitz(); }}
-              className="btn px-7 py-3.5 bg-secondary-fixed text-primary dark:bg-[#d4ad70] dark:text-[#211707] font-bold text-sm rounded-2xl shadow-lg hover:bg-white dark:hover:bg-[#e5bf81] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+              className="daily-blitz-action btn w-full sm:w-auto justify-center px-7 py-4 text-base font-bold rounded-xl transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">play_circle</span>
               <span>Start Daily Blitz</span>
             </button>
             <button
               onClick={() => { playClick(); onNavigate('leaderboard'); }}
-              className="btn px-4 py-3.5 bg-white/10 hover:bg-white/20 text-white font-medium text-sm rounded-2xl border border-white/20 transition-all cursor-pointer"
+              className="daily-blitz-rankings btn w-full sm:w-auto justify-center px-4 py-3 text-sm font-medium rounded-xl transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-[18px]">leaderboard</span>
               <span>Rankings</span>
             </button>
           </div>
         </div>
-
-        {/* Ambient background decoration */}
-        <div className="absolute -right-12 -bottom-12 w-64 h-64 rounded-full bg-secondary/20 blur-3xl pointer-events-none" />
       </section>
 
       {/* ── STITCH REDESIGN: GENTLE RHYTHM HERO CADENCE TRACKER ───────────── */}
@@ -136,9 +134,9 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
       <DailyMethaliCard onNavigate={onNavigate} />
 
       {/* ── QUICK METRICS & BREATHING COMPANION ───────────────────────────── */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Metric 1: Games Completed */}
-        <div className="flex flex-col p-5 rounded-2xl bg-surface border border-border-subtle/50 shadow-sm">
+        <div className="home-stat-card flex flex-col p-5 rounded-xl bg-surface border border-border-subtle shadow-sm">
           <span className="text-[11px] text-outline uppercase font-semibold">Total Sessions</span>
           <div className="flex items-baseline gap-2 mt-2">
             <span className="font-headline-xl text-3xl font-extrabold text-primary tabular-nums">
@@ -152,7 +150,7 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
         </div>
 
         {/* Metric 2: Accuracy */}
-        <div className="flex flex-col p-5 rounded-2xl bg-surface border border-border-subtle/50 shadow-sm">
+        <div className="home-stat-card flex flex-col p-5 rounded-xl bg-surface border border-border-subtle shadow-sm">
           <span className="text-[11px] text-outline uppercase font-semibold">Overall Accuracy</span>
           <div className="flex items-baseline gap-2 mt-2">
             <span className="font-headline-xl text-3xl font-extrabold text-secondary tabular-nums">
@@ -166,10 +164,10 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
         </div>
 
         {/* Mindful Breathing Companion */}
-        <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border-subtle/50 shadow-sm">
+        <div className="home-stat-card flex items-center gap-4 p-5 rounded-xl bg-surface border border-border-subtle shadow-sm">
           <div className="relative w-16 h-16 rounded-full flex items-center justify-center bg-surface-container shrink-0 overflow-hidden">
             <div
-              className={`w-12 h-12 rounded-full bg-secondary/30 transition-transform duration-1000 ease-in-out ${
+              className={`w-12 h-12 rounded-full bg-secondary/30 transition-transform duration-[4000ms] ease-in-out ${
                 isInhaling ? 'scale-125 bg-secondary/50' : 'scale-75 bg-secondary/20'
               }`}
             />
@@ -206,12 +204,12 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
           {games.map((g) => (
             <div
               key={g.id}
-              className="flex flex-col justify-between p-5 rounded-2xl bg-surface border border-border-subtle/50 shadow-xs hover:shadow-md transition-all group"
+              className="home-game-card flex flex-col justify-between p-5 rounded-xl bg-surface border border-border-subtle shadow-xs hover:shadow-md transition-all group"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl p-2 rounded-xl bg-surface-container group-hover:scale-110 transition-transform">
-                    {g.icon}
+                  <span className="inline-flex p-2 rounded-xl bg-surface-container text-secondary group-hover:text-primary transition-colors">
+                    <ExerciseIcon name={g.icon} size={28} />
                   </span>
                   <span className="text-[11px] font-semibold text-secondary uppercase tracking-wider">
                     {g.categoryLabel}

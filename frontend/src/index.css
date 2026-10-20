@@ -26,3 +26,175 @@ html.dark, html.dark body {
   flex-direction: column;
 }
 
+/* Shared application shell and home page treatment */
+.suite-header {
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.14);
+}
+
+.app-icon-frame {
+  display: inline-flex;
+  flex: none;
+  overflow: hidden;
+  border-radius: 24%;
+  transition: transform 180ms ease;
+}
+
+.app-icon-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 22%;
+}
+
+/* The source mark has a pale bevel baked into its edge; crop it in dark mode. */
+.dark .app-icon-image {
+  transform: scale(1.08);
+}
+
+.suite-header button:hover .app-icon-frame {
+  transform: translateY(-1px);
+}
+
+.home-screen {
+  width: 100%;
+}
+
+.screen-layout {
+  max-width: none;
+}
+
+.btn {
+  border-radius: 0.7rem;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.btn-primary,
+.btn-secondary {
+  box-shadow: none;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.header-icon-button:focus-visible,
+.suite-bottom-nav button:focus-visible,
+.home-screen button:focus-visible {
+  outline: 2px solid var(--tertiary);
+  outline-offset: 3px;
+}
+
+.daily-blitz-card {
+  background: linear-gradient(128deg, #1e3a34 0%, #244b42 55%, #1b3932 100%);
+  border: 0;
+  box-shadow: 0 18px 42px rgb(8 24 20 / 0.2);
+  isolation: isolate;
+}
+
+.daily-blitz-action {
+  color: #182821;
+  background: #e8b86d;
+  border: 1px solid #e8b86d;
+}
+
+.daily-blitz-action:hover {
+  background: #f0c982;
+  border-color: #f0c982;
+}
+
+.daily-blitz-action:active {
+  background: #dca95d;
+}
+
+.daily-blitz-rankings {
+  color: #e3eee9;
+  background: rgb(255 255 255 / 0.035);
+  border: 1px solid rgb(211 231 221 / 0.24);
+}
+
+.daily-blitz-rankings:hover {
+  background: rgb(255 255 255 / 0.09);
+  border-color: rgb(211 231 221 / 0.42);
+}
+
+.home-player-name {
+  color: var(--primary);
+}
+
+html.dark .home-player-name {
+  color: #8bc7b2;
+}
+
+.home-stat-card {
+  border-top: 3px solid #4a7c6d;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+.home-stat-card:nth-child(2) {
+  border-top-color: #e8b86d;
+}
+
+.home-stat-card:hover,
+.home-game-card:hover {
+  border-color: #4a7c6d;
+}
+
+.suite-bottom-nav {
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 0.13);
+}
+
+@media (max-width: 639px) {
+  .home-screen {
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .home-greeting h1 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+  }
+
+  .daily-blitz-card {
+    padding: 1.35rem;
+    border-radius: 1.35rem;
+  }
+
+  .home-ready-pill {
+    font-size: 0.68rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .profile-screen {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+  }
+
+  .profile-screen > .profile-page-header,
+  .profile-screen > .profile-toast,
+  .profile-screen > .profile-identity-card,
+  .profile-screen > .profile-guest-card,
+  .profile-screen > .profile-customization-card,
+  .profile-screen > .profile-data-card {
+    grid-column: 1 / -1;
+  }
+
+  .profile-theme-card,
+  .profile-audio-card {
+    align-self: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-screen *,
+  .suite-bottom-nav * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+

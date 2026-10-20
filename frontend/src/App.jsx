@@ -7,12 +7,14 @@ import { SelectScreen } from './components/screens/SelectScreen.jsx';
 import { StatsScreen } from './components/screens/StatsScreen.jsx';
 import { LeaderboardScreen } from './components/screens/LeaderboardScreen.jsx';
 import { ProfileScreen } from './components/screens/ProfileScreen.jsx';
+import { SettingsScreen } from './components/screens/SettingsScreen.jsx';
 import { QuotesScreen } from './components/screens/QuotesScreen.jsx';
 import { BanjaScreen } from './components/screens/BanjaScreen.jsx';
 import { ReadyCountdown } from './components/game/ReadyCountdown.jsx';
 import { GameViewport } from './components/game/GameViewport.jsx';
 import { RoundSummaryModal } from './components/game/RoundSummaryModal.jsx';
 import { AuthModal } from './components/auth/AuthModal.jsx';
+import { ExerciseIcon } from './components/icons/ExerciseIcon.jsx';
 import { MigrationBanner } from './components/auth/MigrationBanner.jsx';
 import { getGameById, getRandomBlitzGames } from './engine/games/registry.js';
 import { useAuth } from './context/AuthContext.jsx';
@@ -20,7 +22,12 @@ import { useAudio } from './context/AudioContext.jsx';
 import { api } from './services/apiClient.js';
 
 export function App() {
-  const [currentScreen, setCurrentScreen] = useState('home');
+  // Spotify returns to the app root after OAuth. Restore Banja before its
+  // player mounts so it can exchange the authorization code and start the SDK.
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    const spotifyCallback = new URLSearchParams(window.location.search);
+    return spotifyCallback.has('code') || spotifyCallback.has('error') ? 'banja' : 'home';
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Active game orchestration state
@@ -92,10 +99,10 @@ export function App() {
 
   const finishBlitzWorkout = async (totalScore, rounds) => {
     let rating = 'Novice';
-    if (totalScore >= 4500) rating = '🧠 Grandmaster';
-    else if (totalScore >= 3500) rating = '⚡ Genius';
-    else if (totalScore >= 2500) rating = '🔥 Sharpshooter';
-    else if (totalScore >= 1500) rating = '🎯 Quick Thinker';
+    if (totalScore >= 4500) rating = 'Grandmaster';
+    else if (totalScore >= 3500) rating = 'Genius';
+    else if (totalScore >= 2500) rating = 'Sharpshooter';
+    else if (totalScore >= 1500) rating = 'Quick Thinker';
 
     sound.playVictory();
     if (fx) fx.confetti(3500);
@@ -202,7 +209,7 @@ export function App() {
         {gamePlayState === 'blitz-final' && blitzFinalData && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 dark:bg-black/70 backdrop-blur-sm select-none">
             <div className="w-full max-w-md bg-surface rounded-3xl p-6 sm:p-8 shadow-2xl border border-border-subtle flex flex-col items-center text-center">
-              <span className="text-4xl mb-2">🏆</span>
+              <ExerciseIcon name="award" size={40} className="text-tertiary mb-2" />
               <h3 className="font-headline-xl text-2xl font-bold text-on-surface">
                 Daily Blitz Complete!
               </h3>
@@ -217,7 +224,7 @@ export function App() {
                 </span>
                 {blitzFinalData.isNewBlitzHigh && (
                   <span className="mt-2 px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
-                    🎉 New Blitz High Score!
+                    New Blitz High Score
                   </span>
                 )}
               </div>
@@ -266,7 +273,11 @@ export function App() {
             )}
 
             {currentScreen === 'profile' && (
-              <ProfileScreen />
+              <ProfileScreen onNavigate={setCurrentScreen} />
+            )}
+
+            {currentScreen === 'settings' && (
+              <SettingsScreen />
             )}
 
             {currentScreen === 'quotes' && (

@@ -44,8 +44,8 @@ export class ConfusingArrowsGame extends BaseGame {
     this.container.innerHTML = `
       <div class="game-wrapper arrows-view">
         <div class="arrow-rule-banner" id="arrow-rule-banner">
-          <span class="rule-chip rule-normal">🟢 GREEN = SAME DIRECTION</span>
-          <span class="rule-chip rule-reverse">🔴 RED = OPPOSITE DIRECTION</span>
+          <span class="rule-chip rule-normal"><span aria-hidden="true" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4a7c6d;margin-right:7px"></span>GREEN = SAME DIRECTION</span>
+          <span class="rule-chip rule-reverse"><span aria-hidden="true" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#c86a58;margin-right:7px"></span>RED = OPPOSITE DIRECTION</span>
         </div>
 
         <div class="arrow-arena">

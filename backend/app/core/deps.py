@@ -46,7 +46,12 @@ def get_current_user_optional(
     if is_cookie_auth and request.method in ("POST", "PUT", "PATCH", "DELETE"):
         # Exempt auth endpoints (login/register/logout) where session doesn't exist yet
         path = request.url.path
-        if not path.endswith("/auth/login") and not path.endswith("/auth/register") and not path.endswith("/auth/logout"):
+        if not any(path.endswith(route) for route in (
+            "/auth/login",
+            "/auth/register",
+            "/auth/google",
+            "/auth/logout",
+        )):
             csrf_header = request.headers.get("X-CSRF-Token")
             if not csrf_header or not validate_csrf_token(csrf_header, str(user_uuid)):
                 raise HTTPException(

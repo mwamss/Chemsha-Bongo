@@ -315,36 +315,29 @@ export function BanjaScreen({ onNavigate }) {
             isDark ? 'bg-[#0a0f0d]/75' : 'bg-primary/30'
           }`}
         >
-          <div className={`w-full max-w-2xl max-h-[92vh] overflow-y-auto backdrop-blur-xl rounded-2xl p-5 sm:p-8 relative space-y-4 sm:space-y-6 animate-in fade-in transition-all ${
+          <div className={`w-full max-w-3xl max-h-[92vh] overflow-y-auto backdrop-blur-xl rounded-3xl p-6 sm:p-9 relative space-y-5 sm:space-y-7 animate-in fade-in transition-all ${
             isDark
               ? 'bg-[#161e1b] border border-[#2a3832] shadow-[0_24px_60px_rgba(0,0,0,0.5)]'
-              : 'bg-surface-container-lowest/95 border border-outline-variant/40 shadow-2xl'
+              : 'bg-[#f8faf7] border border-[#d9e2dc] shadow-[0_28px_80px_rgba(16,30,26,0.22)]'
           }`}>
-            {/* Rainbow Accent Strip */}
-            <div className={`h-1.5 w-full absolute top-0 left-0 ${
-              isDark
-                ? 'bg-gradient-to-r from-[#204f43] via-[#528e7d] to-[#95d3c0]'
-                : 'bg-gradient-to-r from-secondary-fixed via-secondary to-primary-container'
-            }`}></div>
-
             {/* Modal Header */}
-            <div className="flex items-start justify-between gap-3 pt-1">
-              <div className="space-y-1">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-2">
                 <div className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs uppercase tracking-wider font-semibold ${
                   isDark ? 'text-[#528e7d]' : 'text-secondary'
                 }`}>
                   <span className="material-symbols-outlined text-sm">spa</span>
-                  <span>Contemplative Check-In</span>
+                  <span>A moment for yourself</span>
                 </div>
-                <h2 className={`font-serif text-xl sm:text-3xl font-normal tracking-tight ${
+                <h2 className={`font-serif text-2xl sm:text-4xl font-medium tracking-tight ${
                   isDark ? 'text-[#f0f4f2]' : 'text-primary'
                 }`}>
-                  How would you like to arrive today?
+                  How would you like to begin?
                 </h2>
-                <p className={`text-xs sm:text-sm leading-relaxed ${
+                <p className={`max-w-2xl text-sm sm:text-base leading-relaxed ${
                   isDark ? 'text-[#8e9e97]' : 'text-on-surface-variant'
                 }`}>
-                  Take a breath. Whether you seek guided reflection or pure unstructured release, this sanctuary is yours.
+                  Choose a guided reflection or a quiet space to write freely. You can change direction at any time.
                 </p>
               </div>
               <button
@@ -365,7 +358,7 @@ export function BanjaScreen({ onNavigate }) {
             </div>
 
             {/* Pathway Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Option 1: Mindful Check-in (Guided Prompts) */}
               <div
                 role="button"
@@ -382,10 +375,10 @@ export function BanjaScreen({ onNavigate }) {
                     setShowArrivalModal(false);
                   }
                 }}
-                className={`group p-4 sm:p-5 rounded-xl active:scale-[0.99] transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-3 ${
+                className={`group p-5 sm:p-6 rounded-2xl active:scale-[0.99] transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 ${
                   isDark
-                    ? 'bg-[#1f2824] hover:bg-[#26322d] border border-[#2d3b35] hover:border-[#528e7d]/50 shadow-sm'
-                    : 'bg-surface-container-low/40 hover:bg-secondary-container/40 border border-outline-variant/30 hover:border-secondary/40'
+                    ? 'bg-[#1b2521] hover:bg-[#202d27] border border-[#2d3b35] hover:border-[#528e7d]/50 shadow-sm'
+                    : 'bg-white/70 hover:bg-white border border-[#e0e7e2] hover:border-secondary/50 hover:shadow-md'
                 }`}
               >
                 <div className="space-y-2">
@@ -394,7 +387,7 @@ export function BanjaScreen({ onNavigate }) {
                       ? 'bg-[#161e1b] border border-[#2d3b35] text-[#528e7d]'
                       : 'bg-surface-container text-secondary'
                   }`}>
-                    <span className="material-symbols-outlined text-xl">explore</span>
+                    <span className="material-symbols-outlined text-xl">psychology_alt</span>
                   </div>
                   <h3 className={`font-serif text-base sm:text-lg font-semibold pt-0.5 flex items-center justify-between ${
                     isDark ? 'text-[#f0f4f2]' : 'text-primary'
@@ -409,7 +402,7 @@ export function BanjaScreen({ onNavigate }) {
                   <p className={`text-xs leading-relaxed ${
                     isDark ? 'text-[#9bb0a5]' : 'text-on-surface-variant'
                   }`}>
-                    Sit with intentional inquiries and deep questions to gently check in with your mind and heart.
+                    Use a thoughtful question to notice what is present and what matters to you today.
                   </p>
                 </div>
                 <div className={`pt-2 flex items-center gap-1.5 text-xs font-semibold ${
@@ -436,10 +429,10 @@ export function BanjaScreen({ onNavigate }) {
                     setShowArrivalModal(false);
                   }
                 }}
-                className={`group p-4 sm:p-5 rounded-xl active:scale-[0.99] transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-3 ${
+                className={`group p-5 sm:p-6 rounded-2xl active:scale-[0.99] transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 ${
                   isDark
-                    ? 'bg-[#1f2824] hover:bg-[#26322d] border border-[#2d3b35] hover:border-[#528e7d]/50 shadow-sm'
-                    : 'bg-surface-container-low/40 hover:bg-secondary-container/40 border border-outline-variant/30 hover:border-secondary/40'
+                    ? 'bg-[#1b2521] hover:bg-[#202d27] border border-[#2d3b35] hover:border-[#528e7d]/50 shadow-sm'
+                    : 'bg-white/70 hover:bg-white border border-[#e0e7e2] hover:border-secondary/50 hover:shadow-md'
                 }`}
               >
                 <div className="space-y-2">
@@ -463,7 +456,7 @@ export function BanjaScreen({ onNavigate }) {
                   <p className={`text-xs leading-relaxed ${
                     isDark ? 'text-[#9bb0a5]' : 'text-on-surface-variant'
                   }`}>
-                    An open, quiet page to freely write out your thoughts, feelings, and stream of consciousness.
+                    Write without a prompt and let your thoughts take shape at your own pace.
                   </p>
                 </div>
                 <div className={`pt-2 flex items-center gap-1.5 text-xs font-semibold ${
@@ -483,7 +476,7 @@ export function BanjaScreen({ onNavigate }) {
                 isDark ? 'text-[#72847d]' : 'text-outline'
               }`}>
                 <span className={`material-symbols-outlined text-sm ${isDark ? 'text-[#528e7d]' : 'text-secondary'}`}>nest_clock_farsight_analog</span>
-                <span>Unhurried &amp; confidential</span>
+                <span>A quiet space at your own pace</span>
               </span>
               <button
                 type="button"
@@ -495,7 +488,7 @@ export function BanjaScreen({ onNavigate }) {
                   isDark ? 'text-[#528e7d] hover:text-[#95d3c0] hover:underline' : 'hover:text-primary hover:underline text-secondary'
                 }`}
               >
-                I'll decide as I go →
+                Start without choosing →
               </button>
             </div>
           </div>
@@ -508,7 +501,7 @@ export function BanjaScreen({ onNavigate }) {
           ? 'bg-[#0f1412]/90 border-b border-[#2d3a35] shadow-[0_1px_12px_rgba(0,0,0,0.5)]'
           : 'bg-surface-container-lowest/90 border-b border-outline-variant/30 shadow-[0_1px_6px_rgba(16,30,26,0.04)]'
       }`}>
-        <div className="h-14 w-full max-w-6xl mx-auto px-3 sm:px-6 flex items-center justify-between gap-2">
+        <div className="h-14 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 flex items-center justify-between gap-2">
           {/* Breadcrumb Left */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button
@@ -724,7 +717,7 @@ export function BanjaScreen({ onNavigate }) {
       </div>
 
       {/* 2. Main Body Viewport */}
-      <main className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-8 flex flex-col items-center pb-28 sm:pb-24">
+      <main className="w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 py-4 sm:py-8 flex flex-col items-center pb-28 sm:pb-24">
         {/* ========================================================================= */}
         {/* VIEW A: GUIDED INQUIRY & DEEP QUESTIONS (Stitch Screen 91d320b8)           */}
         {/* ========================================================================= */}
@@ -740,7 +733,7 @@ export function BanjaScreen({ onNavigate }) {
 
               {/* Sub-navigation & Zen Breadcrumb Context */}
               {!zenMode && (
-                <div className="w-full max-w-5xl mx-auto pb-3 sm:pb-4">
+                <div className="w-full mx-auto pb-3 sm:pb-4">
                   <div className={`flex flex-wrap items-center justify-between gap-2 sm:gap-3 text-[11px] sm:text-xs ${
                     isDark ? 'text-[#8e9e97]' : 'text-on-surface-variant'
                   }`}>
@@ -770,7 +763,7 @@ export function BanjaScreen({ onNavigate }) {
 
               {/* Mindful Greeting & Cognitive Orientation */}
               {!zenMode && (
-                <section className="w-full max-w-5xl mx-auto pt-1 sm:pt-2 pb-4 sm:pb-6">
+                <section className="w-full mx-auto pt-1 sm:pt-2 pb-4 sm:pb-6">
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4">
                     <div className="space-y-1 max-w-2xl">
                       <div className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs uppercase tracking-wider font-semibold ${
@@ -846,19 +839,12 @@ export function BanjaScreen({ onNavigate }) {
               )}
 
               {/* Core Interactive Inquiry & Dialogue Surface (Central Sacred Vessel) */}
-              <section className="w-full max-w-4xl mx-auto pb-8 sm:pb-10">
+              <section className="w-full mx-auto pb-8 sm:pb-10">
                 <article className={`rounded-2xl relative overflow-hidden transition-all duration-300 ${
                   isDark
-                    ? 'bg-[#181d1b] rounded-xl border border-[#2d3a35] shadow-2xl'
-                    : 'bg-surface-container-lowest shadow-md border border-outline-variant/30'
+                    ? 'bg-[#181d1b] rounded-xl shadow-2xl'
+                    : 'bg-surface-container-lowest shadow-md'
                 }`}>
-                  {/* Subtle Top Accent */}
-                  <div className={`h-1.5 w-full ${
-                    isDark
-                      ? 'bg-gradient-to-r from-[#204f43] via-[#528e7d] to-[#95d3c0]'
-                      : 'bg-gradient-to-r from-secondary-fixed via-secondary to-primary-container'
-                  }`}></div>
-
                   <div className="p-4 sm:p-8 md:p-10 space-y-5 sm:space-y-6">
                     {/* Inquiry Selector & Navigation Controls */}
                     <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 pb-3 sm:pb-4 -mx-4 sm:-mx-8 md:-mx-10 px-4 sm:px-8 md:px-10 -mt-4 sm:-mt-8 md:-mt-10 pt-4 sm:pt-6 border-b ${
@@ -960,8 +946,8 @@ export function BanjaScreen({ onNavigate }) {
                         {/* Point 1: Somatic Resonance */}
                         <div className={`p-3.5 sm:p-4 rounded-xl flex flex-col justify-between ${
                           isDark
-                            ? 'bg-[#141a17] border border-[#2d3a35]/60'
-                            : 'bg-surface-container-lowest shadow-2xs border border-outline-variant/30'
+                            ? 'bg-[#141a17]'
+                            : 'bg-surface-container-low'
                         }`}>
                           <div className="space-y-1">
                             <div className={`flex items-center gap-1.5 text-xs font-semibold ${
@@ -987,8 +973,8 @@ export function BanjaScreen({ onNavigate }) {
                         {/* Point 2: Gentle Release */}
                         <div className={`p-3.5 sm:p-4 rounded-xl flex flex-col justify-between ${
                           isDark
-                            ? 'bg-[#141a17] border border-[#2d3a35]/60'
-                            : 'bg-surface-container-lowest shadow-2xs border border-outline-variant/30'
+                            ? 'bg-[#141a17]'
+                            : 'bg-surface-container-low'
                         }`}>
                           <div className="space-y-1">
                             <div className={`flex items-center gap-1.5 text-xs font-semibold ${
@@ -1042,10 +1028,10 @@ export function BanjaScreen({ onNavigate }) {
                             value={title}
                             onChange={handleTitleChange}
                             placeholder="Unfolding thoughts on this inquiry..."
-                            className={`w-full font-serif text-base sm:text-xl font-semibold px-3 py-2 rounded-xl focus:outline-none focus:ring-1 border shadow-inner ${
+                          className={`w-full font-serif text-base sm:text-xl font-semibold px-3 py-2 rounded-xl focus:outline-none focus:ring-2 ${
                               isDark
-                                ? 'bg-[#111614] border-[#2d3a35] text-[#f0f4f2] placeholder:text-[#404945] focus:ring-[#95d3c0] focus:border-[#95d3c0]'
-                                : 'bg-surface-container-low/40 border-outline-variant/30 text-primary placeholder:text-outline-variant focus:ring-secondary/40'
+                              ? 'bg-[#111614] text-[#f0f4f2] placeholder:text-[#65736c] focus:ring-[#95d3c0]'
+                              : 'bg-surface-container-low/60 text-primary placeholder:text-outline-variant focus:ring-secondary/40'
                             }`}
                           />
                         </div>
@@ -1065,19 +1051,19 @@ export function BanjaScreen({ onNavigate }) {
                           onChange={handleBodyChange}
                           placeholder="Write whatever arises without judgment. Let thoughts arrive as pebbles falling into clean water..."
                           rows={5}
-                          className={`w-full min-h-[140px] sm:min-h-[180px] font-serif text-base sm:text-lg leading-relaxed p-3.5 sm:p-4 rounded-xl focus:outline-none focus:ring-1 resize-y shadow-inner border ${
+                          className={`w-full min-h-[140px] sm:min-h-[180px] font-serif text-base sm:text-lg leading-relaxed p-3.5 sm:p-4 rounded-xl focus:outline-none focus:ring-2 resize-y ${
                             isDark
-                              ? 'bg-[#111614] border-[#2d3a35] text-[#e1e8e4] placeholder:text-[#72847d] focus:ring-[#95d3c0] focus:border-[#95d3c0]'
-                              : 'bg-surface-container-low/30 border-outline-variant/30 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-secondary/40'
+                              ? 'bg-[#111614] text-[#e1e8e4] placeholder:text-[#72847d] focus:ring-[#95d3c0]'
+                              : 'bg-surface-container-low/50 text-on-surface placeholder:text-on-surface-variant/60 focus:ring-secondary/40'
                           }`}
                         />
                       </div>
 
                       {/* Reflection Metadata & Voice Note Indicator */}
-                      <div className={`flex flex-col xs:flex-row xs:items-center justify-between gap-2 text-xs p-2.5 sm:p-3 rounded-xl border ${
+                      <div className={`flex flex-col xs:flex-row xs:items-center justify-between gap-2 text-xs p-2.5 sm:p-3 rounded-xl ${
                         isDark
-                          ? 'bg-[#141a17] border-[#2d3a35]/60 text-[#8e9e97]'
-                          : 'bg-surface-container-low/40 border-outline-variant/20 text-on-surface-variant'
+                          ? 'bg-[#141a17] text-[#8e9e97]'
+                          : 'bg-surface-container-low/40 text-on-surface-variant'
                       }`}>
                         <div className="flex flex-wrap items-center gap-2">
                           <span className={`flex items-center gap-1 font-medium ${
@@ -1197,7 +1183,7 @@ export function BanjaScreen({ onNavigate }) {
               </section>
 
               {/* Secondary Companion Questions / Inquiry Carousel (Alternative Horizons) */}
-              <section className="w-full max-w-5xl mx-auto pb-8 sm:pb-10">
+              <section className="w-full mx-auto pb-8 sm:pb-10">
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -1287,9 +1273,9 @@ export function BanjaScreen({ onNavigate }) {
         {/* VIEW B: FREE EXPRESSION MANUSCRIPT SANCTUARY (Original Banja Chamber)      */}
         {/* ========================================================================= */}
         {banjaMode === 'free' && (
-          <div className="w-full flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 animate-in fade-in">
+          <div className="w-full flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6 animate-in fade-in">
             {/* Main Manuscript Column */}
-            <div className="w-full max-w-[760px] flex flex-col">
+            <div className="w-full min-w-0 flex-1 flex flex-col">
               {/* Editorial Sanctuary Header */}
               {!zenMode && (
                 <header className="w-full flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -1627,7 +1613,7 @@ export function BanjaScreen({ onNavigate }) {
             </div>
 
             {showAtmosphere && !zenMode && (
-              <aside className="w-full max-w-[760px] lg:w-96 shrink-0 lg:sticky lg:top-20">
+              <aside className="w-full lg:w-[min(30vw,460px)] shrink-0 lg:sticky lg:top-20">
                 <SpotifyPlayer spotifyUri={settings.spotifyUri} isAuthenticated={isAuthenticated} onSave={(spotify_uri) => updateSettings({ spotify_uri })} />
               </aside>
             )}

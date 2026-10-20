@@ -66,7 +66,7 @@ export function QuotesScreen({ onNavigate }) {
   });
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-20 select-none">
+    <div className="screen-layout flex flex-col gap-8 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 pt-6 pb-20 select-none">
       {/* ── TOP HEADER & BREADCRUMB ──────────────────────────────────────── */}
       <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle/40 pb-5">
         <div>
@@ -95,7 +95,7 @@ export function QuotesScreen({ onNavigate }) {
       </section>
 
       {/* ── FEATURED CENTERPIECE: HERO CARD ─────────────────────────────── */}
-      <section className="max-w-xl mx-auto w-full">
+      <section className="w-full mx-auto">
         <DailyMethaliCard />
       </section>
 

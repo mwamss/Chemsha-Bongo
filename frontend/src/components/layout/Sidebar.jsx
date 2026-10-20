@@ -2,10 +2,11 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { GentleRhythmSidebarWidget } from '../rhythm/GentleRhythmTracker.jsx';
+import { BrandIcon } from '../BrandIcon.jsx';
 
 export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
   const { displayName, avatarInitial, avatarColor, avatarImage, isAuthenticated, logout, setShowAuthModal } = useAuth();
-  const { playClick, ambientPlaying, toggleAmbient } = useAudio();
+  const { playClick } = useAudio();
 
   if (!isOpen) return null;
 
@@ -29,7 +30,7 @@ export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
         {/* Header */}
         <div className="flex items-center justify-between px-5 h-16 border-b border-border-subtle/30 shrink-0">
           <div className="flex items-center gap-2.5">
-            <img src="/assets/chemsha-bongo-logo.png" alt="Chemsha Bongo" className="h-7 w-7 object-contain" />
+            <BrandIcon className="w-8 h-8" />
             <span className="font-headline-md text-base text-on-surface font-bold">Menu</span>
           </div>
           <button
@@ -48,7 +49,7 @@ export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
             <button
               onClick={() => handleNav('profile')}
               className="flex items-center gap-3 p-3 rounded-2xl bg-surface-container border border-border-subtle/40 hover:bg-surface-container-high transition-colors text-left cursor-pointer group"
-              title="Open Account & Settings"
+              title="Open Profile"
             >
               <div
                 className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-base text-white shadow-sm shrink-0 group-hover:scale-105 transition-transform overflow-hidden"
@@ -153,36 +154,17 @@ export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
               </button>
 
               <button
-                onClick={() => handleNav('profile')}
+                onClick={() => handleNav('settings')}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all cursor-pointer ${
-                  currentScreen === 'profile'
+                  currentScreen === 'settings'
                     ? 'bg-secondary text-white font-semibold shadow-sm'
                     : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
                 }`}
               >
-                <span className="material-symbols-outlined text-[20px]">tune</span>
-                <span className="text-sm">Account &amp; Settings</span>
+                <span className="material-symbols-outlined text-[20px]">settings</span>
+                <span className="text-sm">Settings</span>
               </button>
             </nav>
-          </section>
-
-          {/* Calming Ambient Sound Toggle */}
-          <section className="flex flex-col gap-1">
-            <p className="text-[10px] text-outline uppercase tracking-widest px-1 mb-1 font-semibold">Sanctuary</p>
-            <button
-              onClick={toggleAmbient}
-              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-surface-container/50 border border-border-subtle/30 hover:bg-surface-container text-left transition-all cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[20px] text-secondary">self_improvement</span>
-                <span className="text-sm font-medium text-on-surface">Ambient Drone</span>
-              </div>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
-                ambientPlaying ? 'bg-secondary text-white' : 'bg-surface text-outline'
-              }`}>
-                {ambientPlaying ? 'Active' : 'Off'}
-              </span>
-            </button>
           </section>
         </div>
 
@@ -193,7 +175,7 @@ export function Sidebar({ isOpen, onClose, currentScreen, onNavigate }) {
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all text-left text-sm cursor-pointer"
           >
             <span className="material-symbols-outlined text-[18px] text-secondary">manage_accounts</span>
-            <span>Profile &amp; Settings</span>
+            <span>Profile</span>
           </button>
 
           {/* Auth Action */}

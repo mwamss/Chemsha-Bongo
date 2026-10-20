@@ -119,6 +119,9 @@ export class ChimpMemoryGame extends BaseGame {
         const val = this.tileMap.get(i);
         tile.type = 'button';
         tile.classList.add('has-number');
+        // Numbered tiles are inert during the memorization preview. They become
+        // available only when the grid has actually been masked.
+        tile.disabled = !masked;
 
         if (masked) {
           tile.classList.add('masked');
@@ -146,21 +149,13 @@ export class ChimpMemoryGame extends BaseGame {
     tiles.forEach(tile => {
       tile.classList.add('masked');
       tile.textContent = '';
+      tile.disabled = false;
       tile.setAttribute('aria-label', `Tile ${Number(tile.dataset.index) + 1}, hidden number`);
     });
   }
 
   handleTileClick(index, value, tileEl, event) {
-    if (!this.isActive || this.isPaused || this.trialLocked) return;
-
-    // If still showing numbers, clicking instantly masks and starts the test
-    if (!this.isMasked) {
-      if (this.previewTimeout) {
-        clearTimeout(this.previewTimeout);
-        this.previewTimeout = null;
-      }
-      this.maskGrid();
-    }
+    if (!this.isActive || this.isPaused || this.trialLocked || !this.isMasked) return;
 
     // Already solved tile clicked
     if (tileEl.classList.contains('solved')) return;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAudio } from '../../context/AudioContext.jsx';
+import { ExerciseIcon } from '../icons/ExerciseIcon.jsx';
 
 export function RoundSummaryModal({
   stats,
@@ -26,19 +27,19 @@ export function RoundSummaryModal({
             <span>Daily Blitz • Round {blitzCurrentRound} of {blitzTotalRounds}</span>
           </div>
         ) : (
-          <div className="w-16 h-16 rounded-2xl bg-secondary-container flex items-center justify-center text-3xl mb-4 shadow-sm">
-            {stats?.isNewHigh ? '🏆' : meta?.icon || '✨'}
+          <div className="w-16 h-16 rounded-xl bg-secondary-container flex items-center justify-center text-secondary mb-4">
+            <ExerciseIcon name={stats?.isNewHigh ? 'award' : meta?.icon || 'schema'} size={32} />
           </div>
         )}
 
         {stats?.isNewHigh && !isBlitz && (
           <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
-            🎉 New Personal Best!
+            New Personal Best
           </span>
         )}
 
         <div className="flex items-center justify-center gap-2 mb-1">
-          {isBlitz && <span className="text-2xl">{meta?.icon || '🎮'}</span>}
+          {isBlitz && <ExerciseIcon name={meta?.icon || 'sports_esports'} size={22} className="text-secondary" />}
           <h3 className="font-headline-xl text-2xl font-bold text-on-surface">
             {meta?.title} Complete
           </h3>
@@ -78,7 +79,7 @@ export function RoundSummaryModal({
         {isBlitz && nextGameMeta && !isLastBlitzRound && (
           <div className="w-full mb-5 p-3 rounded-2xl bg-surface-container/60 border border-secondary/30 flex items-center justify-between text-left">
             <div className="flex items-center gap-2.5">
-              <span className="text-2xl">{nextGameMeta.icon}</span>
+              <ExerciseIcon name={nextGameMeta.icon} size={22} className="text-secondary" />
               <div>
                 <span className="text-[10px] text-secondary font-bold uppercase tracking-wider">Next Round</span>
                 <h4 className="text-sm font-bold text-on-surface leading-tight">{nextGameMeta.title}</h4>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllGames } from '../../engine/games/registry.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { api } from '../../services/apiClient.js';
+import { ExerciseIcon } from '../icons/ExerciseIcon.jsx';
 
 export function StatsScreen() {
   const { storage, isAuthenticated } = useAuth();
@@ -41,7 +42,7 @@ export function StatsScreen() {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-20 select-none">
+    <div className="screen-layout flex flex-col gap-8 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 pt-6 pb-20 select-none">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle/40 pb-4">
         <div>
           <h1 className="font-headline-xl text-2xl sm:text-3xl font-extrabold text-on-surface">
@@ -118,7 +119,7 @@ export function StatsScreen() {
                 return (
                   <tr key={g.id} className="hover:bg-surface-container/30 transition-colors">
                     <td className="py-4 px-6 flex items-center gap-3">
-                      <span className="text-2xl">{g.icon}</span>
+                      <span className="text-secondary"><ExerciseIcon name={g.icon} size={22} /></span>
                       <span className="font-semibold text-on-surface">{g.title}</span>
                     </td>
                     <td className="py-4 px-6 text-secondary text-xs uppercase font-medium">

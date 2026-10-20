@@ -1036,6 +1036,11 @@ html.dark [class~="bg-primary"][class~="text-white"] {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
+.chimp-tile.has-number:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
 .chimp-tile.has-number.masked {
   background: var(--surface);
   border: 2px solid var(--secondary);

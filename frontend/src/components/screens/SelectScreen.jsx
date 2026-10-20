@@ -2,6 +2,7 @@ import React from 'react';
 import { getAllGames } from '../../engine/games/registry.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useAudio } from '../../context/AudioContext.jsx';
+import { ExerciseIcon } from '../icons/ExerciseIcon.jsx';
 
 export function SelectScreen({ onLaunchGame }) {
   const { storage } = useAuth();
@@ -9,7 +10,7 @@ export function SelectScreen({ onLaunchGame }) {
   const games = getAllGames();
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-20 select-none">
+    <div className="screen-layout flex flex-col gap-6 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 pt-6 pb-20 select-none">
       <div className="flex flex-col gap-1 border-b border-border-subtle/40 pb-4">
         <h1 className="font-headline-xl text-2xl sm:text-3xl font-extrabold text-on-surface">
           Exercise Directory
@@ -19,7 +20,7 @@ export function SelectScreen({ onLaunchGame }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
         {games.map((g) => {
           const pbScore = storage.getHighScore(g.id);
           const pbStreak = storage.getBestStreak(g.id);
@@ -32,8 +33,8 @@ export function SelectScreen({ onLaunchGame }) {
               <div>
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex items-center gap-3">
-                    <span className="text-4xl p-2.5 rounded-2xl bg-surface-container">
-                      {g.icon}
+                    <span className="inline-flex p-2.5 rounded-xl bg-surface-container text-secondary">
+                      <ExerciseIcon name={g.icon} size={32} />
                     </span>
                     <div>
                       <h3 className="font-headline-md text-lg font-bold text-on-surface">{g.title}</h3>
