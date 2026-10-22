@@ -19,7 +19,14 @@ from backend.app.core.deps import get_db, get_current_user
 from backend.app.models.user import User, UserProfile
 from backend.app.models.settings import UserSettings
 from backend.app.models.stats import UserAggregatedStats
-from backend.app.schemas.auth import RegisterRequest, LoginRequest, GoogleLoginRequest, TokenResponse, AuthMeResponse
+from backend.app.schemas.auth import (
+    RegisterRequest,
+    LoginRequest,
+    GoogleLoginRequest,
+    GoogleRegistrationRequiredResponse,
+    TokenResponse,
+    AuthMeResponse,
+)
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -221,13 +228,13 @@ def login(
         )
 
 
-@router.post("/google", response_model=TokenResponse)
+@router.post("/google", response_model=TokenResponse | GoogleRegistrationRequiredResponse)
 def google_login(
     payload: GoogleLoginRequest,
     response: Response,
     db: Session = Depends(get_db),
 ):
-    """Verify a Google Identity Services token and sign in or create an account."""
+    """Sign in an existing Google user or collect required profile details for a new one."""
     claims = verify_google_credential(payload.credential)
 
     google_sub = claims.get("sub")
@@ -254,13 +261,27 @@ def google_login(
             if len(username_base) < 3:
                 username_base = f"{username_base or 'player'}_user"
             username_base = username_base[:42]
-            username = username_base
-            while db.scalar(select(User.id).where(User.username == username)):
-                username = f"{username_base[:41]}_{secrets.token_hex(3)}"
+
+            suggested_username = username_base
+            while db.scalar(select(User.id).where(User.username == suggested_username)):
+                suggested_username = f"{username_base[:41]}_{secrets.token_hex(3)}"
+
+            suggested_surname = (claims.get("name") or "").strip()[:100]
+            if not payload.username or not payload.surname or not payload.surname.strip():
+                return GoogleRegistrationRequiredResponse(
+                    email=email,
+                    suggested_username=suggested_username,
+                    suggested_surname=suggested_surname,
+                )
+
+            username = payload.username.strip()
+            surname = payload.surname.strip()
+            if db.scalar(select(User.id).where(User.username == username)):
+                raise HTTPException(status_code=409, detail="That username is already taken. Choose another one.")
 
             profile = UserProfile(
-                surname=(claims.get("name") or "")[:100],
-                display_name=(claims.get("name") or "")[:100] or None,
+                surname=surname,
+                display_name=surname,
                 avatar_color="#1e3a34",
             )
             user = User(

@@ -105,11 +105,12 @@ class ApiClient {
     return data;
   }
 
-  async loginWithGoogle(credential) {
+  async loginWithGoogle(credential, profile = {}) {
     const data = await this.request('/auth/google', {
       method: 'POST',
-      body: JSON.stringify({ credential }),
+      body: JSON.stringify({ credential, ...profile }),
     });
+    if (data.registration_required) return data;
     if (data.csrf_token) this.setCsrfToken(data.csrf_token);
     this.currentUser = data;
     return data;

@@ -167,8 +167,9 @@ export function AuthProvider({ children }) {
     return res;
   };
 
-  const loginWithGoogle = async (credential) => {
-    const res = await api.loginWithGoogle(credential);
+  const loginWithGoogle = async (credential, profile = {}) => {
+    const res = await api.loginWithGoogle(credential, profile);
+    if (res.registration_required) return res;
     const userData = await api.getMe();
     if (userData) await applyAccount(userData);
     setShowAuthModal(false);

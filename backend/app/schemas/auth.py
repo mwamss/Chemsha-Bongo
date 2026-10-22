@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional
+from typing import Literal, Optional
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -17,6 +17,15 @@ class LoginRequest(BaseModel):
 
 class GoogleLoginRequest(BaseModel):
     credential: str = Field(..., min_length=20, max_length=8192)
+    username: Optional[str] = Field(default=None, min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_-]+$")
+    surname: Optional[str] = Field(default=None, min_length=1, max_length=100)
+
+
+class GoogleRegistrationRequiredResponse(BaseModel):
+    registration_required: Literal[True] = True
+    email: EmailStr
+    suggested_username: str
+    suggested_surname: str
 
 
 class TokenResponse(BaseModel):
