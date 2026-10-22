@@ -11,20 +11,20 @@ export function Header({ onOpenSidebar, onNavigate }) {
 
   return (
     <header className="suite-header fixed top-0 w-full z-50 bg-surface/95 backdrop-blur-xl pt-safe border-b border-border-subtle">
-      <div className="h-16 px-4 sm:px-6 lg:px-10 2xl:px-12 flex items-center justify-between w-full mx-auto">
+      <div className="h-16 px-3 min-[400px]:px-4 sm:px-6 lg:px-10 2xl:px-12 flex items-center justify-between gap-1 w-full mx-auto">
         {/* Left: Brand & Sidebar Trigger */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 min-w-0">
           <button
             onClick={() => { playClick(); onOpenSidebar(); }}
-            className="flex items-center gap-2.5 p-1.5 -ml-1.5 rounded-lg hover:bg-surface-container/60 transition-colors cursor-pointer group"
+            className="flex items-center gap-1.5 min-[400px]:gap-2.5 p-1 -ml-1 min-w-0 rounded-lg hover:bg-surface-container/60 transition-colors cursor-pointer group"
             title="Open Menu"
           >
-            <BrandIcon className="w-11 h-11" />
-            <div className="flex flex-col text-left">
-              <span className="font-headline-md text-[17px] font-bold text-on-surface leading-tight tracking-tight">
+            <BrandIcon className="w-9 h-9 min-[400px]:w-11 min-[400px]:h-11 shrink-0" />
+            <div className="flex min-w-0 flex-col text-left">
+              <span className="font-headline-md text-[14px] min-[400px]:text-[17px] font-bold text-on-surface leading-tight tracking-tight whitespace-nowrap">
                 Chemsha Bongo
               </span>
-              <span className="text-[10px] text-secondary font-semibold tracking-[0.09em] uppercase">
+              <span className="hidden min-[360px]:block text-[9px] min-[400px]:text-[10px] text-secondary font-semibold tracking-[0.07em] min-[400px]:tracking-[0.09em] uppercase whitespace-nowrap">
                 Mindful Brain Suite
               </span>
             </div>
@@ -32,11 +32,11 @@ export function Header({ onOpenSidebar, onNavigate }) {
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex shrink-0 items-center gap-0.5 min-[400px]:gap-2.5">
           {/* Theme Mode Toggle (Obsidian Dark / Mint Light) */}
           <button
             onClick={() => { playClick(); toggleTheme(); }}
-            className="header-icon-button w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
+            className="header-icon-button w-8 h-8 min-[400px]:w-10 min-[400px]:h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
             title={isDark ? "Switch to Light Mode (Mint Alabaster)" : "Switch to Dark Mode (Obsidian Sanctuary)"}
             aria-label="Toggle theme mode"
           >
@@ -48,7 +48,7 @@ export function Header({ onOpenSidebar, onNavigate }) {
           {/* Audio Mute Toggle */}
           <button
             onClick={toggleMute}
-            className="header-icon-button w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
+            className="header-icon-button w-8 h-8 min-[400px]:w-10 min-[400px]:h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
             title={muted ? "Unmute Sound" : "Mute Sound"}
           >
             <span className="material-symbols-outlined text-[20px]">
@@ -73,7 +73,9 @@ export function Header({ onOpenSidebar, onNavigate }) {
           ) : (
             <button
               onClick={() => setShowAuthModal(true)}
-              className="btn btn-secondary px-3.5 py-1.5 min-h-[38px] text-xs font-semibold rounded-lg cursor-pointer"
+            aria-label="Sign in"
+            title="Sign in"
+              className="btn btn-secondary px-2 min-[400px]:px-3.5 py-1 min-[400px]:py-1.5 min-h-[34px] min-[400px]:min-h-[38px] text-[11px] min-[400px]:text-xs font-semibold rounded-lg cursor-pointer"
             >
               <span className="material-symbols-outlined text-[16px]">login</span>
               <span>Sign In</span>

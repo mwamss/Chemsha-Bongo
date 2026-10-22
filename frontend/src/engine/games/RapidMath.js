@@ -89,22 +89,24 @@ export class RapidMathGame extends BaseGame {
   }
 
   generateMultipleChoiceProblem() {
+    const level = Math.max(1, Math.min(5, this.difficulty || 2));
+    const operandRange = 20 + level * 10;
     const ops = ['+', '-', '*'];
     const op = ops[Math.floor(Math.random() * ops.length)];
     let a, b, answer;
 
     if (op === '+') {
-      a = Math.floor(Math.random() * 40) + 10;
-      b = Math.floor(Math.random() * 40) + 5;
+      a = Math.floor(Math.random() * operandRange) + 10;
+      b = Math.floor(Math.random() * operandRange) + 5;
       answer = a + b;
     } else if (op === '-') {
-      a = Math.floor(Math.random() * 50) + 20;
+      a = Math.floor(Math.random() * (30 + level * 10)) + 20;
       b = Math.floor(Math.random() * (a - 5)) + 5;
       answer = a - b;
     } else {
       // Multiplication
-      a = Math.floor(Math.random() * 11) + 2;
-      b = Math.floor(Math.random() * 11) + 2;
+      a = Math.floor(Math.random() * (7 + level * 2)) + 2;
+      b = Math.floor(Math.random() * (7 + level * 2)) + 2;
       answer = a * b;
     }
 
@@ -138,21 +140,22 @@ export class RapidMathGame extends BaseGame {
   }
 
   generateTrueFalseProblem() {
+    const level = Math.max(1, Math.min(5, this.difficulty || 2));
     const ops = ['+', '-', '*'];
     const op = ops[Math.floor(Math.random() * ops.length)];
     let a, b, actualAnswer;
 
     if (op === '+') {
-      a = Math.floor(Math.random() * 35) + 10;
-      b = Math.floor(Math.random() * 35) + 10;
+      a = Math.floor(Math.random() * (25 + level * 5)) + 10;
+      b = Math.floor(Math.random() * (25 + level * 5)) + 10;
       actualAnswer = a + b;
     } else if (op === '-') {
-      a = Math.floor(Math.random() * 60) + 20;
-      b = Math.floor(Math.random() * 30) + 5;
+      a = Math.floor(Math.random() * (40 + level * 10)) + 20;
+      b = Math.floor(Math.random() * (20 + level * 5)) + 5;
       actualAnswer = a - b;
     } else {
-      a = Math.floor(Math.random() * 9) + 3;
-      b = Math.floor(Math.random() * 9) + 3;
+      a = Math.floor(Math.random() * (5 + level * 2)) + 3;
+      b = Math.floor(Math.random() * (5 + level * 2)) + 3;
       actualAnswer = a * b;
     }
 

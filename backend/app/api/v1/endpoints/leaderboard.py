@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, func, desc, and_
 
 from backend.app.core.config import settings
+from backend.app.core.challenge_time import challenge_date as current_challenge_date
 from backend.app.core.deps import get_db
 from backend.app.models.user import User, UserProfile
 from backend.app.models.personal_best import PersonalBest
@@ -78,7 +79,7 @@ def get_daily_blitz_leaderboard(
       - Tie-breaker: Earliest achieved timestamp wins.
     """
     if not challenge_date:
-        challenge_date = datetime.now(timezone.utc).date()
+        challenge_date = current_challenge_date()
 
     # Subquery: Player's best score on the challenge date
     best_scores_subq = (

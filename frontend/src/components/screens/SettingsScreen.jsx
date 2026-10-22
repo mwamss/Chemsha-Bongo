@@ -26,8 +26,9 @@ function PreferenceRow({ title, description, value, onChange, activeLabel = 'Ena
 }
 
 export function SettingsScreen() {
-  const { settings, updateSettings, isAuthenticated, setShowAuthModal } = useAuth();
+  const { settings, updateSettings, updateLocalSettings, isAuthenticated, setShowAuthModal, privateDataSyncStatus, retryPrivateDataSync, storagePersistenceStatus } = useAuth();
   const [privateSyncError, setPrivateSyncError] = useState('');
+  const [reminderMessage, setReminderMessage] = useState('');
   const { muted, toggleMute, ambientPlaying, toggleAmbient, playTestChime, playClick } = useAudio();
   const { isDark, setTheme, toggleTheme } = useTheme();
 
@@ -80,6 +81,73 @@ export function SettingsScreen() {
           onClick={() => { playClick(); toggleTheme(); }}
           className="self-start px-4 py-2 rounded-xl border border-border-subtle text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
         >Switch to {isDark ? 'light' : 'dark'} theme</button>
+      </section>
+
+      <section className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50">
+        <div className="border-b border-border-subtle/30 pb-3">
+          <h2 className="text-lg font-bold text-on-surface flex items-center gap-2">
+            <span className="material-symbols-outlined text-secondary">sports_esports</span> Practice
+          </h2>
+          <p className="text-xs text-on-surface-variant mt-1">Set a comfortable challenge level and optional practice reminder.</p>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 border-b border-border-subtle/30">
+          <div>
+            <p className="text-sm font-semibold text-on-surface">Game difficulty</p>
+            <p className="text-xs text-on-surface-variant mt-1">Adjusts game challenge. You can change this at any time.</p>
+          </div>
+          <select
+            aria-label="Game difficulty"
+            value={settings?.difficulty ?? 2}
+            onChange={(event) => updateLocalSettings({ difficulty: Number(event.target.value) })}
+            className="min-w-40 rounded-xl border border-border-subtle bg-surface-container px-3 py-2 text-sm text-on-surface"
+          >
+            <option value="1">Gentle · 1</option>
+            <option value="2">Steady · 2</option>
+            <option value="3">Focused · 3</option>
+            <option value="4">Demanding · 4</option>
+            <option value="5">Advanced · 5</option>
+          </select>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">
+          <div>
+            <p className="text-sm font-semibold text-on-surface">Daily practice reminder</p>
+            <p className="text-xs text-on-surface-variant mt-1">A private browser notification at your chosen time while the app is open.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="time"
+              aria-label="Practice reminder time"
+              value={settings?.reminderTime || '18:00'}
+              onChange={(event) => updateLocalSettings({ reminderTime: event.target.value })}
+              className="rounded-xl border border-border-subtle bg-surface-container px-3 py-2 text-sm text-on-surface"
+            />
+            <button
+              type="button"
+              role="switch"
+              aria-checked={Boolean(settings?.reminderEnabled)}
+              onClick={async () => {
+                setReminderMessage('');
+                if (settings?.reminderEnabled) {
+                  updateLocalSettings({ reminderEnabled: false });
+                  return;
+                }
+                if (!('Notification' in window)) {
+                  setReminderMessage('This browser does not support notifications.');
+                  return;
+                }
+                const permission = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+                if (permission !== 'granted') {
+                  setReminderMessage('Allow notifications in your browser to turn reminders on.');
+                  return;
+                }
+                updateLocalSettings({ reminderEnabled: true });
+                setReminderMessage('Reminder enabled for this browser. The app needs to stay open.');
+              }}
+              className={`min-w-24 rounded-xl px-4 py-2 text-xs font-semibold ${settings?.reminderEnabled ? 'bg-secondary text-white' : 'bg-surface-container text-on-surface-variant'}`}
+            >{settings?.reminderEnabled ? 'On' : 'Off'}</button>
+          </div>
+        </div>
+        {reminderMessage && <p role="status" className="text-xs text-on-surface-variant">{reminderMessage}</p>}
       </section>
 
       <section className="p-6 sm:p-8 rounded-3xl bg-surface border border-border-subtle/50">
@@ -140,10 +208,34 @@ export function SettingsScreen() {
                   setPrivateSyncError(error.message || 'Private data sync could not be updated.');
                 }
               }}
-              activeLabel="Syncing"
+              activeLabel="On"
               inactiveLabel="Off"
             />
             {privateSyncError && <p role="alert" className="text-xs text-red-500 mt-2">{privateSyncError}</p>}
+            {settings?.privateSyncEnabled && (
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs" aria-live="polite">
+                <p className={privateDataSyncStatus === 'error' ? 'text-red-600 dark:text-red-400' : 'text-on-surface-variant'}>
+                  {privateDataSyncStatus === 'syncing' ? 'Syncing private data…'
+                    : privateDataSyncStatus === 'synced' ? 'Private data is synced to this account.'
+                      : privateDataSyncStatus === 'error' ? 'Sync failed. Your local data is still available.'
+                        : 'Waiting for the next change to sync.'}
+                </p>
+                {privateDataSyncStatus === 'error' && (
+                  <button type="button" onClick={() => retryPrivateDataSync().catch(() => {})} className="font-semibold text-secondary underline underline-offset-2">
+                    Retry
+                  </button>
+                )}
+              </div>
+            )}
+            {storagePersistenceStatus !== 'persistent' && (
+              <p role="alert" className="text-xs text-amber-700 dark:text-amber-300 mt-2">
+                {storagePersistenceStatus === 'memory-only'
+                  ? 'Browser storage is unavailable. Your unsynced data will be lost when this tab closes.'
+                  : storagePersistenceStatus === 'error'
+                    ? 'Browser storage could not be read or written. Keep account sync enabled and download a backup.'
+                    : 'Checking browser storage…'}
+              </p>
+            )}
           </>
         ) : (
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4">

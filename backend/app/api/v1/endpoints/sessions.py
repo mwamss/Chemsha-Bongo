@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from backend.app.core.config import settings
+from backend.app.core.challenge_time import challenge_date as current_challenge_date
 from backend.app.core.deps import get_db, get_current_user
 from backend.app.models.user import User
 from backend.app.models.game import Game
@@ -30,6 +31,10 @@ def record_game_session(
     Record an individual game round with bounds validation and anti-cheat checks.
     Idempotent by client_session_id.
     """
+    # Serialize account record updates on PostgreSQL so concurrent submissions
+    # cannot both create a PersonalBest or lose an aggregate-stat increment.
+    db.scalar(select(User).where(User.id == current_user.id).with_for_update())
+
     # 1. Check idempotency
     existing = db.scalar(
         select(GameSession).where(GameSession.client_session_id == payload.client_session_id)
@@ -62,7 +67,7 @@ def record_game_session(
     rate = payload.score / max(1, payload.duration_sec)
     if rate > 200 or payload.score > settings.MAX_THEORETICAL_SCORE_PER_ROUND:
         is_flagged = True
-    if payload.max_streak > (payload.correct_count + 1) or payload.max_streak > settings.MAX_THEORETICAL_STREAK_PER_ROUND:
+    if payload.max_streak > payload.correct_count or payload.max_streak > settings.MAX_THEORETICAL_STREAK_PER_ROUND:
         is_flagged = True
     if payload.correct_count + payload.wrong_count > payload.duration_sec * 10:
         is_flagged = True
@@ -156,6 +161,10 @@ def record_daily_blitz(
     Record a 3-game Daily Blitz workout session.
     Validates round scores and enforces challenge date isolation.
     """
+    # Keep repeated/concurrent submissions for one account ordered before the
+    # idempotency check and aggregate-stat update.
+    db.scalar(select(User).where(User.id == current_user.id).with_for_update())
+
     # 1. Idempotency check
     existing = db.scalar(
         select(DailyBlitzSession).where(DailyBlitzSession.client_session_id == payload.client_session_id)
@@ -207,7 +216,7 @@ def record_daily_blitz(
     elif payload.total_score >= 1500:
         rating = "Quick Thinker"
 
-    today_date = datetime.now(timezone.utc).date()
+    today_date = current_challenge_date()
 
     blitz_session = DailyBlitzSession(
         user_id=current_user.id,

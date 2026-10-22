@@ -12,6 +12,7 @@ export function GameViewport({
   gameId,
   mode = 'free-play',
   durationSec = 30,
+  difficulty = 2,
   onRoundComplete,
   onExit,
   onRestart,
@@ -120,7 +121,7 @@ export function GameViewport({
     sound.playGameOver();
 
     const totalAns = m.correctCount + m.wrongCount;
-    const accuracy = totalAns > 0 ? Math.round((m.correctCount / totalAns) * 100) : 100;
+    const accuracy = totalAns > 0 ? Math.round((m.correctCount / totalAns) * 100) : null;
 
     // 1. Record in local Storage fallback
     const localResult = storage.recordGameResult(
@@ -225,7 +226,7 @@ export function GameViewport({
       container: containerRef.current,
       sound,
       fx,
-      difficulty: 2,
+      difficulty,
       onScore: (basePoints, coords) => handleScore(basePoints, coords),
       onError: () => handleError(),
     });
@@ -259,7 +260,7 @@ export function GameViewport({
       }
       metricsRef.current.isRoundActive = false;
     };
-  }, [gameId, durationSec]);
+  }, [gameId, durationSec, difficulty]);
 
   const meta = getGameById(gameId);
 
@@ -335,7 +336,7 @@ export function GameViewport({
             <span className="material-symbols-outlined text-4xl text-secondary">pause_circle</span>
             <h3 className="font-headline-md text-xl font-bold text-on-surface">Game Paused</h3>
             <p className="text-sm text-on-surface-variant">Take a mindful breath before continuing.</p>
-            <div className="flex gap-3 mt-2">
+            <div className="game-pause-actions flex gap-3 mt-2">
               <button onClick={togglePause} className="btn btn-primary px-6">
                 Resume
               </button>

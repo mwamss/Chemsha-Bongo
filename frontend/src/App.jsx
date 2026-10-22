@@ -59,8 +59,27 @@ export function App() {
   const [blitzRoundsStats, setBlitzRoundsStats] = useState([]);
   const [blitzFinalData, setBlitzFinalData] = useState(null);
 
-  const { storage, isAuthenticated } = useAuth();
+  const { storage, isAuthenticated, settings } = useAuth();
   const { sound, fx, playClick } = useAudio();
+
+  useEffect(() => {
+    if (!settings?.reminderEnabled || !('Notification' in window) || Notification.permission !== 'granted') return undefined;
+    const checkReminder = () => {
+      const now = new Date();
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      if (currentTime !== settings.reminderTime) return;
+      const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const key = 'chemsha_practice_reminder_last_date';
+      try {
+        if (window.localStorage.getItem(key) === dateKey) return;
+        new Notification('A little time for practice?', { body: 'Your daily brain training session is ready when you are.' });
+        window.localStorage.setItem(key, dateKey);
+      } catch { /* Notifications remain optional when browser storage is unavailable. */ }
+    };
+    checkReminder();
+    const timer = window.setInterval(checkReminder, 15000);
+    return () => window.clearInterval(timer);
+  }, [settings?.reminderEnabled, settings?.reminderTime]);
 
   // --- Free Play Initiation ---
   const launchFreePlay = (gameId) => {
@@ -170,7 +189,7 @@ export function App() {
   const activeMeta = activeGameId ? getGameById(activeGameId) : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface text-on-surface">
+    <div className="min-h-screen min-h-[100dvh] flex flex-col bg-surface text-on-surface">
       {/* Fixed Header */}
       <Header
         onOpenSidebar={() => setIsSidebarOpen(true)}
@@ -186,7 +205,7 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 pt-16 pb-16 md:pb-4 flex flex-col">
+      <main className="flex-1 pt-[calc(4rem+env(safe-area-inset-top,0px))] pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] md:pt-[calc(4.5rem+env(safe-area-inset-top,0px))] md:pb-4 flex flex-col">
         {gamePlayState === 'countdown' && activeMeta && (
           <ReadyCountdown
             key={`countdown-${activeGameId}-${blitzCurrentIndex}`}
@@ -201,6 +220,7 @@ export function App() {
             gameId={activeGameId}
             mode={blitzMode ? 'blitz' : 'free-play'}
             durationSec={30}
+            difficulty={settings?.difficulty ?? 2}
             onRoundComplete={handleRoundComplete}
             onExit={() => exitGameToScreen('home')}
             onRestart={restartCurrentRound}

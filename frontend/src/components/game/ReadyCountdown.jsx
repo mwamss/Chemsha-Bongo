@@ -34,6 +34,8 @@ export function ReadyCountdown({ meta, onFinished }) {
         <div className="text-center">
           <h2 className="font-headline-xl text-3xl font-bold text-on-surface mb-1">{meta?.title}</h2>
           <p className="text-sm text-secondary font-medium">{meta?.categoryLabel}</p>
+          {meta?.instructions && <p className="max-w-md text-sm text-on-surface-variant mt-3">{meta.instructions}</p>}
+          {meta?.controlsHint && <p className="text-xs text-outline mt-2">{meta.controlsHint}</p>}
         </div>
         <div className="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center shadow-lg border-2 border-secondary">
           <span className="font-headline-xl text-4xl font-extrabold text-on-secondary-container">

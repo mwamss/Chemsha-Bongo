@@ -28,20 +28,20 @@ export function SelectScreen({ onLaunchGame }) {
           return (
             <div
               key={g.id}
-              className="flex flex-col justify-between p-6 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm hover:shadow-md transition-all"
+              className="exercise-card flex flex-col justify-between p-6 rounded-3xl bg-surface border border-border-subtle/50 shadow-sm hover:shadow-md transition-all"
             >
               <div>
-                <div className="flex items-start justify-between gap-4 mb-3">
-                  <div className="flex items-center gap-3">
+                <div className="exercise-card-header flex items-start justify-between gap-4 mb-3">
+                  <div className="exercise-card-identity flex items-center gap-3">
                     <span className="inline-flex p-2.5 rounded-xl bg-surface-container text-secondary">
                       <ExerciseIcon name={g.icon} size={32} />
                     </span>
                     <div>
-                      <h3 className="font-headline-md text-lg font-bold text-on-surface">{g.title}</h3>
+                      <h3 className="exercise-card-title font-headline-md text-lg font-bold text-on-surface">{g.title}</h3>
                       <span className="text-xs text-secondary font-medium">{g.subtitle}</span>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-surface-container text-xs font-semibold text-secondary uppercase tracking-wider">
+                  <span className="exercise-card-category px-2.5 py-1 rounded-full bg-surface-container text-xs font-semibold text-secondary uppercase tracking-wider">
                     {g.categoryLabel}
                   </span>
                 </div>
@@ -51,7 +51,7 @@ export function SelectScreen({ onLaunchGame }) {
                 </p>
 
                 {/* Personal best badges */}
-                <div className="flex items-center gap-4 mt-4 text-xs text-outline font-medium">
+                <div className="exercise-card-records flex items-center gap-4 mt-4 text-xs text-outline font-medium">
                   <div className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-[16px] text-amber-500">trophy</span>
                     <span>Best Score: <strong className="text-on-surface">{pbScore}</strong></span>
@@ -63,11 +63,11 @@ export function SelectScreen({ onLaunchGame }) {
                 </div>
               </div>
 
-              <div className="pt-5 mt-5 border-t border-border-subtle/30 flex items-center justify-between">
+              <div className="exercise-card-footer pt-5 mt-5 border-t border-border-subtle/30 flex items-center justify-between">
                 <span className="text-xs text-outline">Duration: 30 seconds</span>
                 <button
                   onClick={() => { playClick(); onLaunchGame(g.id); }}
-                  className="btn btn-primary px-6 py-2.5 text-xs font-bold rounded-xl cursor-pointer"
+                  className="exercise-card-start btn btn-primary px-6 py-2.5 text-xs font-bold rounded-xl cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[16px]">play_arrow</span>
                   <span>Start Exercise</span>

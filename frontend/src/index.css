@@ -163,6 +163,162 @@ html.dark .home-player-name {
   .home-ready-pill {
     font-size: 0.68rem;
   }
+
+  .suite-header > div:first-child {
+    gap: 0.25rem;
+  }
+
+  .suite-header > div:first-child > div:first-child > button {
+    gap: 0.35rem;
+    padding: 0.25rem;
+    max-width: 100%;
+  }
+
+  .suite-header .app-icon-frame {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .suite-header .app-icon-frame + div > span:first-child {
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+
+  .suite-header .app-icon-frame + div > span:last-child {
+    display: none;
+  }
+
+  .suite-header > div:first-child > div:last-child {
+    gap: 0.1rem;
+  }
+
+  .suite-header .header-icon-button {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+  }
+
+  .suite-header .btn-secondary {
+    min-height: 2.5rem;
+    padding: 0.35rem 0.55rem;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .screen-layout,
+  .home-screen {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .game-pause-actions {
+    width: min(100%, 18rem);
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .game-pause-actions .btn {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  .game-summary-card {
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 1.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .chimp-tile,
+  .color-choice-btn,
+  .dpad-btn {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .exercise-card {
+    padding: 1rem;
+    border-radius: 1rem;
+    gap: 0.75rem;
+  }
+
+  .exercise-card-header {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .exercise-card-identity {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .exercise-card-title {
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+
+  .exercise-card-category {
+    align-self: flex-start;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .exercise-card-records {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .exercise-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .exercise-card-start {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .suite-header .btn-secondary > span:last-child {
+    display: none;
+  }
+
+  .suite-header .app-icon-frame {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .suite-header .app-icon-frame + div > span:first-child {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .home-screen {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  .daily-blitz-card {
+    padding: 1rem;
+  }
+
+  .suite-bottom-nav > div {
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+  }
+
+  .suite-bottom-nav button {
+    min-width: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 
 @media (min-width: 1280px) {

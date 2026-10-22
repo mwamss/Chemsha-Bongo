@@ -63,6 +63,22 @@
 
   /* Layout */
   --max-w-app: 1140px;
+
+  /* Spotify player surfaces follow the active app theme. */
+  --spotify-shell: #ffffff;
+  --spotify-panel: #f3f7f4;
+  --spotify-panel-deep: #edf3ef;
+  --spotify-border: #d8e2db;
+  --spotify-border-strong: #c8d7ce;
+  --spotify-control: #edf4ef;
+  --spotify-track: #1ed760;
+  --spotify-track-ink: #092515;
+  --spotify-muted: #596a60;
+  --spotify-faint: #718078;
+  --spotify-input: #ffffff;
+  --spotify-input-placeholder: #7a8980;
+  --spotify-error: #b42318;
+  --spotify-message: #16743a;
 }
 
 html.dark {
@@ -84,6 +100,21 @@ html.dark {
   --border-subtle: #2d3a35;
   --border-focus: #528e7d;
   --border-light: rgba(45, 58, 53, 0.4);
+
+  --spotify-shell: #07100d;
+  --spotify-panel: #102019;
+  --spotify-panel-deep: #0d1913;
+  --spotify-border: #1b2a23;
+  --spotify-border-strong: #22352c;
+  --spotify-control: #0b2415;
+  --spotify-track: #1ed760;
+  --spotify-track-ink: #06140b;
+  --spotify-muted: #b0beb6;
+  --spotify-faint: #87948c;
+  --spotify-input: #101e16;
+  --spotify-input-placeholder: #78867e;
+  --spotify-error: #f87171;
+  --spotify-message: #73d99a;
 
   /* Primary, Secondary & Accent Colors */
   --primary: #95d3c0;              /* Luminous Mint Alabaster Accent */
@@ -112,11 +143,71 @@ html.dark {
   --shadow-level-3: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 4px 12px -2px rgba(0, 0, 0, 0.5);
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
+.spotify-player-shell {
+  color: var(--text-primary);
+  background: var(--spotify-shell);
+  border-color: var(--spotify-border);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.12);
+}
+
+.spotify-player-panel {
+  background: linear-gradient(135deg, var(--spotify-panel) 0%, var(--spotify-panel-deep) 100%);
+  border-color: var(--spotify-border);
+}
+
+.spotify-player-secondary-panel {
+  color: var(--text-primary);
+  background: var(--spotify-panel);
+  border-color: var(--spotify-border);
+}
+
+.spotify-player-status {
+  color: var(--text-primary);
+  background: var(--spotify-panel-deep);
+  border-color: var(--spotify-border);
+}
+
+.spotify-player-control-surface {
+  color: var(--spotify-muted);
+  background: var(--spotify-control);
+  border-color: var(--spotify-border-strong);
+}
+
+.spotify-player-control-surface:hover {
+  background: color-mix(in srgb, var(--spotify-control), var(--spotify-track) 10%);
+}
+
+.spotify-player-control-button { color: var(--spotify-muted); }
+.spotify-player-control-button:hover { color: var(--text-primary); }
+
+.spotify-player-muted { color: var(--spotify-muted); }
+.spotify-player-faint { color: var(--spotify-faint); }
+.spotify-player-accent { color: #13833e; }
+html.dark .spotify-player-accent { color: #1ed760; }
+
+.spotify-player-input {
+  color: var(--text-primary);
+  background: var(--spotify-input);
+  border-color: var(--spotify-border-strong);
+}
+
+.spotify-player-input::placeholder { color: var(--spotify-input-placeholder); }
+.spotify-player-input:focus { border-color: #13833e; outline: none; }
+html.dark .spotify-player-input:focus { border-color: #1ed760; }
+
+.spotify-player-progress { background-color: #dce7df; }
+html.dark .spotify-player-progress { background-color: #293a31; }
+
+.spotify-player-error { color: var(--spotify-error); }
+.spotify-player-message { color: var(--spotify-message); }
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 html {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAudio } from '../../context/AudioContext.jsx';
 import { ExerciseIcon } from '../icons/ExerciseIcon.jsx';
 
@@ -15,11 +15,34 @@ export function RoundSummaryModal({
   onExit,
 }) {
   const { playClick } = useAudio();
+  const [shareStatus, setShareStatus] = useState('');
   const isLastBlitzRound = isBlitz && blitzCurrentRound >= blitzTotalRounds;
+
+  const handleShare = async () => {
+    playClick();
+    const score = isBlitz ? blitzCumulativeScore : (stats?.score ?? 0);
+    const lines = [
+      isBlitz ? (isLastBlitzRound ? 'I completed today’s Chemsha Bongo Daily Blitz.' : `I am taking on today’s Daily Blitz (round ${blitzCurrentRound} of ${blitzTotalRounds}).`) : `I completed ${meta?.title || 'a Chemsha Bongo exercise'}.`,
+      `Score: ${Number(score).toLocaleString()}${isBlitz ? ' total' : ''}`,
+      !isBlitz && stats?.accuracy != null ? `Accuracy: ${stats.accuracy}%` : '',
+      !isBlitz && stats?.maxStreak != null ? `Best streak: ${stats.maxStreak}` : '',
+      'Try the challenge:',
+      typeof window !== 'undefined' ? window.location.origin : '',
+    ].filter(Boolean);
+    const payload = { title: 'Chemsha Bongo practice', text: lines.join('\n'), url: typeof window !== 'undefined' ? window.location.origin : undefined };
+    try {
+      if (navigator.share) await navigator.share(payload);
+      else if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(lines.join('\n'));
+      else throw new Error('Sharing is unavailable in this browser.');
+      setShareStatus(navigator.share ? 'Ready to share' : 'Result copied');
+    } catch (error) {
+      if (error?.name !== 'AbortError') setShareStatus(error?.message || 'Could not share this result.');
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 dark:bg-black/70 backdrop-blur-sm select-none">
-      <div className="w-full max-w-md bg-surface rounded-3xl p-6 sm:p-8 shadow-2xl border border-border-subtle flex flex-col items-center text-center animate-countPulse">
+      <div className="game-summary-card w-full max-w-md bg-surface rounded-3xl p-6 sm:p-8 shadow-2xl border border-border-subtle flex flex-col items-center text-center animate-countPulse">
         {/* Blitz Badge or Celebration Icon */}
         {isBlitz ? (
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold uppercase tracking-wider mb-3 shadow-2xs">
@@ -63,7 +86,7 @@ export function RoundSummaryModal({
           <div className="flex flex-col p-3 rounded-2xl bg-surface-container border border-border-subtle/40">
             <span className="text-[10px] text-outline uppercase font-semibold">Accuracy</span>
             <span className="font-headline-xl text-xl font-bold text-secondary mt-1 tabular-nums">
-              {stats?.accuracy ?? 100}%
+              {stats?.accuracy == null ? '—' : `${stats.accuracy}%`}
             </span>
           </div>
 
@@ -93,6 +116,11 @@ export function RoundSummaryModal({
 
         {/* Buttons */}
         <div className="flex flex-col w-full gap-2.5">
+          <button type="button" onClick={handleShare} className="btn btn-secondary w-full py-2.5 text-sm font-semibold rounded-2xl cursor-pointer">
+            <span className="material-symbols-outlined text-[18px]">share</span>
+            <span>Share result</span>
+          </button>
+          {shareStatus && <p className="text-xs text-secondary" role="status">{shareStatus}</p>}
           {isBlitz ? (
             <button
               onClick={() => { playClick(); onNext(); }}

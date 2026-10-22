@@ -46,11 +46,16 @@ const DEFAULT_DATA = {
     highestOverallStreak: 0
   },
   dailyRhythm: {},
+  sessionHistory: [],
+  wellbeingCheckins: {},
   banjaTombstones: {},
   settings: {
     soundMuted: false,
     hapticsEnabled: true,
     theme: 'dark',
+    difficulty: 2,
+    reminderEnabled: false,
+    reminderTime: '18:00',
     spotifyUri: '',
     privateSyncEnabled: false
   },
@@ -61,7 +66,20 @@ const DEFAULT_DATA = {
 export class StorageManager {
   constructor() {
     this.memoryStore = null;
+    this.persistenceStatus = 'checking';
     this.data = this.load();
+  }
+
+  getPersistenceStatus() {
+    return this.persistenceStatus;
+  }
+
+  notifyPersistenceStatus() {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('chemsha-storage-persistence', {
+        detail: { status: this.persistenceStatus },
+      }));
+    }
   }
 
   isAvailable() {
@@ -79,6 +97,8 @@ export class StorageManager {
     if (this.isAvailable()) {
       try {
         const raw = window.localStorage.getItem(STORAGE_KEY);
+        this.persistenceStatus = 'persistent';
+        this.notifyPersistenceStatus();
         if (raw) {
           const parsed = JSON.parse(raw);
           const data = {
@@ -91,6 +111,8 @@ export class StorageManager {
             highScores: { ...DEFAULT_DATA.highScores, ...(parsed.highScores || {}) },
             bestStreaks: { ...DEFAULT_DATA.bestStreaks, ...(parsed.bestStreaks || {}) },
             dailyRhythm: { ...(parsed.dailyRhythm || {}) },
+            sessionHistory: Array.isArray(parsed.sessionHistory) ? parsed.sessionHistory : [],
+            wellbeingCheckins: { ...(parsed.wellbeingCheckins || {}) },
             banjaTombstones: { ...(parsed.banjaTombstones || {}) },
             isMigrated: !!parsed.isMigrated,
             banjaEntries: Array.isArray(parsed.banjaEntries) ? parsed.banjaEntries : []
@@ -99,8 +121,13 @@ export class StorageManager {
           return data;
         }
       } catch (err) {
+        this.persistenceStatus = 'error';
+        this.notifyPersistenceStatus();
         console.warn('Failed to parse localStorage data:', err);
       }
+    } else {
+      this.persistenceStatus = 'memory-only';
+      this.notifyPersistenceStatus();
     }
     return JSON.parse(JSON.stringify(this.memoryStore || DEFAULT_DATA));
   }
@@ -111,10 +138,15 @@ export class StorageManager {
     if (this.isAvailable()) {
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+        this.persistenceStatus = 'persistent';
       } catch (err) {
+        this.persistenceStatus = 'error';
         console.warn('Failed to write to localStorage:', err);
       }
+    } else {
+      this.persistenceStatus = 'memory-only';
     }
+    this.notifyPersistenceStatus();
     if (notifySync && typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('chemsha-storage-update'));
     }
@@ -128,6 +160,41 @@ export class StorageManager {
 
   getBestStreak(gameId) {
     return this.data.bestStreaks[gameId] || 0;
+  }
+
+  getSessionHistory() {
+    return Array.isArray(this.data.sessionHistory) ? this.data.sessionHistory : [];
+  }
+
+  getWellbeingCheckins() {
+    return this.data.wellbeingCheckins || {};
+  }
+
+  saveWellbeingCheckin(dateKey, mood) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey) || !['calm', 'okay', 'tense', 'low', 'energized'].includes(mood)) return this.getWellbeingCheckins();
+    this.data.wellbeingCheckins = this.data.wellbeingCheckins || {};
+    this.data.wellbeingCheckins[dateKey] = { mood, updatedAt: Date.now() };
+    this.data.wellbeingCheckins = Object.fromEntries(Object.entries(this.data.wellbeingCheckins).sort(([a], [b]) => b.localeCompare(a)).slice(0, 365));
+    this.save();
+    return this.data.wellbeingCheckins;
+  }
+
+  getPracticeRecommendation(games, historyOverride = null) {
+    const history = Array.isArray(historyOverride) ? historyOverride : this.getSessionHistory();
+    const gameStats = games.map((game) => {
+      const sessions = history.filter((session) => session.gameId === game.id);
+      const recent = sessions.slice(0, 10);
+      const answers = recent.reduce((sum, session) => sum + session.correctCount + session.wrongCount, 0);
+      const correct = recent.reduce((sum, session) => sum + session.correctCount, 0);
+      return { game, sessions: sessions.length, accuracy: answers ? Math.round((correct / answers) * 100) : null };
+    });
+    const withEnoughData = gameStats.filter((item) => item.accuracy !== null && item.sessions >= 3);
+    if (withEnoughData.length) {
+      withEnoughData.sort((a, b) => a.accuracy - b.accuracy || a.sessions - b.sessions);
+      return { ...withEnoughData[0], reason: `Recent accuracy is ${withEnoughData[0].accuracy}%` };
+    }
+    gameStats.sort((a, b) => a.sessions - b.sessions || a.game.title.localeCompare(b.game.title));
+    return { ...gameStats[0], reason: gameStats[0]?.sessions ? 'A useful area to revisit' : 'A good place to begin' };
   }
 
   recordGameResult(gameId, score, streak, correctCount = 0, wrongCount = 0, durationSec = 30) {
@@ -151,6 +218,19 @@ export class StorageManager {
     this.data.totals.gamesPlayed += 1;
     this.data.totals.correctAnswers += correctCount;
     this.data.totals.wrongAnswers += wrongCount;
+
+    this.data.sessionHistory = this.data.sessionHistory || [];
+    this.data.sessionHistory.unshift({
+      id: `game-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      gameId,
+      score,
+      maxStreak: streak,
+      correctCount,
+      wrongCount,
+      durationSec: Math.max(0, Number(durationSec) || 0),
+      playedAt: Date.now(),
+    });
+    this.data.sessionHistory = this.data.sessionHistory.slice(0, 365);
 
     const todayKey = localDateKey();
     const todayRhythm = this.data.dailyRhythm[todayKey] || { focusSessions: 0, focusSeconds: 0, restHonored: false };
@@ -300,7 +380,7 @@ export class StorageManager {
   getTotals() {
     const { gamesPlayed, correctAnswers, wrongAnswers, highestOverallStreak } = this.data.totals;
     const totalAns = correctAnswers + wrongAnswers;
-    const accuracy = totalAns > 0 ? Math.round((correctAnswers / totalAns) * 100) : 100;
+    const accuracy = totalAns > 0 ? Math.round((correctAnswers / totalAns) * 100) : null;
     return {
       gamesPlayed,
       correctAnswers,
@@ -346,9 +426,15 @@ export class StorageManager {
     const index = this.data.banjaEntries.findIndex(e => e.id === entry.id);
     if (this.data.banjaTombstones) delete this.data.banjaTombstones[entry.id];
     if (index >= 0) {
-      this.data.banjaEntries[index] = { ...this.data.banjaEntries[index], ...entry, updatedAt: Date.now() };
+      this.data.banjaEntries[index] = {
+        ...this.data.banjaEntries[index],
+        ...entry,
+        createdAt: this.data.banjaEntries[index].createdAt || entry.createdAt || Date.now(),
+        updatedAt: Date.now(),
+      };
     } else {
-      this.data.banjaEntries.unshift({ ...entry, updatedAt: Date.now() });
+      const now = Date.now();
+      this.data.banjaEntries.unshift({ ...entry, createdAt: entry.createdAt || now, updatedAt: now });
     }
     this.save();
     return this.data.banjaEntries;
@@ -364,10 +450,16 @@ export class StorageManager {
   }
 
   exportPrivateData() {
+    const allEntries = this.getBanjaEntries();
+    const tombstones = { ...(this.data.banjaTombstones || {}) };
+    for (const entry of allEntries) {
+      if (entry.localOnly) tombstones[entry.id] = Math.max(tombstones[entry.id] || 0, Number(entry.updatedAt) || Date.now());
+    }
     return {
-      banjaEntries: this.getBanjaEntries(),
-      banjaTombstones: { ...(this.data.banjaTombstones || {}) },
+      banjaEntries: allEntries.filter((entry) => !entry.localOnly),
+      banjaTombstones: tombstones,
       dailyRhythm: { ...this.data.dailyRhythm },
+      wellbeingCheckins: { ...this.getWellbeingCheckins() },
     };
   }
 
@@ -398,6 +490,11 @@ export class StorageManager {
         restHonored: !focusSessions && Boolean(localDay.restHonored || remoteDay.restHonored),
         updatedAt: Math.max(Number(localDay.updatedAt) || 0, Number(remoteDay.updatedAt) || 0),
       };
+    }
+    this.data.wellbeingCheckins = this.data.wellbeingCheckins || {};
+    for (const [dateKey, remoteCheckin] of Object.entries(remote.wellbeingCheckins || {})) {
+      const local = this.data.wellbeingCheckins[dateKey];
+      if (!local || (Number(remoteCheckin.updatedAt) || 0) > (Number(local.updatedAt) || 0)) this.data.wellbeingCheckins[dateKey] = remoteCheckin;
     }
     this.save(false);
     if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('chemsha-private-data-merged'));

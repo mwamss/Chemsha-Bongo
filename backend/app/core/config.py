@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 DEFAULT_DB_FILE = (ROOT_DIR / "chemsha_dev.db").as_posix()
@@ -69,6 +70,15 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return []
+
+    @field_validator("CHALLENGE_TIMEZONE")
+    @classmethod
+    def validate_challenge_timezone(cls, value: str) -> str:
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError) as error:
+            raise ValueError("CHALLENGE_TIMEZONE must be a valid IANA timezone.") from error
+        return value
 
     # Game Mechanics & Validation
     CHALLENGE_TIMEZONE: str = "UTC"

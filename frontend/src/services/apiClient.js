@@ -212,6 +212,10 @@ class ApiClient {
     return this.request('/statistics/summary');
   }
 
+  async getSessionHistory(days = 30) {
+    return this.request(`/statistics/history?days=${encodeURIComponent(days)}`);
+  }
+
   async getGameLeaderboard(gameId) {
     return this.request(`/leaderboard/game/${gameId}`);
   }

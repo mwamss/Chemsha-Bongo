@@ -12,8 +12,40 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
   const { playClick } = useAudio();
   const [totals, setTotals] = useState(() => storage.getTotals());
   const [isInhaling, setIsInhaling] = useState(true);
+  const [recommendation, setRecommendation] = useState(() => storage.getPracticeRecommendation(getAllGames()));
+  const [wellbeing, setWellbeing] = useState(() => storage.getWellbeingCheckins());
 
   const games = getAllGames();
+  const todayKey = (() => { const date = new Date(); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; })();
+  const moods = [
+    { id: 'calm', label: 'Calm', icon: 'self_improvement' },
+    { id: 'okay', label: 'Okay', icon: 'sentiment_satisfied' },
+    { id: 'tense', label: 'Tense', icon: 'bolt' },
+    { id: 'low', label: 'Low', icon: 'cloud' },
+    { id: 'energized', label: 'Energized', icon: 'wb_sunny' },
+  ];
+
+  useEffect(() => {
+    const update = () => {
+      setRecommendation(storage.getPracticeRecommendation(games));
+      setWellbeing(storage.getWellbeingCheckins());
+    };
+    window.addEventListener('chemsha-storage-update', update);
+    window.addEventListener('chemsha-private-data-merged', update);
+    return () => {
+      window.removeEventListener('chemsha-storage-update', update);
+      window.removeEventListener('chemsha-private-data-merged', update);
+    };
+  }, [storage]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+    let active = true;
+    api.getSessionHistory(365)
+      .then((history) => { if (active && Array.isArray(history) && history.length) setRecommendation(storage.getPracticeRecommendation(games, history)); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [isAuthenticated, storage]);
 
   // Load account stats if authenticated, otherwise use local totals
   useEffect(() => {
@@ -130,6 +162,40 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
       {/* ── STITCH REDESIGN: GENTLE RHYTHM HERO CADENCE TRACKER ───────────── */}
       <GentleRhythmTracker onLaunchBlitz={onLaunchBlitz} />
 
+      {recommendation?.game && (
+        <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-surface border border-border-subtle p-5 sm:px-6">
+          <div className="flex items-center gap-4">
+            <span className="inline-flex p-3 rounded-xl bg-surface-container text-secondary"><ExerciseIcon name={recommendation.game.icon} size={26} /></span>
+            <div>
+              <p className="text-[11px] uppercase tracking-wide font-semibold text-secondary">Suggested practice · {recommendation.reason}</p>
+              <h3 className="font-headline-md text-lg font-bold text-on-surface">{recommendation.game.title}</h3>
+              <p className="text-sm text-on-surface-variant">A short round, at your chosen difficulty.</p>
+            </div>
+          </div>
+          <button onClick={() => { playClick(); onLaunchGame(recommendation.game.id); }} className="btn btn-secondary px-5 py-2.5 rounded-lg font-semibold cursor-pointer self-start sm:self-auto">Practice now</button>
+        </section>
+      )}
+
+      <section className="rounded-2xl bg-surface border border-border-subtle p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div>
+            <p className="text-[11px] uppercase tracking-wide font-semibold text-secondary">Daily wellbeing check-in</p>
+            <h2 className="font-headline-md text-lg font-bold text-on-surface mt-1">How are you feeling today?</h2>
+            <p className="text-xs text-on-surface-variant mt-1">A private, optional check-in. It is not a diagnosis.</p>
+          </div>
+          {wellbeing[todayKey] && <span className="text-xs text-secondary">Today: {moods.find((mood) => mood.id === wellbeing[todayKey].mood)?.label}</span>}
+        </div>
+        <div className="flex flex-wrap gap-2 mt-4" role="group" aria-label="Choose today's wellbeing check-in">
+          {moods.map((mood) => (
+            <button key={mood.id} type="button" aria-pressed={wellbeing[todayKey]?.mood === mood.id}
+              onClick={() => { playClick(); setWellbeing(storage.saveWellbeingCheckin(todayKey, mood.id)); }}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors cursor-pointer ${wellbeing[todayKey]?.mood === mood.id ? 'bg-secondary text-white border-secondary' : 'bg-surface-container text-on-surface-variant border-border-subtle hover:border-secondary/50'}`}>
+              <span className="material-symbols-outlined text-base" aria-hidden="true">{mood.icon}</span>{mood.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
       {/* ── DAILY METHALI & AXIOM QUOTES SECTION ────────────────────────── */}
       <DailyMethaliCard onNavigate={onNavigate} />
 
@@ -154,7 +220,7 @@ export function HomeScreen({ onLaunchGame, onLaunchBlitz, onNavigate }) {
           <span className="text-[11px] text-outline uppercase font-semibold">Overall Accuracy</span>
           <div className="flex items-baseline gap-2 mt-2">
             <span className="font-headline-xl text-3xl font-extrabold text-secondary tabular-nums">
-              {totals.accuracy}%
+              {totals.accuracy == null ? '—' : `${totals.accuracy}%`}
             </span>
             <span className="text-xs text-on-surface-variant">precision</span>
           </div>

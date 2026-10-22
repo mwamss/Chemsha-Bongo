@@ -72,7 +72,12 @@ export class NumberSequenceGame extends BaseGame {
   }
 
   generatePattern() {
-    const patternTypes = ['linear-add', 'linear-sub', 'multiply', 'squares', 'alternating'];
+    const level = Math.max(1, Math.min(5, this.difficulty || 2));
+    const patternTypes = level === 1
+      ? ['linear-add', 'linear-sub', 'alternating']
+      : level === 2
+        ? ['linear-add', 'linear-sub', 'multiply', 'alternating']
+        : ['linear-add', 'linear-sub', 'multiply', 'squares', 'alternating'];
     const chosen = patternTypes[Math.floor(Math.random() * patternTypes.length)];
 
     let seq = [];

@@ -143,7 +143,8 @@ export class ColorClashGame extends BaseGame {
     if (correct) {
       // Speed bonus if answered in under 1 second
       const timeTaken = performance.now() - this.questionStartTime;
-      const speedBonus = timeTaken < 900 ? 50 : 0;
+      const speedThreshold = Math.max(300, 1500 - (this.difficulty * 300));
+      const speedBonus = timeTaken < speedThreshold ? 50 : 0;
       this.awardScore(100 + speedBonus, clickCoords);
       this.nextQuestion();
     } else {

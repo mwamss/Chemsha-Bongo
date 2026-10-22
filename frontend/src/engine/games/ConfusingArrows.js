@@ -114,7 +114,8 @@ export class ConfusingArrowsGame extends BaseGame {
     // Pick random direction
     const dirObj = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
     // 50% chance of standard (Green) vs opposite (Red)
-    const isRed = Math.random() < 0.5;
+    const redProbability = 0.25 + ((Math.max(1, Math.min(5, this.difficulty)) - 1) * 0.125);
+    const isRed = Math.random() < redProbability;
 
     this.currentDirection = dirObj;
     this.isOpposite = isRed;

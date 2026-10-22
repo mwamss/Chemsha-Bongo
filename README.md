@@ -42,6 +42,13 @@ The built-in sign-in throttle is per application process. If you run multiple wo
 
 The Spotify Web Playback SDK requires Spotify Premium. Spotify tokens stay in browser session storage and are not used as Chemsha Bongo account credentials.
 
+## Backups and restore checks
+
+- For hosted deployments, enable the database provider's automated PostgreSQL backups and point-in-time recovery where available. Retain backups separately from the application database and restrict access because backups can contain private reflections.
+- Before applying migrations or changing hosting providers, take a database snapshot. Periodically restore a recent backup into a separate staging database and verify sign-in, profiles, game history, and private-data sync.
+- For local Docker Compose backups, use `pg_dump` from the database container and save the output outside the project directory. Restore into a separate database first; avoid overwriting the live database until the restored copy has been checked.
+- The Profile screen's JSON export is a per-browser backup. Download it before clearing browser data or moving a guest profile to another browser.
+
 ## Data notes
 
 - Game progress is stored locally for guests and can be imported into an account once. Authenticated game sessions and profile settings are stored by the backend.

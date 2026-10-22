@@ -119,3 +119,22 @@ def test_user_stats_accumulate_in_account(client):
     assert stats["personal_bests"]["color-clash"]["high_score"] == 1100
     assert stats["personal_bests"]["rapid-math"]["high_score"] == 1350
 
+
+def test_user_stats_accuracy_is_empty_before_any_answers(client):
+    reg = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "new_stats_player@example.com",
+            "username": "new_stats_player",
+            "password": "Password123!",
+            "surname": "New Player",
+        },
+    )
+    assert reg.status_code == 201, reg.text
+    headers = {"X-CSRF-Token": reg.json()["csrf_token"]}
+
+    stats_res = client.get("/api/v1/statistics/summary", headers=headers)
+
+    assert stats_res.status_code == 200
+    assert stats_res.json()["accuracy"] is None
+

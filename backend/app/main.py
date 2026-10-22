@@ -3,6 +3,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+from fastapi import Depends
 
 from backend.app.core.config import settings
 from backend.app.api.v1.api import api_router
@@ -56,6 +59,13 @@ def health_check():
         "version": settings.VERSION,
         "environment": settings.ENVIRONMENT,
     }
+
+
+@app.get("/ready", tags=["Health"])
+def readiness_check(db: Session = Depends(get_db)):
+    """Confirm the API can reach its configured database."""
+    db.execute(text("SELECT 1"))
+    return {"status": "ready", "database": "reachable"}
 
 
 # If frontend production build exists, mount static files at root

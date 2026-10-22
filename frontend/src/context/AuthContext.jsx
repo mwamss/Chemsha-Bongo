@@ -14,6 +14,9 @@ export function AuthProvider({ children }) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [migrationPrompt, setMigrationPrompt] = useState(false);
   const [syncStatus, setSyncStatus] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
+  const [privateDataSyncStatus, setPrivateDataSyncStatus] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
+  const [storagePersistenceStatus, setStoragePersistenceStatus] = useState(() => storage.getPersistenceStatus());
+  const privateSyncQueueRef = useRef(Promise.resolve());
 
   // Settings state (defaults to local storage, overwritten by user account when logged in)
   const [settings, setSettings] = useState(() => storage.getSettings());
@@ -38,6 +41,23 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const syncPrivateDataNow = async () => {
+    setPrivateDataSyncStatus('syncing');
+    const sync = async () => {
+      const remote = await api.syncPrivateData(storage.exportPrivateData());
+      storage.mergePrivateData(remote);
+    };
+    const queuedSync = privateSyncQueueRef.current.then(sync, sync);
+    privateSyncQueueRef.current = queuedSync.catch(() => {});
+    try {
+      await queuedSync;
+      setPrivateDataSyncStatus('synced');
+    } catch (error) {
+      setPrivateDataSyncStatus('error');
+      throw error;
+    }
+  };
+
   const applyAccount = async (userData) => {
     setUser(userData);
     await loadAvatarImage(userData);
@@ -54,11 +74,13 @@ export function AuthProvider({ children }) {
       try {
         const privateData = await api.getPrivateData();
         storage.mergePrivateData(privateData);
-        const merged = await api.syncPrivateData(storage.exportPrivateData());
-        storage.mergePrivateData(merged);
+        await syncPrivateDataNow();
       } catch (error) {
+        setPrivateDataSyncStatus('error');
         console.warn('Could not sync private account data:', error.message);
       }
+    } else {
+      setPrivateDataSyncStatus('idle');
     }
   };
 
@@ -67,19 +89,43 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    const refreshStorageStatus = (event) => {
+      setStoragePersistenceStatus(event.detail?.status || storage.getPersistenceStatus());
+    };
+    window.addEventListener('chemsha-storage-persistence', refreshStorageStatus);
+    return () => window.removeEventListener('chemsha-storage-persistence', refreshStorageStatus);
+  }, [storage]);
+
+  useEffect(() => {
     if (!user || !settings.privateSyncEnabled) return undefined;
     let timer;
+    let retryTimer;
+    let retryAttempt = 0;
+    let active = true;
+    const retryDelays = [2000, 5000, 15000];
+    const attemptSync = () => {
+      syncPrivateDataNow()
+        .then(() => { retryAttempt = 0; })
+        .catch((error) => {
+          console.warn('Private account sync failed:', error.message);
+          if (active && retryAttempt < retryDelays.length) {
+            retryTimer = setTimeout(attemptSync, retryDelays[retryAttempt]);
+            retryAttempt += 1;
+          }
+        });
+    };
     const sync = () => {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        api.syncPrivateData(storage.exportPrivateData())
-          .then((remote) => storage.mergePrivateData(remote))
-          .catch((error) => console.warn('Private account sync failed:', error.message));
-      }, 700);
+      clearTimeout(retryTimer);
+      retryAttempt = 0;
+      setPrivateDataSyncStatus('syncing');
+      timer = setTimeout(attemptSync, 700);
     };
     window.addEventListener('chemsha-storage-update', sync);
     return () => {
+      active = false;
       clearTimeout(timer);
+      clearTimeout(retryTimer);
       window.removeEventListener('chemsha-storage-update', sync);
     };
   }, [user, settings.privateSyncEnabled, storage]);
@@ -163,7 +209,9 @@ export function AuthProvider({ children }) {
     await api.logout();
     setUser(null);
     replaceAvatarImage(null);
+    storage.updateSettings({ privateSyncEnabled: false });
     setSettings(storage.getSettings());
+    setPrivateDataSyncStatus('idle');
   };
 
   const updateProfile = async ({ surname, display_name, avatar_color }) => {
@@ -243,10 +291,10 @@ export function AuthProvider({ children }) {
         if (partial.private_sync_enabled === true) {
           const remote = await api.getPrivateData();
           storage.mergePrivateData(remote);
-          const merged = await api.syncPrivateData(storage.exportPrivateData());
-          storage.mergePrivateData(merged);
+          await syncPrivateDataNow();
         } else if (partial.private_sync_enabled === false) {
           await api.deletePrivateData();
+          setPrivateDataSyncStatus('idle');
         }
       } catch (e) {
         console.warn('Failed to update account settings on server:', e);
@@ -260,6 +308,16 @@ export function AuthProvider({ children }) {
         if (partial.spotify_uri !== undefined || partial.private_sync_enabled !== undefined) throw e;
       }
     }
+  };
+
+  const updateLocalSettings = (partial) => {
+    storage.updateSettings(partial);
+    setSettings({ ...storage.getSettings() });
+  };
+
+  const retryPrivateDataSync = async () => {
+    if (!user || !settings.privateSyncEnabled) return;
+    await syncPrivateDataNow();
   };
 
   const handleMigrate = async () => {
@@ -309,6 +367,9 @@ export function AuthProvider({ children }) {
     setShowAuthModal,
     migrationPrompt,
     syncStatus,
+    privateDataSyncStatus,
+    retryPrivateDataSync,
+    storagePersistenceStatus,
     syncLocalData,
     handleMigrate,
     dismissMigration,
@@ -321,6 +382,7 @@ export function AuthProvider({ children }) {
     uploadAvatar,
     removeAvatar,
     updateSettings,
+    updateLocalSettings,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

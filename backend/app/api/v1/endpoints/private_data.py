@@ -27,6 +27,7 @@ def get_private_data(
         banjaEntries=record.banja_entries,
         banjaTombstones=record.banja_tombstones,
         dailyRhythm=record.daily_rhythm,
+        wellbeingCheckins=record.wellbeing_checkins,
     )
 
 
@@ -75,11 +76,19 @@ def sync_private_data(
     record.banja_entries = sorted(entries.values(), key=lambda entry: entry.get("updatedAt", 0), reverse=True)
     record.banja_tombstones = tombstones
     record.daily_rhythm = rhythm
+    wellbeing = dict(record.wellbeing_checkins or {})
+    for date_key, checkin_model in payload.wellbeingCheckins.items():
+        incoming = checkin_model.model_dump()
+        previous = wellbeing.get(date_key)
+        if not previous or incoming["updatedAt"] > previous.get("updatedAt", 0):
+            wellbeing[date_key] = incoming
+    record.wellbeing_checkins = wellbeing
     db.commit()
     return PrivateDataSync(
         banjaEntries=record.banja_entries,
         banjaTombstones=record.banja_tombstones,
         dailyRhythm=record.daily_rhythm,
+        wellbeingCheckins=record.wellbeing_checkins,
     )
 
 

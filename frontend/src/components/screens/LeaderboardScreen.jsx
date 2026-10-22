@@ -8,8 +8,24 @@ export function LeaderboardScreen() {
   const [activeTab, setActiveTab] = useState('blitz'); // 'blitz' or gameId
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [shareStatus, setShareStatus] = useState('');
   const { playClick } = useAudio();
   const games = getAllGames();
+
+  const shareChallenge = async () => {
+    playClick();
+    const url = window.location.origin;
+    const text = activeTab === 'blitz'
+      ? `Join me for today's Chemsha Bongo Daily Blitz. Compare your score on the leaderboard: ${url}`
+      : `Try ${games.find((game) => game.id === activeTab)?.title || 'a Chemsha Bongo exercise'} and compare scores with me: ${url}`;
+    try {
+      if (navigator.share) await navigator.share({ title: 'Chemsha Bongo challenge', text, url });
+      else await navigator.clipboard.writeText(text);
+      setShareStatus(navigator.share ? 'Challenge ready to share.' : 'Challenge invitation copied.');
+    } catch (error) {
+      if (error?.name !== 'AbortError') setShareStatus('Sharing is not available in this browser.');
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -28,14 +44,16 @@ export function LeaderboardScreen() {
 
   return (
     <div className="screen-layout flex flex-col gap-6 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 pt-6 pb-20 select-none">
-      <div className="flex flex-col gap-1 border-b border-border-subtle/40 pb-4">
-        <h1 className="font-headline-xl text-2xl sm:text-3xl font-extrabold text-on-surface">
-          Global Leaderboards
-        </h1>
-        <p className="text-sm text-on-surface-variant">
-          Verified player rankings for the Daily Blitz challenge and individual cognitive pillars.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-border-subtle/40 pb-4">
+        <div>
+          <h1 className="font-headline-xl text-2xl sm:text-3xl font-extrabold text-on-surface">Global Leaderboards</h1>
+          <p className="text-sm text-on-surface-variant">Verified player rankings for the Daily Blitz challenge and individual cognitive pillars.</p>
+        </div>
+        <button type="button" onClick={shareChallenge} className="btn btn-secondary px-4 py-2.5 rounded-xl text-sm font-semibold self-start sm:self-auto">
+          <span className="material-symbols-outlined text-[18px]">group_add</span> Invite someone
+        </button>
       </div>
+      {shareStatus && <p role="status" className="text-xs text-secondary">{shareStatus}</p>}
 
       {/* ── TAB BAR ───────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">

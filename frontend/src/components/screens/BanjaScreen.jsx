@@ -23,7 +23,7 @@ const getTimeOfDaySession = () => {
 };
 
 export function BanjaScreen({ onNavigate }) {
-  const { storage, settings, isAuthenticated, updateSettings } = useAuth();
+  const { storage, settings, isAuthenticated, updateSettings, privateDataSyncStatus, retryPrivateDataSync, storagePersistenceStatus } = useAuth();
   const { playClick } = useAudio();
   const { theme, setTheme, isDark, toggleTheme } = useTheme();
 
@@ -34,10 +34,18 @@ export function BanjaScreen({ onNavigate }) {
   // Journal Entries State (Offline-first synced via Storage.js)
   const [entries, setEntries] = useState([]);
   const [currentEntryId, setCurrentEntryId] = useState(null);
+  const currentEntryIdRef = useRef(null);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [sessionLabel, setSessionLabel] = useState(getTimeOfDaySession);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [tagsText, setTagsText] = useState('');
+  const [localOnly, setLocalOnly] = useState(false);
+  const [reflectionSearch, setReflectionSearch] = useState('');
+  const [reflectionCategoryFilter, setReflectionCategoryFilter] = useState('');
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [onThisDayOnly, setOnThisDayOnly] = useState(false);
+  const [reflectionIntent, setReflectionIntent] = useState('');
   const [dailyQuote, setDailyQuote] = useState(null);
 
   // Reflection Dataset & Navigation State
@@ -61,6 +69,11 @@ export function BanjaScreen({ onNavigate }) {
   const [showPromptBanner, setShowPromptBanner] = useState(false);
 
   const textareaRef = useRef(null);
+
+  const updateCurrentEntryId = (id) => {
+    currentEntryIdRef.current = id;
+    setCurrentEntryId(id);
+  };
 
   // Load Categories & Daily Quote
   useEffect(() => {
@@ -135,9 +148,9 @@ export function BanjaScreen({ onNavigate }) {
   }, [body]);
 
   // Save current entry to Storage.js
-  const saveCurrent = (newTitle = title, newBody = body, newFav = isFavorite) => {
+  const saveCurrent = (newTitle = title, newBody = body, newFav = isFavorite, newTags = tagsText, newLocalOnly = localOnly) => {
     if (!storage) return;
-    if (!newTitle.trim() && !newBody.trim() && !currentEntryId) {
+    if (!newTitle.trim() && !newBody.trim() && !currentEntryIdRef.current) {
       return;
     }
 
@@ -145,25 +158,27 @@ export function BanjaScreen({ onNavigate }) {
     const words = trimmed ? trimmed.split(/\s+/).length : 0;
     const now = new Date();
     const timeStr = `Today, ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-
-    const idToUse = currentEntryId || `banja-${Date.now()}`;
+    const idToUse = currentEntryIdRef.current || `banja-${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`}`;
+    const isGuidedEntry = banjaMode === 'guided';
     const entryData = {
       id: idToUse,
-      title: newTitle || (activePrompt ? activePrompt.question : 'Untitled Reflection'),
+      title: newTitle.trim() || (isGuidedEntry ? activePrompt?.question : '') || 'Untitled Reflection',
       body: newBody,
       session: sessionLabel,
-      promptId: activePrompt?.id || null,
-      promptCategory: activePrompt?.category || selectedCategory || 'Reflection',
+      promptId: isGuidedEntry ? activePrompt?.id || null : null,
+      promptCategory: isGuidedEntry ? activePrompt?.category || selectedCategory || 'Reflection' : 'Free Expression',
       timestamp: timeStr,
       wordCount: words,
       isFavorite: newFav,
+      tags: [...new Set(newTags.split(',').map((tag) => tag.trim()).filter(Boolean))].slice(0, 20),
+      localOnly: newLocalOnly,
       hasVoiceNote: isVoiceNoteActive,
       updatedAt: Date.now()
     };
 
     const updatedList = storage.saveBanjaEntry(entryData);
     setEntries(updatedList);
-    setCurrentEntryId(idToUse);
+    updateCurrentEntryId(idToUse);
     setSavedStatus('Saved to personal sanctuary');
   };
 
@@ -232,12 +247,14 @@ export function BanjaScreen({ onNavigate }) {
   // Reset to fresh reflection
   const handleNewReflection = () => {
     playClick();
-    setCurrentEntryId(null);
+    updateCurrentEntryId(null);
     setTitle('');
     setBody('');
     setIsVoiceNoteActive(false);
     setSessionLabel(getTimeOfDaySession());
     setIsFavorite(false);
+    setTagsText('');
+    setLocalOnly(false);
     setSavedStatus('Ready to write');
     handleShuffleInquiry();
     if (textareaRef.current) {
@@ -265,11 +282,13 @@ export function BanjaScreen({ onNavigate }) {
   // Select entry from drawer
   const handleSelectDrawerEntry = (entry) => {
     playClick();
-    setCurrentEntryId(entry.id);
+    updateCurrentEntryId(entry.id);
     setTitle(entry.title || '');
     setBody(entry.body || '');
     setSessionLabel(entry.session || getTimeOfDaySession());
     setIsFavorite(!!entry.isFavorite);
+    setTagsText(Array.isArray(entry.tags) ? entry.tags.join(', ') : '');
+    setLocalOnly(!!entry.localOnly);
     setIsVoiceNoteActive(!!entry.hasVoiceNote);
     setSavedStatus('Loaded reflection');
     setIsDrawerOpen(false);
@@ -288,9 +307,7 @@ export function BanjaScreen({ onNavigate }) {
   // Delete current entry
   const handleDeleteCurrent = () => {
     if (!currentEntryId) {
-      setTitle('');
-      setBody('');
-      setSavedStatus('Ready to write');
+      handleNewReflection();
       return;
     }
     if (window.confirm('Quietly clear this current reflection from your sanctuary?')) {
@@ -304,6 +321,16 @@ export function BanjaScreen({ onNavigate }) {
   // Word metrics
   const wordCount = body.trim() ? body.trim().split(/\s+/).length : 0;
   const readTime = Math.max(1, Math.round(wordCount / 180));
+  const filteredEntries = entries.filter((entry) => {
+    const query = reflectionSearch.trim().toLocaleLowerCase();
+    const matchesQuery = !query || `${entry.title || ''} ${entry.body || ''} ${(entry.tags || []).join(' ')}`.toLocaleLowerCase().includes(query);
+    const matchesCategory = !reflectionCategoryFilter || entry.promptCategory === reflectionCategoryFilter;
+    const matchesFavorite = !favoritesOnly || entry.isFavorite;
+    const date = new Date(entry.createdAt || entry.updatedAt || 0);
+    const today = new Date();
+    const matchesDay = !onThisDayOnly || (date.getMonth() === today.getMonth() && date.getDate() === today.getDate());
+    return matchesQuery && matchesCategory && matchesFavorite && matchesDay;
+  });
 
   // Dynamic Date string
   const todayFormatted = new Intl.DateTimeFormat('en-US', {
@@ -511,15 +538,15 @@ export function BanjaScreen({ onNavigate }) {
           ? 'bg-[#0f1412]/90 border-b border-[#2d3a35] shadow-[0_1px_12px_rgba(0,0,0,0.5)]'
           : 'bg-surface-container-lowest/90 border-b border-outline-variant/30 shadow-[0_1px_6px_rgba(16,30,26,0.04)]'
       }`}>
-        <div className="h-14 w-full mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 flex items-center justify-between gap-2">
+        <div className="h-14 w-full mx-auto px-2 sm:px-6 lg:px-10 2xl:px-12 flex items-center justify-between gap-1 sm:gap-2">
           {/* Breadcrumb Left */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-0.5 sm:gap-3 shrink-0">
             <button
               onClick={() => {
                 playClick();
                 if (onNavigate) onNavigate('home');
               }}
-              className={`flex items-center gap-1 transition-colors text-xs font-medium py-1 px-2 rounded-lg cursor-pointer ${
+              className={`flex items-center gap-1 transition-colors text-xs font-medium py-1 px-1 sm:px-2 rounded-lg cursor-pointer ${
                 isDark
                   ? 'text-[#8e9e97] hover:text-[#e1e8e4] hover:bg-[#181d1b]'
                   : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
@@ -529,7 +556,7 @@ export function BanjaScreen({ onNavigate }) {
               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
               <span className="hidden sm:inline">Sanctuary</span>
             </button>
-            <span className={`text-xs ${isDark ? 'text-[#404945]' : 'text-outline-variant'}`}>/</span>
+            <span className={`hidden sm:inline text-xs ${isDark ? 'text-[#404945]' : 'text-outline-variant'}`}>/</span>
             <div className="flex items-center gap-1.5">
               <span className={`material-symbols-outlined text-lg ${isDark ? 'text-[#95d3c0]' : 'text-secondary'}`}>auto_stories</span>
               <span className={`font-headline-md text-sm sm:text-base font-bold tracking-tight ${
@@ -584,7 +611,7 @@ export function BanjaScreen({ onNavigate }) {
           </div>
 
           {/* Quick Action Buttons Right */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-0 sm:gap-2 shrink-0">
             {/* Arrival Modal Toggle */}
             <button
               type="button"
@@ -592,7 +619,7 @@ export function BanjaScreen({ onNavigate }) {
                 playClick();
                 setShowArrivalModal(true);
               }}
-              className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer shadow-2xs ${
+              className={`inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer shadow-2xs ${
                 isDark
                   ? 'bg-[#181d1b] border-[#2d3a35] text-[#8e9e97] hover:text-[#e1e8e4] hover:bg-[#1f2724]'
                   : 'bg-surface-container-low hover:bg-surface-container text-secondary border-outline-variant/30'
@@ -628,7 +655,7 @@ export function BanjaScreen({ onNavigate }) {
                 playClick();
                 setIsDrawerOpen(true);
               }}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center gap-1 px-1.5 sm:px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer shadow-2xs ${
                 isDark
                   ? 'bg-[#181d1b] border-[#2d3a35] text-[#8e9e97] hover:text-[#e1e8e4] hover:bg-[#1f2724]'
                   : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-outline-variant/30'
@@ -650,7 +677,7 @@ export function BanjaScreen({ onNavigate }) {
                 playClick();
                 setZenMode(!zenMode);
               }}
-              className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer ${
+              className={`w-9 h-9 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer ${
                 zenMode
                   ? (isDark ? 'bg-[#204f43] text-[#95d3c0] shadow-xs' : 'bg-secondary text-white shadow-xs')
                   : (isDark ? 'text-[#8e9e97] hover:text-[#e1e8e4] hover:bg-[#181d1b]' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low')
@@ -668,7 +695,7 @@ export function BanjaScreen({ onNavigate }) {
                 playClick();
                 toggleTheme();
               }}
-              className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl transition-all cursor-pointer ${
+              className={`w-9 h-9 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl transition-all cursor-pointer ${
                 isDark
                   ? 'bg-[#181d1b] border border-[#2d3a35] text-[#95d3c0] hover:text-white hover:bg-[#1f2724]'
                   : 'bg-surface-container-low border border-outline-variant/30 text-secondary hover:text-primary hover:bg-surface-container'
@@ -834,6 +861,20 @@ export function BanjaScreen({ onNavigate }) {
                           isDark ? 'text-[#72847d]' : 'text-outline'
                         }`}>expand_more</span>
                       </div>
+
+                      <label className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] sm:text-xs border ${isDark ? 'bg-[#181d1b] border-[#2d3a35] text-[#8e9e97]' : 'bg-surface-container-lowest border-outline-variant/30 text-on-surface-variant'}`}>
+                        <span className="material-symbols-outlined text-sm">explore</span>
+                        <span className="sr-only">Reflection focus</span>
+                        <select aria-label="Choose reflection focus" value={reflectionIntent} onChange={(event) => {
+                          const intent = event.target.value;
+                          setReflectionIntent(intent);
+                          const match = categories.find((category) => category.name.toLowerCase() === intent.toLowerCase());
+                          if (match) setSelectedCategory(match.name);
+                        }} className="bg-transparent outline-none max-w-32">
+                          <option value="">Choose a focus</option>
+                          {categories.slice(0, 8).map((category) => <option key={category.name} value={category.name}>{category.name}</option>)}
+                        </select>
+                      </label>
 
                       <span className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold flex items-center gap-1 border ${
                         isDark
@@ -1067,6 +1108,17 @@ export function BanjaScreen({ onNavigate }) {
                               : 'bg-surface-container-low/50 text-on-surface placeholder:text-on-surface-variant/60 focus:ring-secondary/40'
                           }`}
                         />
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                        <label className={`flex-1 text-xs ${isDark ? 'text-[#8e9e97]' : 'text-on-surface-variant'}`}>
+                          Tags <span className="opacity-70">(comma separated)</span>
+                          <input aria-label="Reflection tags" value={tagsText} onChange={(event) => { setTagsText(event.target.value); saveCurrent(title, body, isFavorite, event.target.value, localOnly); }} placeholder="work, gratitude, family" className={`mt-1 w-full px-3 py-2 rounded-lg text-sm ${isDark ? 'bg-[#111614] text-[#e1e8e4] placeholder:text-[#65736c]' : 'bg-surface-container-low/60 text-on-surface placeholder:text-outline'}`} />
+                        </label>
+                        <label className={`flex items-center gap-2 text-xs cursor-pointer ${isDark ? 'text-[#8e9e97]' : 'text-on-surface-variant'}`}>
+                          <input type="checkbox" checked={localOnly} onChange={(event) => { setLocalOnly(event.target.checked); saveCurrent(title, body, isFavorite, tagsText, event.target.checked); }} />
+                          Keep this reflection on this device only
+                        </label>
                       </div>
 
                       {/* Reflection Metadata & Voice Note Indicator */}
@@ -1548,6 +1600,17 @@ export function BanjaScreen({ onNavigate }) {
                   />
                 </div>
 
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-center mt-4">
+                  <label className={`flex-1 text-xs ${isDark ? 'text-[#8E9E97]' : 'text-on-surface-variant'}`}>
+                    Tags <span className="opacity-70">(comma separated)</span>
+                    <input aria-label="Reflection tags" value={tagsText} onChange={(event) => { setTagsText(event.target.value); saveCurrent(title, body, isFavorite, event.target.value, localOnly); }} placeholder="work, gratitude, family" className={`mt-1 w-full px-3 py-2 rounded-lg text-sm ${isDark ? 'bg-[#111614] text-[#E1E8E4] placeholder:text-[#65736C]' : 'bg-surface-container-low/60 text-on-surface placeholder:text-outline'}`} />
+                  </label>
+                  <label className={`flex items-center gap-2 text-xs cursor-pointer ${isDark ? 'text-[#8E9E97]' : 'text-on-surface-variant'}`}>
+                    <input type="checkbox" checked={localOnly} onChange={(event) => { setLocalOnly(event.target.checked); saveCurrent(title, body, isFavorite, tagsText, event.target.checked); }} />
+                    Keep this reflection on this device only
+                  </label>
+                </div>
+
                 {/* Word Metrics & Save Status */}
                 <div className={`mt-4 sm:mt-6 pt-3 border-t flex flex-wrap items-center justify-between gap-2 text-xs ${
                   isDark
@@ -1566,10 +1629,31 @@ export function BanjaScreen({ onNavigate }) {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`font-mono text-[11px] ${isDark ? 'text-[#72847D]' : 'text-outline'}`}>
-                      {settings?.privateSyncEnabled ? 'Auto-saved locally · account sync enabled' : 'Auto-saved locally'}
+                      {storagePersistenceStatus === 'persistent'
+                        ? 'Saved on this device'
+                        : storagePersistenceStatus === 'memory-only'
+                          ? 'Temporary save only · browser storage unavailable'
+                          : storagePersistenceStatus === 'error'
+                            ? 'Could not save to browser storage'
+                            : 'Saving…'}
                     </span>
                   </div>
                 </div>
+                {settings?.privateSyncEnabled && isAuthenticated && (
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px]" aria-live="polite">
+                    <span className={privateDataSyncStatus === 'error' ? 'text-red-600 dark:text-red-400' : isDark ? 'text-[#8E9E97]' : 'text-on-surface-variant'}>
+                      {privateDataSyncStatus === 'syncing' ? 'Syncing reflections to your account…'
+                        : privateDataSyncStatus === 'synced' ? 'Account copy is up to date'
+                          : privateDataSyncStatus === 'error' ? 'Account sync needs attention'
+                            : 'Account sync is enabled'}
+                    </span>
+                    {privateDataSyncStatus === 'error' && (
+                      <button type="button" onClick={() => retryPrivateDataSync().catch(() => {})} className="font-semibold text-secondary underline underline-offset-2">
+                        Retry sync
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {/* Action Strip (Mobile Friendly) */}
                 <div className="mt-4 flex flex-col xs:flex-row xs:items-center justify-between gap-2 pt-2">
@@ -1578,11 +1662,7 @@ export function BanjaScreen({ onNavigate }) {
                       type="button"
                       onClick={() => {
                         playClick();
-                        setCurrentEntryId(null);
-                        setTitle('');
-                        setBody('');
-                        setSavedStatus('Ready to write');
-                        if (textareaRef.current) textareaRef.current.focus();
+                        handleNewReflection();
                       }}
                       className={`min-h-[40px] inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl active:scale-[0.98] text-xs font-semibold transition-colors shadow-2xs cursor-pointer ${
                         isDark
@@ -1670,6 +1750,17 @@ export function BanjaScreen({ onNavigate }) {
 
               {/* Drawer Entries List */}
               <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5 sm:space-y-3">
+                <div className="space-y-2 pb-2">
+                  <input type="search" aria-label="Search reflections" value={reflectionSearch} onChange={(event) => setReflectionSearch(event.target.value)} placeholder="Search reflections and tags" className={`w-full px-3 py-2 rounded-lg text-sm ${isDark ? 'bg-[#111614] text-[#f0f4f2] placeholder:text-[#72847d]' : 'bg-white text-on-surface border border-outline-variant/40'}`} />
+                  <select aria-label="Filter reflections by category" value={reflectionCategoryFilter} onChange={(event) => setReflectionCategoryFilter(event.target.value)} className={`w-full px-3 py-2 rounded-lg text-sm ${isDark ? 'bg-[#111614] text-[#e1e8e4]' : 'bg-white text-on-surface border border-outline-variant/40'}`}>
+                    <option value="">All categories</option>
+                    {[...new Set(entries.map((entry) => entry.promptCategory).filter(Boolean))].map((category) => <option key={category} value={category}>{category}</option>)}
+                  </select>
+                  <div className="flex gap-2 text-xs">
+                    <button type="button" aria-pressed={favoritesOnly} onClick={() => setFavoritesOnly((value) => !value)} className={`px-3 py-1.5 rounded-full ${favoritesOnly ? 'bg-secondary text-white' : 'bg-surface-container text-on-surface-variant'}`}>Favorites</button>
+                    <button type="button" aria-pressed={onThisDayOnly} onClick={() => setOnThisDayOnly((value) => !value)} className={`px-3 py-1.5 rounded-full ${onThisDayOnly ? 'bg-secondary text-white' : 'bg-surface-container text-on-surface-variant'}`}>On this day</button>
+                  </div>
+                </div>
                 {entries.length === 0 ? (
                   <div className="text-center py-12 px-4">
                     <span className={`material-symbols-outlined text-4xl mb-2 ${isDark ? 'text-[#8E9E97]/40' : 'text-outline/40'}`}>auto_stories</span>
@@ -1677,7 +1768,7 @@ export function BanjaScreen({ onNavigate }) {
                     <p className={`text-xs mt-1 ${isDark ? 'text-[#72847D]' : 'text-outline'}`}>Reflections written in Guided Check-in or Free Expression will be preserved here.</p>
                   </div>
                 ) : (
-                  entries.map((entry) => (
+                  filteredEntries.length === 0 ? <p className="text-center text-sm text-on-surface-variant py-8">No reflections match these filters.</p> : filteredEntries.map((entry) => (
                     <div
                       key={entry.id}
                       role="button"
@@ -1722,6 +1813,7 @@ export function BanjaScreen({ onNavigate }) {
                         isDark ? 'text-[#72847D]' : 'text-outline'
                       }`}>
                         <span>{entry.wordCount || 0} words</span>
+                        <span className="flex gap-1 flex-wrap">{(entry.tags || []).map((tag) => <span key={tag} className="px-1.5 py-0.5 rounded bg-secondary/10 text-secondary">{tag}</span>)}{entry.localOnly && <span className="text-amber-600">On this device</span>}</span>
                         {entry.isFavorite && (
                           <span className="material-symbols-outlined text-amber-400 text-[14px]">bookmark</span>
                         )}
